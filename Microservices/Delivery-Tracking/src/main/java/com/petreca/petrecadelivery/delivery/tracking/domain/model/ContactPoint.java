@@ -1,10 +1,10 @@
 package com.petreca.petrecadelivery.delivery.tracking.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import jakarta.persistence.Embeddable;
+import lombok.*;
 
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PACKAGE)
 @AllArgsConstructor
 @EqualsAndHashCode
 @Builder

@@ -1,7 +1,12 @@
 package com.petreca.petrecadelivery.delivery.tracking.domain.model;
 
+import com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryFulfilledEvent;
+import com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryPickedUpEvent;
+import com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryPlacedEvent;
 import com.petreca.petrecadelivery.delivery.tracking.domain.exception.DomainException;
+import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.domain.AbstractAggregateRoot;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -11,12 +16,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class Delivery {
+public class Delivery extends AbstractAggregateRoot<Delivery> {
 
+    @Id
     @EqualsAndHashCode.Include
     private UUID id;
     private UUID courierId;
@@ -34,9 +41,29 @@ public class Delivery {
 
     private Integer totalItems;
 
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "zipCode", column = @Column(name = "sender_zip_code")),
+            @AttributeOverride(name = "street", column = @Column(name = "sender_street")),
+            @AttributeOverride(name = "number", column = @Column(name = "sender_number")),
+            @AttributeOverride(name = "complement", column = @Column(name = "sender_complement")),
+            @AttributeOverride(name = "name", column = @Column(name = "sender_name")),
+            @AttributeOverride(name = "phone", column = @Column(name = "sender_phone"))
+    })
     private ContactPoint sender;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "zipCode", column = @Column(name = "recipient_zip_code")),
+            @AttributeOverride(name = "street", column = @Column(name = "recipient_street")),
+            @AttributeOverride(name = "number", column = @Column(name = "recipient_number")),
+            @AttributeOverride(name = "complement", column = @Column(name = "recipient_complement")),
+            @AttributeOverride(name = "name", column = @Column(name = "recipient_name")),
+            @AttributeOverride(name = "phone", column = @Column(name = "recipient_phone"))
+    })
     private ContactPoint recipient;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "delivery")
     private List<Item> items = new ArrayList<>();
 
     public static Delivery draft() {
@@ -51,7 +78,7 @@ public class Delivery {
     }
 
     public UUID addItem(String name, int quantity) {
-        Item item = Item.brandNew(name, quantity);
+        Item item = Item.brandNew(name, quantity, this);
         items.add(item);
         calculateTotalItems();
         return item.getId();
@@ -88,17 +115,24 @@ public class Delivery {
         verifyIfCanBePlaced();
         this.chanteStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         this.setPlacedAt(OffsetDateTime.now());
+        super.registerEvent(
+                new DeliveryPlacedEvent(this.placedAt, this.id));
     }
 
     public void pickUp(UUID courierId) {
         this.setCourierId(courierId);
         this.chanteStatusTo(DeliveryStatus.IN_TRANSIT);
         this.setAssignedAt(OffsetDateTime.now());
+        super.registerEvent(
+                new DeliveryPickedUpEvent(this.assignedAt, this.id));
     }
 
     public void markAsDelivered() {
         this.chanteStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
+        super.registerEvent(
+                new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));
+
     }
 
     public List<Item> getItems() {
