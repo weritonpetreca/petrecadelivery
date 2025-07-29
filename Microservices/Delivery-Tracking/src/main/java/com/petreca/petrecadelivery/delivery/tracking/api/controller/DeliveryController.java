@@ -8,6 +8,7 @@ import com.petreca.petrecadelivery.delivery.tracking.domain.service.DeliveryChec
 import com.petreca.petrecadelivery.delivery.tracking.domain.service.DeliveryPreparationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Random;
 import java.util.UUID;
 
 @RestController
@@ -38,15 +40,21 @@ public class DeliveryController {
         return deliveryPreparationService.edit(deliveryId, input);
     }
 
+    @SneakyThrows
     @GetMapping
     public PagedModel<Delivery> findAll(@PageableDefault Pageable pageable) {
+        if (Math.random() < 0.7) {
+            throw new RuntimeException();
+        }
+        int millis = new Random().nextInt(400);
+        Thread.sleep(millis);
         return new PagedModel<>(deliveryRepository.findAll(pageable));
     }
 
     @GetMapping("/{deliveryId}")
     public Delivery findById(@PathVariable UUID deliveryId) {
         return deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND) );
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/{deliveryId}/placement")
