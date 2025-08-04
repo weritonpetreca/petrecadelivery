@@ -211,7 +211,7 @@ Chegamos ao final da apresentação deste projeto, e eu não poderia deixar de r
 
 Este projeto é o resultado prático dos valiosos ensinamentos adquiridos durante a imersão **"Mergulho Microsserviços Spring"** da **Algaworks**. Agradeço imensamente a toda a equipe da Algaworks pela qualidade excepcional do conteúdo e pelo suporte contínuo.
 
-Em especial, gostaria de agradecer aos mestres **Alex Augusto** e **Thiago Faria de Andrade**, cuja didática, paciência e profundo conhecimento técnico foram fundamentais para transformar conceitos complexos em aprendizado sólido e aplicável.
+Em especial, gostaria de agradecer aos mestres [**Alex Augusto**](https://github.com/alexaugustobr) e [**Thiago Faria de Andrade**](https://github.com/thiagofa), cuja didática, paciência e profundo conhecimento técnico foram fundamentais para transformar conceitos complexos em aprendizado sólido e aplicável.
 
 O **PetrecaDelivery** nasceu como um exercício de aprendizado, mas se tornou um portfólio que me enche de orgulho, demonstrando a aplicação de uma arquitetura robusta e alinhada com as melhores práticas do mercado.
 
