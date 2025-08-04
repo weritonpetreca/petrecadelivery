@@ -16,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Random;
 import java.util.UUID;
 
 @RestController
@@ -43,11 +42,6 @@ public class DeliveryController {
     @SneakyThrows
     @GetMapping
     public PagedModel<Delivery> findAll(@PageableDefault Pageable pageable) {
-        if (Math.random() < 0.7) {
-            throw new RuntimeException();
-        }
-        int millis = new Random().nextInt(400);
-        Thread.sleep(millis);
         return new PagedModel<>(deliveryRepository.findAll(pageable));
     }
 
