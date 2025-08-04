@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
-import java.util.Random;
 import java.util.UUID;
 
 @RestController
@@ -63,14 +62,6 @@ public class CourierController {
     @PostMapping("/payout-calculation")
     public CourierPayoutResultModel calculate(@RequestBody CourierPayoutCalculationInput input){
         log.info("Calculating");
-
-        if (Math.random() < 0.5) {
-            throw new RuntimeException();
-        }
-
-        int millis = new Random().nextInt(400);
-        Thread.sleep(millis);
-
         BigDecimal payoutFee = courierPayoutService.calculate(input.getDistanceInKm());
         return new CourierPayoutResultModel(payoutFee);
     }
