@@ -2,10 +2,12 @@ package com.petreca.petrecadelivery.delivery.tracking.domain.repository;
 
 import com.petreca.petrecadelivery.delivery.tracking.domain.model.ContactPoint;
 import com.petreca.petrecadelivery.delivery.tracking.domain.model.Delivery;
+import com.petreca.petrecadelivery.delivery.tracking.infrastructure.PostgreSQLTestContainerConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -14,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(PostgreSQLTestContainerConfig.class)
 class DeliveryRepositoryTest {
 
     @Autowired
