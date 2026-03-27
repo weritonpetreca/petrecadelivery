@@ -1,122 +1,170 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.4</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
-	<groupId>com.petreca.petrecadelivery</groupId>
-	<artifactId>Courier-Management</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>Courier-Management</name>
-	<description>Demo project for Spring Boot</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
-	<properties>
-		<java.version>21</java.version>
-		<spring-cloud.version>2025.0.0</spring-cloud.version>
 
-	</properties>
+	<!--
+        Herda do parent centralizado da plataforma PetrecaDelivery.
+    -->
+	<parent>
+		<groupId>com.petreca.petrecadelivery</groupId>
+		<artifactId>petrecadelivery-parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../../pom.xml</relativePath>
+	</parent>
+
+	<artifactId>courier-management</artifactId>
+	<name>PetrecaDelivery :: Courier Management</name>
+	<description>
+		Microsserviço responsável pelo ciclo de vida dos entregadores:
+		cadastro, atualização, cálculo de pagamentos e atribuição/conclusão
+		de entregas via consumo de eventos Kafka publicados pelo Delivery Tracking.
+	</description>
+
 	<dependencies>
+
+		<!-- ── Persistência ─────────────────────────────────────────── -->
+
+		<!--
+            Spring Data JPA + Hibernate.
+            Abstrai o acesso ao banco de dados via repositórios.
+        -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-		</dependency>
+
+		<!--
+            Driver PostgreSQL em runtime — só necessário durante execução,
+            não em compile time, pois o JPA abstrai o SQL específico do banco.
+        -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
+		<!-- ── Web ──────────────────────────────────────────────────── -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!--
+            Bean Validation (Jakarta) — habilita @NotBlank, @NotNull,
+            @Valid e outras anotações de validação nas classes de input.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- ── Mensageria ───────────────────────────────────────────── -->
+
+		<!--
+            Spring Kafka — integração com Apache Kafka.
+            Usado para consumir eventos publicados pelo Delivery Tracking
+            (ex: DeliveryPlacedEvent) e reagir atribuindo entregadores.
+        -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<!-- ── Service Discovery ────────────────────────────────────── -->
+
+		<!--
+            Eureka Client — registra este serviço no Service Registry,
+            tornando-o descobrível pelo Gateway e por outros microsserviços.
+        -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+
+		<!-- ── Produtividade ────────────────────────────────────────── -->
+
+		<!--
+            Lombok — geração de código boilerplate em compile time.
+            Scope optional: não é transitivo para quem depender deste módulo.
+        -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<!-- ── Testes ───────────────────────────────────────────────── -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!--
+            Spring Kafka Test — suporte a embedded Kafka para testes
+            de integração sem necessidade de infraestrutura real.
+        -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!--
+            REST Assured — DSL fluente para testes de APIs REST.
+            Versão gerenciada pelo parent pom — sem necessidade de declarar aqui.
+        -->
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-			<version>5.5.5</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Testcontainers BOM — gerencia versões compatíveis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-testcontainers</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.cloud</groupId>
-				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+	<!--
+        Nota: dependencyManagement com Spring Cloud e Resilience4j BOMs
+        já está no parent — removido daqui para evitar duplicação.
+    -->
 
 	<build>
 		<plugins>
+			<!--
+                Os plugins maven-compiler-plugin (com Lombok annotation processor)
+                e spring-boot-maven-plugin (com exclusão do Lombok do fat-jar)
+                já estão configurados no pluginManagement do parent.
+                Basta referenciá-los aqui sem repetir a configuração.
+            -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<annotationProcessorPaths>
-						<path>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</path>
-					</annotationProcessorPaths>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>

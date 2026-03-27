@@ -29,9 +29,9 @@ public class Courier {
     @Setter(AccessLevel.PUBLIC)
     private String phone;
 
-    private Integer fulfilledDeliveriesQunatity;
+    private Integer fulfilledDeliveriesQuantity = 0;
 
-    private Integer pendingDeliveriesQuantity;
+    private Integer pendingDeliveriesQuantity = 0;
 
     private OffsetDateTime lastFulfilledDeliveryAt;
 
@@ -47,8 +47,6 @@ public class Courier {
         courier.setId(UUID.randomUUID());
         courier.setName(name);
         courier.setPhone(phone);
-        courier.setPendingDeliveriesQuantity(0);
-        courier.setFulfilledDeliveriesQunatity(0);
         return courier;
     }
 
@@ -56,17 +54,16 @@ public class Courier {
         this.pendingDeliveries.add(
                 AssignedDelivery.pending(deliveryId, this)
         );
-        this.setPendingDeliveriesQuantity(
-                this.getPendingDeliveriesQuantity() + 1);
+        this.pendingDeliveriesQuantity++;
     }
 
     public void fulfill(UUID deliveryId) {
         AssignedDelivery delivery = this.pendingDeliveries.stream().filter(d -> d.getId().equals(deliveryId))
                 .findFirst().orElseThrow();
-        this.pendingDeliveries.remove(delivery);
 
+        this.pendingDeliveries.remove(delivery);
         this.pendingDeliveriesQuantity--;
-        this.fulfilledDeliveriesQunatity++;
+        this.fulfilledDeliveriesQuantity++;
         this.lastFulfilledDeliveryAt = OffsetDateTime.now();
     }
 }

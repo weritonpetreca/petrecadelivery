@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+        O parent pom herda do spring-boot-starter-parent para que todos os módulos
+        filhos se beneficiem automaticamente do gerenciamento de versões do Spring Boot
+        (plugins, dependências, encoding, etc.) sem precisar declarar cada um.
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.4</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.petreca.petrecadelivery</groupId>
+    <artifactId>petrecadelivery-parent</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>PetrecaDelivery :: Parent</name>
+    <description>
+        Parent POM da plataforma PetrecaDelivery. Centraliza versões, dependências
+        compartilhadas e configurações de build para todos os microsserviços.
+    </description>
+
+    <!--
+        Declaração dos módulos. O Maven reconhece esses caminhos relativos
+        a partir da raiz do projeto e os trata como parte do mesmo build.
+        Isso permite buildar toda a plataforma com um único "mvn install" na raiz.
+    -->
+    <modules>
+        <module>Microservices/Service-Registry</module>
+        <module>Microservices/Gateway</module>
+        <module>Microservices/Courier-Management</module>
+        <module>Microservices/Delivery-Tracking</module>
+    </modules>
+
+    <!-- ================================================================
+         PROPRIEDADES GLOBAIS
+         Declaradas aqui uma única vez e herdadas por todos os filhos.
+         Evita inconsistência de versões entre microsserviços.
+         ================================================================ -->
+    <properties>
+        <java.version>21</java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <testcontainers.version>1.21.4</testcontainers.version>
+
+        <!-- Spring Cloud BOM — gerencia todas as dependências do ecossistema
+             Spring Cloud (Eureka, Gateway, Config, etc.) de forma compatível. -->
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+
+        <!-- Resilience4j BOM — gerencia Circuit Breaker, Retry, Rate Limiter, etc. -->
+        <resilience4j.version>2.3.0</resilience4j.version>
+
+        <!-- REST Assured — biblioteca para testes de integração de APIs REST -->
+        <rest-assured.version>5.5.5</rest-assured.version>
+    </properties>
+
+    <!-- ================================================================
+         GERENCIAMENTO DE DEPENDÊNCIAS
+         Define versões centralizadas sem adicionar dependências diretamente.
+         Os módulos filhos declaram o que precisam sem repetir a versão.
+         ================================================================ -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!--
+                Spring Cloud Dependencies BOM (Bill of Materials).
+                Um BOM é um pom especial que declara versões compatíveis
+                entre si para um conjunto de bibliotecas. Ao importá-lo aqui,
+                garantimos que todos os módulos usem versões harmonizadas
+                do ecossistema Spring Cloud.
+            -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--
+                Resilience4j BOM.
+                Garante compatibilidade entre resilience4j-spring-boot3,
+                resilience4j-circuitbreaker, resilience4j-retry, etc.
+            -->
+            <dependency>
+                <groupId>io.github.resilience4j</groupId>
+                <artifactId>resilience4j-bom</artifactId>
+                <version>${resilience4j.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--
+                REST Assured — versão centralizada para testes de integração.
+                Usado atualmente no Courier-Management para testes do controller.
+            -->
+            <dependency>
+                <groupId>io.rest-assured</groupId>
+                <artifactId>rest-assured</artifactId>
+                <version>${rest-assured.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- ================================================================
+         CONFIGURAÇÃO DE BUILD COMPARTILHADA
+         Plugins configurados aqui são herdados por todos os módulos.
+         ================================================================ -->
+    <build>
+        <pluginManagement>
+            <plugins>
+
+                <!--
+                    Compilador Java com suporte a Lombok via annotation processing.
+                    Centralizado aqui para que todos os módulos que usam Lombok
+                    não precisem repetir essa configuração.
+                -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+
+                <!--
+                    Spring Boot Maven Plugin centralizado.
+                    Configuração de exclusão do Lombok no fat-jar também
+                    centralizada — Lombok só é necessário em compile time.
+                -->
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <configuration>
+                        <excludes>
+                            <exclude>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                            </exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
