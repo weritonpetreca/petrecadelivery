@@ -1,13 +1,21 @@
-server.port: 8081
+server:
+  port: 0  # porta aleatória — evita conflito entre execuções paralelas
 
 spring:
   application:
-    name: courier-management
+    name: courier-management-test
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
-    show-sql: true
-  datasource:
-    url: jdbc:postgresql://localhost:5432/courierdb_test
-    username: postgres
-    password: postgres
+      ddl-auto: create-drop  # cria o schema antes e destrói depois — ambiente limpo
+    show-sql: true           # útil para debugar queries nos testes
+
+  # Desabilita Kafka durante os testes — sem infraestrutura real
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration
+
+# Desabilita Eureka — não há Service Registry no ambiente de teste
+eureka:
+  client:
+    enabled: false
