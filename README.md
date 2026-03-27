@@ -1,220 +1,598 @@
-# 🚀 PetrecaDelivery - Plataforma de Microserviços
+<div align="center">
 
-![Java](https://img.shields.io/badge/Java-21-blue?style=for-the-badge&logo=openjdk)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-success?style=for-the-badge&logo=spring)
-![Docker](https://img.shields.io/badge/Docker-blue?style=for-the-badge&logo=docker)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-blue?style=for-the-badge&logo=postgresql)
-![Kafka](https://img.shields.io/badge/Apache_Kafka-black?style=for-the-badge&logo=apachekafka)
-![Maven](https://img.shields.io/badge/Maven-red?style=for-the-badge&logo=apachemaven)
+# ⚔️ PetrecaDelivery
 
-Bem-vindo ao **PetrecaDelivery**, uma plataforma de entregas desenvolvida com uma arquitetura moderna de microserviços. Este projeto realizado durante as aulas de uma imersão feita pela Algaworks para ser escalável, resiliente e de fácil manutenção, separando as responsabilidades do negócio em serviços independentes e especializados.
+### *"Evil is evil. Lesser, greater, middling — it's all the same. But a witcher must choose."*
+### *— And this witcher chose microservices.*
 
-## 🏛️ Arquitetura da Plataforma
+<br/>
 
-A plataforma segue os princípios de microserviços, onde cada serviço possui seu próprio domínio e, em muitos casos, seu próprio banco de dados. A comunicação entre eles é facilitada por um **API Gateway** e um **Service Registry**, garantindo um ecossistema desacoplado e robusto.
+![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.5-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Spring Cloud](https://img.shields.io/badge/Spring_Cloud_2025-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
+![Resilience4j](https://img.shields.io/badge/Resilience4j_2.3-4CAF50?style=for-the-badge&logo=java&logoColor=white)
 
--   **API Gateway**: Centraliza o acesso externo, aplicando filtros de resiliência como Retries e Circuit Breaker.
--   **Service Registry (Eureka)**: Permite que os serviços se encontrem dinamicamente na rede.
--   **Comunicação Assíncrona (Kafka)**: Eventos de domínio (como "Pedido Realizado") são publicados em tópicos do Kafka, permitindo que outros serviços reajam a eles sem acoplamento direto.
--   **Containerização (Docker)**: Toda a infraestrutura de suporte (bancos de dados, Kafka, etc.) é gerenciada pelo Docker Compose, garantindo um ambiente de desenvolvimento consistente e de fácil configuração.
+</div>
 
-Abaixo, um diagrama simplificado ilustra a interação entre os componentes:
+---
+
+## 📜 The Lore
+
+> *In the Continent, monsters lurk in every shadow. In the world of distributed systems, the monsters have different names: cascading failures, tight coupling, single points of failure. Just as Geralt of Rivia wanders the Continent slaying beasts with silver and steel, **PetrecaDelivery** was forged to slay the complexity of modern delivery logistics — with microservices and resilience patterns.*
+
+**PetrecaDelivery** is a production-grade delivery platform built on a microservices architecture. Each service is an independent witcher school — specialized, autonomous, and battle-hardened. They communicate through a **Service Registry** (the Witchers' notice board), an **API Gateway** (the city gates), and **Apache Kafka** (the ravens carrying messages across the Continent).
+
+
+---
+
+## 🗺️ The Continent — Architecture Overview
+
+> *"The world doesn't need a hero. It needs a professional."* — The architecture agrees.
 
 ```mermaid
 graph TD
-    Client([External Client]) --> Gateway["API Gateway"];
+    Client(["🧙 External Client"]):::client --> GW
 
-    subgraph "Core Services"
-        Gateway -- discovers --> Registry["Service Registry (Eureka)"];
-        DeliveryTracking["Delivery Tracking"] -- registers --> Registry;
-        CourierManagement["Courier Management"] -- registers --> Registry;
+    subgraph "🏰 The City Gates"
+        GW["🚪 API Gateway\n:9999"]:::gateway
     end
 
-    subgraph "Request Flow (via Gateway)"
-        Gateway -- "/api/v1/deliveries/**" --> DeliveryTracking;
-        Gateway -- "/api/v1/couriers/**" --> CourierManagement;
+    subgraph "📋 The Notice Board"
+        SR["📍 Service Registry\nEureka :8761"]:::registry
     end
 
-    subgraph "Async Communication"
-        DeliveryTracking -- "DeliveryPlacedEvent" --> Kafka["Apache Kafka"];
-        Kafka -- " " --> CourierManagement;
+    GW -- "discovers services" --> SR
+
+    subgraph "⚔️ The Witcher Schools"
+        DT["🚚 Delivery Tracking\n:8080"]:::service
+        CM["🛵 Courier Management\n:8081"]:::service
     end
+
+    DT -- "registers" --> SR
+    CM -- "registers" --> SR
+
+    GW -- "POST/GET /api/v1/deliveries/**" --> DT
+    GW -- "GET/POST /api/v1/couriers/**" --> CM
+    GW -- "GET /public/couriers/**\n(sanitized response)" --> CM
+
+    subgraph "🐦 The Ravens — Async Events"
+        K["Apache Kafka\n:9092"]:::kafka
+    end
+
+    DT -- "DeliveryPlacedEvent\nDeliveryPickedUpEvent\nDeliveryFulfilledEvent" --> K
+    K -- "consumes events" --> CM
+
+    subgraph "🏗️ Infrastructure"
+        PG[("🐘 PostgreSQL :5432\ncourierdb | deliverydb")]:::infra
+        PGA["🖥️ pgAdmin :5050"]:::infra
+        KUI["📊 Kafka UI :8090"]:::infra
+    end
+
+    DT --- PG
+    CM --- PG
+    PGA --- PG
+    KUI --- K
+
+    classDef client fill:#8B4513,color:#fff,stroke:#5C2D0A
+    classDef gateway fill:#4A0E8F,color:#fff,stroke:#2D0860
+    classDef registry fill:#1A5276,color:#fff,stroke:#0E3460
+    classDef service fill:#1E8449,color:#fff,stroke:#145A32
+    classDef kafka fill:#231F20,color:#fff,stroke:#000
+    classDef infra fill:#555,color:#fff,stroke:#333
 ```
 
-## 📦 Nossos Microserviços
+---
 
-A plataforma é composta pelos seguintes serviços:
+## 🏰 The Four Schools — Microservices
 
-| Serviço | Porta | Descrição |
+> *Every witcher school has its own mutations, its own signs, its own purpose. So do our services.*
+
+| School | Port | The Sign It Casts |
 | :--- | :---: | :--- |
-| 📍 **Service Registry** | `8761` | O coração da descoberta de serviços. Todos os outros microserviços se registram aqui para que possam ser encontrados pelo Gateway e por outros serviços. |
-| 🚪 **API Gateway** | `9999` | Ponto de entrada único para todas as requisições externas. Roteia o tráfego para o serviço apropriado e aplica padrões de resiliência (Retry, Circuit Breaker) com Resilience4j. |
-| 🛵 **Courier Management** | `8082` | Responsável por todo o ciclo de vida dos entregadores: cadastro, consulta, atualização e cálculo de pagamentos. |
-| 🚚 **Delivery Tracking** | `8080` | Gerencia a criação e o rastreamento de entregas. Publica eventos importantes (ex: `DeliveryPlacedEvent`) no Kafka para notificar outros sistemas. |
+| 📍 **Service Registry** | `8761` | The **Axii** sign — bends all services to register and be found. The Eureka Server that holds the map of the Continent. |
+| 🚪 **API Gateway** | `9999` | The **Quen** shield — the single protective barrier between the outside world and the inner services. Routes traffic and applies **Retry** and **Circuit Breaker** patterns via Resilience4j. Also exposes sanitized `/public/couriers` routes, stripping sensitive fields from responses. |
+| 🚚 **Delivery Tracking** | `8080` | The **Igni** flame — ignites the delivery lifecycle. Manages creation, editing, and every checkpoint of a delivery. Publishes domain events to Kafka and calls Courier Management via HTTP (also protected by its own Resilience4j Retry + Circuit Breaker). |
+| 🛵 **Courier Management** | `8081` | The **Aard** blast — the force that assigns couriers to deliveries. Manages the full courier lifecycle, calculates payouts, and reacts to Kafka events from Delivery Tracking. |
 
-## 🏗️ Infraestrutura de Suporte (via Docker Compose)
+---
 
-A base da nossa plataforma é provisionada pelo `docker-compose.yml`:
+## 🔄 The Delivery Lifecycle — A Witcher Contract
 
--   **PostgreSQL**: Banco de dados relacional para os microserviços.
--   **pgAdmin**: Ferramenta de interface gráfica para gerenciar o PostgreSQL. Acessível em `http://localhost:8083`.
--   **Apache Kafka**: Plataforma de streaming de eventos para comunicação assíncrona.
--   **Kafka UI**: Interface web para visualizar tópicos, mensagens e o estado do cluster Kafka. Acessível em `http://localhost:8084`.
+> *Every contract has stages. So does every delivery.*
 
-## 🛠️ Tecnologias Utilizadas
+```
+  [DRAFT] ──place()──► [WAITING_FOR_COURIER] ──pickUp()──► [IN_TRANSIT] ──complete()──► [DELIVERED]
+```
 
-A plataforma é construída com um conjunto de tecnologias modernas e robustas:
+| Status | Meaning |
+| :--- | :--- |
+| `DRAFT` | The contract is written but not yet posted on the notice board. |
+| `WAITING_FOR_COURIER` | Posted on the board. A `DeliveryPlacedEvent` is fired to Kafka. Couriers are notified. |
+| `IN_TRANSIT` | A witcher (courier) accepted the contract. A `DeliveryPickedUpEvent` is fired. |
+| `DELIVERED` | The contract is fulfilled. A `DeliveryFulfilledEvent` is fired. The courier's stats are updated. |
 
--   **Backend**: Java 21, Spring Boot 3
--   **Comunicação**: Spring Cloud Gateway, Netflix Eureka, Spring for Apache Kafka
--   **Resiliência**: Spring Cloud Circuit Breaker com Resilience4j
--   **Persistência**: Spring Data JPA, Hibernate
--   **Banco de Dados**: PostgreSQL
--   **Containerização**: Docker & Docker Compose
--   **Build**: Maven
+---
 
-## 📋 Pré-requisitos
+## ⚡ Resilience Patterns — The Witcher's Armor
 
-Antes de começar, garanta que você tenha as seguintes ferramentas instaladas:
--   JDK 21 ou superior
--   Docker e Docker Compose
--   Apache Maven
--   Uma IDE de sua preferência (IntelliJ, VS Code, Eclipse)
+> *"Monsters don't play fair. Neither does a distributed network."*
 
-## ⚡ Como Executar o Projeto
+The platform is armored with **Resilience4j** at two levels:
 
-Siga os passos abaixo para colocar a plataforma completa no ar em seu ambiente local.
+**At the Gateway (protecting inbound traffic):**
+- **Retry** on `delivery-tracking-route`: 3 attempts with exponential backoff (`10ms → 20ms → 30ms`) on `5xx` errors for `GET` and `PUT`.
+- **Circuit Breaker** (`delivery-tracking-route-circuit-breaker`): Opens after 50% failure rate over 5 calls. Stays open for **5 seconds**, then enters `HALF_OPEN` to probe recovery.
 
-### 1. Iniciar a Infraestrutura
-O primeiro passo é subir todos os serviços de infraestrutura definidos no Docker Compose.
-Na raiz do projeto, execute:
-``` 
+**At Delivery Tracking (protecting outbound HTTP to Courier Management):**
+- **Retry** (`Retry_CourierAPIClient_payoutCalculation`): 3 attempts on `ResourceAccessException`.
+- **Circuit Breaker** (`CircuitBreaker_CourierAPIClient_payoutCalculation`): Same sliding window policy, opens for **5 seconds**.
+
+---
+
+## 🏗️ Infrastructure — The Continent's Foundations
+
+> *Every great witcher needs a keep. Ours runs on Docker.*
+
+All infrastructure is provisioned via `docker-compose.yml`. The databases are **automatically created** on first boot via `init-databases.sql` — no manual steps required.
+
+| Service | Port | Purpose |
+| :--- | :---: | :--- |
+| 🐘 **PostgreSQL 17** | `5432` | Relational persistence. Hosts `courierdb` and `deliverydb`. |
+| 🖥️ **pgAdmin 4** | `5050` | Web UI for PostgreSQL management. |
+| 📨 **Apache Kafka** (KRaft) | `9092` | Event streaming backbone. No Zookeeper needed. |
+| 📊 **Kafka UI** | `8090` | Web UI to inspect topics, partitions, and messages. |
+
+---
+
+## 🛠️ The Witcher's Arsenal — Tech Stack
+
+| Layer | Technology |
+| :--- | :--- |
+| **Language** | Java 21 (Virtual Threads ready) |
+| **Framework** | Spring Boot 3.5.4 |
+| **Service Discovery** | Spring Cloud Netflix Eureka (`2025.0.0`) |
+| **API Gateway** | Spring Cloud Gateway (WebFlux) |
+| **Async Messaging** | Spring for Apache Kafka |
+| **Resilience** | Resilience4j 2.3 (Circuit Breaker, Retry) |
+| **Persistence** | Spring Data JPA + Hibernate |
+| **Database** | PostgreSQL 17 |
+| **Containerization** | Docker & Docker Compose |
+| **Build** | Maven (multi-module from root) |
+| **Utilities** | Lombok, Bean Validation |
+
+---
+
+## 📋 Prerequisites — Before You Draw Your Sword
+
+Ensure the following are installed on your machine:
+
+- ☕ **JDK 21+**
+- 🐳 **Docker & Docker Compose**
+- 📦 **Apache Maven** (or use the included `./mvnw` wrapper)
+- 🖥️ An IDE of your choice (IntelliJ IDEA recommended)
+
+---
+
+## ⚡ How to Run — Summoning the Continent
+
+> *"If I'm to choose between one evil and another, I'd rather not choose at all."*
+> *— But here, you must follow the order below.*
+
+### Step 1 — Raise the Infrastructure
+
+From the **project root**, start all infrastructure containers:
+
+```bash
 docker-compose up -d
 ```
-Este comando irá iniciar o PostgreSQL, pgAdmin, Kafka e Kafka-UI em segundo plano.
 
-Em seguida devemos entrar no pgAdmin e criar dentro do servidor os bancos de dados correspondentes ao descrito no `aplication.yml` dos nossos microserviços **Courier-Management** e **Delivery-Tracking**.
-No nosso caso, `courierdb` e `deliverydb` respectivamente.
-> **Credenciais do pgAdmin**:
-> - **URL**: `http://localhost:8083`
-> - **Email**: `dba@petrecadelivery.com`
-> - **Senha**: `petrecadelivery`
+This will start PostgreSQL, pgAdmin, Kafka, and Kafka UI in the background. The databases `courierdb` and `deliverydb` are **automatically created** by the init script. No manual database creation needed.
 
-### 2.Iniciar os Microserviços
-É recomendado iniciar os serviços na seguinte ordem. Abra um terminal para cada microserviço.
+> **pgAdmin Access**
+> | Field | Value |
+> | :--- | :--- |
+> | URL | `http://localhost:5050` |
+> | Email | `admin@admin.com` |
+> | Password | `admin` |
 
-**A. Service Registry**
+> **Kafka UI Access:** `http://localhost:8090`
 
-Navegue até a pasta /Microservices/Service-Registry
+---
+
+### Step 2 — Build All Modules
+
+From the **project root**, build the entire platform with a single command:
+
+```bash
+./mvnw install -DskipTests
 ```
+
+---
+
+### Step 3 — Start the Microservices
+
+Start the services in the order below. Open a separate terminal for each.
+
+**A. Service Registry** *(start first — all others depend on it)*
+
+```bash
 cd Microservices/Service-Registry
-```
-Execute o serviço
-```
 ./mvnw spring-boot:run
 ```
-Aguarde até que o Eureka Server esteja disponível em `http://localhost:8761`.
 
-**B. Outros Microserviços**
+Wait until the Eureka dashboard is available at `http://localhost:8761`.
 
-Agora, inicie os outros serviços em terminais separados. A ordem entre eles não importa, pois eles se registrarão no Eureka assim que estiverem prontos.
+---
 
-Em um novo terminal, para o Courier Management
-```
-cd Microservices/Courier-Management
-./mvnw spring-boot:run -Dserver.port=8082
-```
-Definindo a porta explicitamente
+**B. Delivery Tracking & Courier Management** *(order between them doesn't matter)*
 
-Em outro terminal, para o Delivery Tracking
-```
+```bash
+# Terminal 2
 cd Microservices/Delivery-Tracking
-./mvnw spring-boot:run -Dserver.port=8080 
+./mvnw spring-boot:run
 ```
-Porta padrão
-> **Nota:**  
-> Definimos portas diferentes (`-Dserver.port=...`) para evitar conflitos ao rodar localmente fora de contêineres Docker.
 
-**C. API Gateway**
-
-Por último, inicie o Gateway. Ele irá descobrir os serviços já registrados no Eureka.
-
-Em um novo terminal, para o Gateway
+```bash
+# Terminal 3
+cd Microservices/Courier-Management
+./mvnw spring-boot:run
 ```
+
+> Delivery Tracking runs on port `8080` (default). Courier Management runs on port `8081` (configured in `application.yml`).
+
+---
+
+**C. API Gateway** *(start last — it discovers already-registered services)*
+
+```bash
+# Terminal 4
 cd Microservices/Gateway
 ./mvnw spring-boot:run
 ```
 
-## 3. Tudo Pronto!
+---
 
-Sua plataforma de microserviços está no ar! Agora você pode fazer requisições para o API Gateway em `http://localhost:9999`, e ele se encarregará de rotear para os serviços corretos.
+### ✅ The Continent is Alive
 
-## 🗺️ Explorando a Plataforma
+All services are up. Send all requests through the Gateway at `http://localhost:9999`.
 
-### Exemplo de Fluxo: Criando uma Nova Entrega
-1.  **Rascunho da Entrega (Draft)**: O cliente envia uma requisição `POST` para o Gateway com os detalhes da entrega.
-    -   O **Gateway** roteia a chamada para o serviço **Delivery Tracking**.
-    -   O serviço de tracking salva a entrega no banco de dados com o status `DRAFT`.
+---
 
-2.  **Publicação da Entrega (Placement)**: Após confirmar os detalhes, o cliente "publica" a entrega.
-    -   O serviço **Delivery Tracking** atualiza o status para `WAITING_FOR_COURIER`.
-    -   Um evento de domínio `DeliveryPlacedEvent` é publicado no tópico `deliveries.v1.events` do **Kafka**.
+## 🗡️ API Reference — The Witcher's Contracts
 
-3.  **Reação ao Evento**:
-    -   O serviço **Courier Management** (ou qualquer outro interessado) consome o evento do Kafka para, por exemplo, notificar entregadores sobre a nova entrega disponível.
+### Delivery Tracking Endpoints
 
-### Principais Endpoints da API
+| Method | Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/deliveries` | Create a new delivery draft |
+| `PUT` | `/api/v1/deliveries/{id}` | Edit a draft delivery |
+| `GET` | `/api/v1/deliveries` | List all deliveries (paginated) |
+| `GET` | `/api/v1/deliveries/{id}` | Get a delivery by ID |
+| `POST` | `/api/v1/deliveries/{id}/placement` | Place the delivery (post to notice board) |
+| `POST` | `/api/v1/deliveries/{id}/pickups` | Assign a courier (pick up) |
+| `POST` | `/api/v1/deliveries/{id}/completion` | Mark delivery as completed |
 
-Aqui estão alguns exemplos de requisições `curl` para interagir com a API.
+### Courier Management Endpoints
 
-**Criar uma nova entrega (rascunho):**
+| Method | Path | Description |
+| :--- | :--- | :--- |
+| `POST` | `/api/v1/couriers` | Register a new courier |
+| `PUT` | `/api/v1/couriers/{id}` | Update courier data |
+| `GET` | `/api/v1/couriers` | List all couriers (paginated) |
+| `GET` | `/api/v1/couriers/{id}` | Get a courier by ID |
+| `POST` | `/api/v1/couriers/payout-calculation` | Calculate payout for a given distance |
+| `GET` | `/public/couriers` | Public courier list (sensitive fields removed) |
+| `GET` | `/public/couriers/{id}` | Public courier detail (sensitive fields removed) |
+
+---
+
+## 🔥 Complete End-to-End Test — A Witcher's Full Contract
+
+> *"This is the way."* — Follow the path below to witness the full delivery lifecycle in action.
+
+### Option 1: Automated Script (Recommended)
+
+The project includes a ready-to-use test script. Simply run:
+
 ```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/ \
--H "Content-Type: application/json" \
--d '{
-      "sender": { "zipCode": "12345-000", "street": "Rua do Remetente", "number": "10", "name": "Empresa A", "phone": "11999999999" },
-      "recipient": { "zipCode": "54321-000", "street": "Avenida do Destinatário", "number": "20", "name": "Cliente B", "phone": "11888888888" },
-      "items": [ { "name": "Produto 1", "quantity": 1 } ]
-    }'
+chmod +x test-delivery-flow.sh
+./test-delivery-flow.sh
 ```
 
-**Publicar a entrega (para que possa ser retirada):**
-```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/{deliveryId}/placement
+This script will automatically:
+1. Create a courier (Geralt of Rivia)
+2. Draft a delivery contract
+3. Place the delivery on the notice board (fires `DeliveryPlacedEvent` to Kafka)
+4. Assign the courier to the delivery (fires `DeliveryPickedUpEvent` to Kafka)
+5. Complete the delivery (fires `DeliveryFulfilledEvent` to Kafka)
+6. Display the final state
+
+Expected output:
 ```
-Obs: Substitua `{deliveryId}` pelo ID fornecido pelo passo anterior. 
+⚔️ PetrecaDelivery — Full Contract Test
+========================================
 
-**Listar todas as entregas:**
-```bash
-curl http://localhost:9999/api/v1/deliveries/
+📍 Step 1: Recruiting a witcher...
+✅ Courier created: <UUID>
+   Name: Geralt of Rivia
+
+📦 Step 2: Drafting a delivery contract...
+✅ Delivery drafted: <UUID>
+   Status: DRAFT
+
+📋 Step 3: Posting contract on the notice board...
+✅ Delivery placed
+   Status: WAITING_FOR_COURIER
+   Event: DeliveryPlacedEvent → Kafka
+
+🛵 Step 4: Geralt accepts the contract...
+✅ Delivery picked up by Geralt
+   Status: IN_TRANSIT
+   Event: DeliveryPickedUpEvent → Kafka
+
+🏆 Step 5: Contract fulfilled...
+✅ Delivery completed
+   Status: DELIVERED
+   Event: DeliveryFulfilledEvent → Kafka
+
+🔍 Step 6: Inspecting the completed contract...
+   Final Status: DELIVERED
+
+========================================
+⚔️ Contract complete. Toss a coin to your witcher.
+
+📊 View Kafka events at: http://localhost:8090
+🗄️  View database at: http://localhost:5050
+📋 View service registry at: http://localhost:8761
 ```
 
-### Testando o Circuit Breaker
+---
 
-O Gateway está configurado com Resilience4j para proteger as chamadas aos microserviços. Para ver o Circuit Breaker em ação:
+### Option 2: Manual Step-by-Step (For Learning)
 
-1.  Pare o serviço `Delivery-Tracking`.
-2.  Faça várias requisições seguidas para `GET http://localhost:9999/api/v1/deliveries/`.
-3.  As primeiras requisições falharão com um erro de `502 BAD_GATEWAY` ou similar (devido às tentativas de `Retry`).
-4.  Após 5 chamadas com falha (conforme `minimumNumberOfCalls`), o circuito se abrirá. As próximas requisições falharão imediatamente com um `503 Service Unavailable`, sem nem tentar contatar o serviço.
-5.  Observe os logs do **API Gateway** para ver as transições de estado do Circuit Breaker (de `CLOSED` para `OPEN`, e depois `HALF_OPEN`).
+> *"Patience is a virtue, especially when hunting monsters."*
 
-### Visualizando Eventos no Kafka
+**Step 0: Create a Courier First**
 
-Acesse a **Kafka UI** em `http://localhost:8084` para explorar os tópicos e visualizar as mensagens publicadas pelos serviços.
+Before any delivery can be assigned, you need a witcher on the notice board:
 
-Após publicar uma entrega (passo 2 do fluxo de exemplo), você poderá ver o evento `DeliveryPlacedEvent` no tópico `deliveries.v1.events`.
+```bash
+curl -X POST http://localhost:9999/api/v1/couriers \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Geralt of Rivia",
+    "phone": "11987654321"
+  }'
+```
 
-## 🙏 Agradecimentos e Considerações Finais
+**📝 Copy the `id` from the response — this is your `COURIER_ID`.**
 
-Chegamos ao final da apresentação deste projeto, e eu não poderia deixar de registrar minha imensa gratidão.
+Example response:
+```json
+{
+  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+  "name": "Geralt of Rivia",
+  "phone": "11987654321",
+  ...
+}
+```
 
-Este projeto é o resultado prático dos valiosos ensinamentos adquiridos durante a imersão **"Mergulho Microsserviços Spring"** da **Algaworks**. Agradeço imensamente a toda a equipe da Algaworks pela qualidade excepcional do conteúdo e pelo suporte contínuo.
+---
 
-Em especial, gostaria de agradecer aos mestres [**Alex Augusto**](https://github.com/alexaugustobr) e [**Thiago Faria de Andrade**](https://github.com/thiagofa), cuja didática, paciência e profundo conhecimento técnico foram fundamentais para transformar conceitos complexos em aprendizado sólido e aplicável.
+**Step 1: Draft a Delivery**
 
-O **PetrecaDelivery** nasceu como um exercício de aprendizado, mas se tornou um portfólio que me enche de orgulho, demonstrando a aplicação de uma arquitetura robusta e alinhada com as melhores práticas do mercado.
+```bash
+curl -X POST http://localhost:9999/api/v1/deliveries \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sender": {
+      "zipCode": "12345-000",
+      "street": "Rua do Remetente",
+      "number": "10",
+      "name": "Empresa A",
+      "phone": "11999999999"
+    },
+    "recipient": {
+      "zipCode": "54321-000",
+      "street": "Avenida do Destinatário",
+      "number": "20",
+      "name": "Cliente B",
+      "phone": "11888888888"
+    },
+    "items": [{ "name": "Silver Sword", "quantity": 1 }]
+  }'
+```
 
-Sinta-se à vontade para explorar o código, testar as funcionalidades e, claro, dar seu feedback! Estou totalmente aberto a sugestões, críticas construtivas e futuras colaborações. Se você encontrar algo que pode ser melhorado ou tiver uma ideia para uma nova funcionalidade, não hesite em abrir uma *issue* ou um *pull request*.
+**📝 Copy the `id` from the response — this is your `DELIVERY_ID`.**
 
-Obrigado por dedicar seu tempo para conhecer o projeto!
+---
+
+**Step 2: Place the Delivery** *(fires `DeliveryPlacedEvent` to Kafka)*
+
+Replace `YOUR_DELIVERY_ID_HERE` with the actual UUID:
+
+```bash
+curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/placement
+```
+
+The delivery is now on the notice board. Check Kafka UI at `http://localhost:8090` — you'll see the `DeliveryPlacedEvent` in the `deliveries.v1.events` topic.
+
+---
+
+**Step 3: Assign the Courier** *(fires `DeliveryPickedUpEvent` to Kafka)*
+
+Replace both `YOUR_DELIVERY_ID_HERE` and `YOUR_COURIER_ID_HERE`:
+
+```bash
+curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/pickups \
+  -H "Content-Type: application/json" \
+  -d '{ "courierId": "YOUR_COURIER_ID_HERE" }'
+```
+
+Geralt has accepted the contract. The delivery is now `IN_TRANSIT`.
+
+---
+
+**Step 4: Complete the Delivery** *(fires `DeliveryFulfilledEvent` to Kafka)*
+
+```bash
+curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/completion
+```
+
+The contract is fulfilled. The delivery status is now `DELIVERED`, and Geralt's stats are updated.
+
+---
+
+**Step 5: Verify the Final State**
+
+```bash
+curl http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE
+```
+
+You should see:
+- `"status": "DELIVERED"`
+- `"fulfilledAt"` timestamp populated
+- `"courierId"` matching Geralt's UUID
+
+Check the courier's updated stats:
+```bash
+curl http://localhost:9999/api/v1/couriers/YOUR_COURIER_ID_HERE
+```
+
+You should see:
+- `"fulfilledDeliveriesQuantity": 1`
+- `"pendingDeliveriesQuantity": 0`
+- `"lastFulfilledDeliveryAt"` timestamp
+
+---
+
+### Option 3: Using jq for Automatic ID Extraction
+
+If you have `jq` installed, use this cleaner approach:
+
+```bash
+# Create courier and capture ID
+COURIER_ID=$(curl -s -X POST http://localhost:9999/api/v1/couriers \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Geralt of Rivia", "phone": "11987654321"}' | jq -r '.id')
+
+echo "Courier ID: $COURIER_ID"
+
+# Create delivery and capture ID
+DELIVERY_ID=$(curl -s -X POST http://localhost:9999/api/v1/deliveries \
+  -H "Content-Type: application/json" \
+  -d '{
+    "sender": {"zipCode": "12345-000", "street": "Rua do Remetente", "number": "10", "name": "Empresa A", "phone": "11999999999"},
+    "recipient": {"zipCode": "54321-000", "street": "Avenida do Destinatário", "number": "20", "name": "Cliente B", "phone": "11888888888"},
+    "items": [{"name": "Silver Sword", "quantity": 1}]
+  }' | jq -r '.id')
+
+echo "Delivery ID: $DELIVERY_ID"
+
+# Place delivery
+curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/placement
+
+# Assign courier
+curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/pickups \
+  -H "Content-Type: application/json" \
+  -d "{\"courierId\": \"$COURIER_ID\"}"
+
+# Complete delivery
+curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/completion
+
+# Verify
+curl http://localhost:9999/api/v1/deliveries/$DELIVERY_ID | jq
+```
+
+---
+
+## 🛡️ Testing the Circuit Breaker — Watching the Shield Break
+
+> *"The sword of destiny has two edges. One of them is you."* — So is the Circuit Breaker.
+
+1. Stop the `Delivery-Tracking` service.
+2. Fire several `GET` requests to `http://localhost:9999/api/v1/deliveries`.
+3. The first requests will fail with `502 BAD_GATEWAY` (Retry exhausted).
+4. After **5 failed calls**, the circuit **opens**. Subsequent requests fail instantly with `503 Service Unavailable` — no attempt is made to reach the dead service.
+5. After **5 seconds**, the circuit enters `HALF_OPEN` and probes for recovery.
+
+Watch the Gateway logs for state transitions: `CLOSED → OPEN → HALF_OPEN → CLOSED`.
+
+---
+
+## 🐦 Inspecting Kafka Events
+
+Access **Kafka UI** at `http://localhost:8090` to explore the `deliveries.v1.events` topic.
+
+After placing a delivery, you will see the `DeliveryPlacedEvent` message published by Delivery Tracking and consumed by Courier Management — the ravens have delivered their message.
+
+---
+
+## 🗄️ Inspecting the Database
+
+> *"Knowledge is power. Guard it well."*
+
+Access **pgAdmin** at `http://localhost:5050` to inspect the PostgreSQL databases.
+
+**Login credentials:**
+- Email: `admin@admin.com`
+- Password: `admin`
+
+The PostgreSQL server is **automatically configured** when you start the containers. You'll see:
+
+**Server: PetrecaDelivery** (already connected)
+- **Database: `courierdb`** → Courier Management data
+  - Tables: `courier`, `assigned_delivery`
+- **Database: `deliverydb`** → Delivery Tracking data
+  - Tables: `delivery`, `item`, `contact_point`
+
+### Viewing Data
+
+**Option 1: Using the GUI**
+1. Expand: `Servers` → `PetrecaDelivery` → `Databases` → `deliverydb` → `Schemas` → `public` → `Tables`
+2. Right-click on `delivery` → "View/Edit Data" → "All Rows"
+
+**Option 2: Using SQL Queries**
+
+Right-click on `deliverydb` → "Query Tool" and run:
+
+```sql
+-- View all deliveries
+SELECT id, status, courier_id, placed_at, fulfilled_at 
+FROM delivery 
+ORDER BY placed_at DESC;
+
+-- View all couriers
+SELECT c.id, c.name, c.phone, 
+       c.fulfilled_deliveries_quantity, 
+       c.pending_deliveries_quantity,
+       c.last_fulfilled_delivery_at
+FROM courierdb.public.courier c;
+
+-- View pending deliveries for couriers
+SELECT * FROM courierdb.public.assigned_delivery;
+```
+
+---
+
+## 🙏 Acknowledgements
+
+> *"People call it a stigma. I call it a sign of wisdom."*
+
+This platform was born from the **"Mergulho Microsserviços Spring"** immersion by [**Algaworks**](https://www.algaworks.com/). My deepest gratitude to masters [**Alex Augusto**](https://github.com/alexaugustobr) and [**Thiago Faria de Andrade**](https://github.com/thiagofa) — whose knowledge and patience transformed complex concepts into battle-tested skills.
+
+Feel free to explore, test, open issues, or submit pull requests. The notice board is always open.
+
+---
+
+<div align="center">
+
+*"Not all those who wander are lost — some are just tracing delivery routes."*
+
+**⚔️ Toss a coin to your witcher ⚔️**
+
+</div>

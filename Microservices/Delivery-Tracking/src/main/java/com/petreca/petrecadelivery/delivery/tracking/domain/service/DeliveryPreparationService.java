@@ -22,7 +22,7 @@ public class DeliveryPreparationService {
 
     private final DeliveryRepository deliveryRepository;
 
-    private final DeliveryTimeEstimationService deliveryTimeEstimationService;;
+    private final DeliveryTimeEstimationService deliveryTimeEstimationService;
     private final CourierPayoutCalculationService courierPayoutCalculationService;
 
     @Transactional
@@ -35,32 +35,32 @@ public class DeliveryPreparationService {
     @Transactional
     public Delivery edit(UUID deliveryId, DeliveryInput input) {
         Delivery delivery = deliveryRepository.findById(deliveryId)
-                .orElseThrow(() -> new DomainException());
+                .orElseThrow(() -> new DomainException("Delivery with ID " + deliveryId + " not found."));
         delivery.removeItems();
         handlePreparation(input, delivery);
         return deliveryRepository.saveAndFlush(delivery);
     }
 
     private void handlePreparation(DeliveryInput input, Delivery delivery) {
-        ContactPointInput senderInput = input.getSender();
-        ContactPointInput recipientInput = input.getRecipient();
+        ContactPointInput senderInput = input.sender();
+        ContactPointInput recipientInput = input.recipient();
 
         ContactPoint sender = ContactPoint.builder()
-                .phone(senderInput.getPhone())
-                .name(senderInput.getName())
-                .complement(senderInput.getComplement())
-                .number(senderInput.getNumber())
-                .zipCode(senderInput.getZipCode())
-                .street(senderInput.getStreet())
+                .phone(senderInput.phone())
+                .name(senderInput.name())
+                .complement(senderInput.complement())
+                .number(senderInput.number())
+                .zipCode(senderInput.zipCode())
+                .street(senderInput.street())
                 .build();
 
         ContactPoint recipient = ContactPoint.builder()
-                .phone(recipientInput.getPhone())
-                .name(recipientInput.getName())
-                .complement(recipientInput.getComplement())
-                .number(recipientInput.getNumber())
-                .zipCode(recipientInput.getZipCode())
-                .street(recipientInput.getStreet())
+                .phone(recipientInput.phone())
+                .name(recipientInput.name())
+                .complement(recipientInput.complement())
+                .number(recipientInput.number())
+                .zipCode(recipientInput.zipCode())
+                .street(recipientInput.street())
                 .build();
 
         DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);
@@ -78,8 +78,8 @@ public class DeliveryPreparationService {
                 .build();
 
         delivery.editPreparationDetails(preparationDetails);
-        for (ItemInput itemInput: input.getItems()) {
-            delivery.addItem(itemInput.getName(), itemInput.getQuantity());
+        for (ItemInput itemInput: input.items()) {
+            delivery.addItem(itemInput.name(), itemInput.quantity());
         }
     }
 

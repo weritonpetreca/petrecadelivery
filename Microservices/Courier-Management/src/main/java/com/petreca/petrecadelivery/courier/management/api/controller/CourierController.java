@@ -107,8 +107,8 @@ public class CourierController {
     public CourierPayoutResultModel calculate(
             @RequestBody CourierPayoutCalculationInput input) {
         log.info("Payout calculation requested for distance: {} km",
-                input.getDistanceInKm());
-        BigDecimal payoutFee = courierPayoutService.calculate(input.getDistanceInKm());
+                input.distanceInKm());
+        BigDecimal payoutFee = courierPayoutService.calculate(input.distanceInKm());
         return new CourierPayoutResultModel(payoutFee);
     }
 }

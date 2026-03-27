@@ -47,9 +47,9 @@ public class CourierRegistrationService {
      * @return entregador persistido com ID gerado
      */
     public Courier create(CourierInput input) {
-        log.info("Creating new courier with name: {}", input.getName());
+        log.info("Creating new courier with name: {}", input.name());
 
-        Courier courier = Courier.brandNew(input.getName(), input.getPhone());
+        Courier courier = Courier.brandNew(input.name(), input.phone());
         Courier saved = courierRepository.saveAndFlush(courier);
 
         log.info("Courier created successfully with id: {}", saved.getId());
@@ -75,8 +75,8 @@ public class CourierRegistrationService {
                 .orElseThrow(() -> new DomainException(
                         "Courier not found: " + courierId));
 
-        courier.setPhone(input.getPhone());
-        courier.setName(input.getName());
+        courier.setPhone(input.phone());
+        courier.setName(input.name());
         Courier updated = courierRepository.saveAndFlush(courier);
 
         log.info("Courier updated successfully with id: {}", courierId);

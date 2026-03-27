@@ -43,7 +43,7 @@ spring:
           filters:
             - RewritePath=/public/couriers, /api/v1/couriers
             - RemoveJsonAttributesResponseBody=pendingDeliveries,pendingDeliveriesQuantity,phone,true
-        - id: courier-management-public
+        - id: courier-management-public-detail
           uri: lb://courier-management
           predicates:
             - Path=/public/couriers/**
@@ -58,7 +58,7 @@ eureka:
     register-with-eureka: false
     fetch-registry: true
     service-url:
-      default-zone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/
 
 resilience4j:
   circuitbreaker:

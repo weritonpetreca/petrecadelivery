@@ -6,9 +6,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class CourierPayoutResultModel {
-    private BigDecimal payoutFee;
-}
+public record CourierPayoutResultModel(
+    BigDecimal payoutFee
+){}
