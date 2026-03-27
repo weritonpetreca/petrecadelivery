@@ -33,3 +33,21 @@ eureka:
   instance:
     instance-id: ${random.value}
     prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # SECURITY FIRST: Only expose exactly what we need. Never use '*'.
+        include: health,prometheus,info
+  endpoint:
+    health:
+      # Allows us to see database and Kafka connection status, not just "UP"
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true

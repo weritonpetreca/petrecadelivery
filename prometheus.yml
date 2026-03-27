@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+  - job_name: 'petrecadelivery-microservices'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets:
+        # host.docker.internal points to your Ubuntu machine's localhost
+        - 'host.docker.internal:8080' # Delivery-Tracking
+        - 'host.docker.internal:8081' # Courier-Management
+        - 'host.docker.internal:8761' # Service-Registry
+        - 'host.docker.internal:9999' # API Gateway
