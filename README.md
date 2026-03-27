@@ -15,6 +15,8 @@
 ![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
 ![Resilience4j](https://img.shields.io/badge/Resilience4j_2.3-4CAF50?style=for-the-badge&logo=java&logoColor=white)
+![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)
 
 </div>
 
@@ -72,10 +74,21 @@ graph TD
         KUI["📊 Kafka UI :8090"]:::infra
     end
 
+    subgraph "🔭 Observability"
+        PROM["📈 Prometheus :9090"]:::observability
+        GRAF["📉 Grafana :3000"]:::observability
+    end
+
     DT --- PG
     CM --- PG
     PGA --- PG
     KUI --- K
+
+    DT -- "exposes /actuator/prometheus" --> PROM
+    CM -- "exposes /actuator/prometheus" --> PROM
+    GW -- "exposes /actuator/prometheus" --> PROM
+    SR -- "exposes /actuator/prometheus" --> PROM
+    PROM -- "datasource" --> GRAF
 
     classDef client fill:#8B4513,color:#fff,stroke:#5C2D0A
     classDef gateway fill:#4A0E8F,color:#fff,stroke:#2D0860
@@ -83,6 +96,7 @@ graph TD
     classDef service fill:#1E8449,color:#fff,stroke:#145A32
     classDef kafka fill:#231F20,color:#fff,stroke:#000
     classDef infra fill:#555,color:#fff,stroke:#333
+    classDef observability fill:#E6522C,color:#fff,stroke:#C13C1A
 ```
 
 ---
@@ -145,6 +159,8 @@ All infrastructure is provisioned via `docker-compose.yml`. The databases are **
 | 🖥️ **pgAdmin 4** | `5050` | Web UI for PostgreSQL management. |
 | 📨 **Apache Kafka** (KRaft) | `9092` | Event streaming backbone. No Zookeeper needed. |
 | 📊 **Kafka UI** | `8090` | Web UI to inspect topics, partitions, and messages. |
+| 📈 **Prometheus** | `9090` | Metrics collection and time-series database. |
+| 📉 **Grafana** | `3000` | Metrics visualization and dashboards. |
 
 ---
 
@@ -158,6 +174,7 @@ All infrastructure is provisioned via `docker-compose.yml`. The databases are **
 | **API Gateway** | Spring Cloud Gateway (WebFlux) |
 | **Async Messaging** | Spring for Apache Kafka |
 | **Resilience** | Resilience4j 2.3 (Circuit Breaker, Retry) |
+| **Observability** | Prometheus + Grafana (Spring Boot Actuator) |
 | **Persistence** | Spring Data JPA + Hibernate |
 | **Database** | PostgreSQL 17 |
 | **Containerization** | Docker & Docker Compose |
@@ -190,7 +207,7 @@ From the **project root**, start all infrastructure containers:
 docker-compose up -d
 ```
 
-This will start PostgreSQL, pgAdmin, Kafka, and Kafka UI in the background. The databases `courierdb` and `deliverydb` are **automatically created** by the init script. No manual database creation needed.
+This will start PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, and Grafana in the background. The databases `courierdb` and `deliverydb` are **automatically created** by the init script. No manual database creation needed.
 
 > **pgAdmin Access**
 > | Field | Value |
@@ -200,6 +217,10 @@ This will start PostgreSQL, pgAdmin, Kafka, and Kafka UI in the background. The 
 > | Password | `admin` |
 
 > **Kafka UI Access:** `http://localhost:8090`
+
+> **Prometheus Access:** `http://localhost:9090`
+
+> **Grafana Access:** `http://localhost:3000` (admin / admin)
 
 ---
 
@@ -348,6 +369,7 @@ Expected output:
 📊 View Kafka events at: http://localhost:8090
 🗄️  View database at: http://localhost:5050
 📋 View service registry at: http://localhost:8761
+📉 View metrics dashboard at: http://localhost:3000
 ```
 
 ---
@@ -576,6 +598,140 @@ FROM courierdb.public.courier c;
 -- View pending deliveries for couriers
 SELECT * FROM courierdb.public.assigned_delivery;
 ```
+
+---
+
+## 🔭 Observability — The Witcher's Senses
+
+> *"A witcher's senses are heightened beyond those of ordinary men. So too must our platform see what others cannot."*
+
+The platform is equipped with **production-grade observability** through Prometheus and Grafana, allowing you to monitor every heartbeat of your microservices in real-time.
+
+### 🎯 What We Monitor
+
+Every microservice exposes metrics via **Spring Boot Actuator** at `/actuator/prometheus`:
+
+- **JVM Metrics**: Memory usage, garbage collection, thread pools
+- **HTTP Metrics**: Request rates, response times, error rates
+- **Resilience4j Metrics**: Circuit breaker states, retry attempts, rate limiter stats
+- **Kafka Metrics**: Message production/consumption rates
+- **Database Metrics**: Connection pool stats, query performance
+- **Custom Business Metrics**: Deliveries created, couriers assigned, contracts fulfilled
+
+### 📈 Prometheus — The Memory Keeper
+
+**Prometheus** scrapes metrics from all microservices every **5 seconds** and stores them in a time-series database.
+
+**Access:** `http://localhost:9090`
+
+**Configuration:** All targets are automatically configured in `prometheus.yml`:
+```yaml
+scrape_configs:
+  - job_name: 'petrecadelivery-microservices'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets:
+        - 'host.docker.internal:8080' # Delivery-Tracking
+        - 'host.docker.internal:8081' # Courier-Management
+        - 'host.docker.internal:8761' # Service-Registry
+        - 'host.docker.internal:9999' # API Gateway
+```
+
+**Try it:** Open Prometheus and run this query to see HTTP request rates:
+```promql
+rate(http_server_requests_seconds_count[1m])
+```
+
+### 📉 Grafana — The Storyteller
+
+**Grafana** transforms raw metrics into beautiful, actionable dashboards.
+
+**Access:** `http://localhost:3000`
+
+**Login credentials:**
+- Username: `admin`
+- Password: `admin`
+
+### ✨ Pre-Configured Dashboard
+
+The platform includes a **pre-loaded Spring Boot dashboard** (ID: 4701) that visualizes:
+
+- 🟢 **System Health**: CPU usage, memory consumption, uptime
+- 🔵 **HTTP Performance**: Request throughput, latency percentiles (p50, p95, p99), error rates
+- 🟡 **JVM Internals**: Heap/non-heap memory, garbage collection frequency, thread states
+- 🟠 **Resilience Patterns**: Circuit breaker states, retry success/failure rates
+- 🟣 **Database**: Active connections, query execution times
+
+**How to access:**
+1. Open Grafana at `http://localhost:3000`
+2. Login with `admin` / `admin`
+3. Navigate to **Dashboards** → **General**
+4. Select **"JVM (Micrometer)"** dashboard
+5. Use the dropdown at the top to switch between services:
+   - `delivery-tracking`
+   - `courier-management`
+   - `gateway`
+   - `service-registry`
+
+### 🔍 Example Queries
+
+**1. Total deliveries created (last 5 minutes):**
+```promql
+increase(http_server_requests_seconds_count{uri="/api/v1/deliveries", method="POST"}[5m])
+```
+
+**2. Average response time for delivery placement:**
+```promql
+rate(http_server_requests_seconds_sum{uri=~".*/placement"}[1m]) 
+/ 
+rate(http_server_requests_seconds_count{uri=~".*/placement"}[1m])
+```
+
+**3. Circuit breaker state (0=CLOSED, 1=OPEN, 2=HALF_OPEN):**
+```promql
+resilience4j_circuitbreaker_state
+```
+
+**4. JVM memory usage percentage:**
+```promql
+(jvm_memory_used_bytes / jvm_memory_max_bytes) * 100
+```
+
+### 🛡️ Automatic Configuration
+
+Everything is **pre-configured** and **auto-provisioned**:
+
+- ✅ **Prometheus datasource** automatically added to Grafana
+- ✅ **Dashboard** automatically imported on startup
+- ✅ **Scrape targets** automatically configured in Prometheus
+- ✅ **Metrics endpoints** automatically exposed by Spring Boot Actuator
+
+**No manual setup required.** Just start the services and open Grafana.
+
+### 🎯 Real-World Use Cases
+
+**Scenario 1: Detecting Performance Degradation**
+- Run the test script multiple times
+- Watch the "HTTP Request Duration" panel in Grafana
+- If p99 latency spikes, investigate slow database queries or external API calls
+
+**Scenario 2: Monitoring Circuit Breaker Behavior**
+- Stop the Delivery-Tracking service
+- Fire requests through the Gateway
+- Watch the circuit breaker transition from `CLOSED` → `OPEN` in real-time
+- See retry attempts and failure rates in the dashboard
+
+**Scenario 3: Capacity Planning**
+- Monitor JVM heap usage over time
+- Track HTTP request rates during peak load
+- Identify when to scale horizontally (add more instances)
+
+### 📚 Further Reading
+
+Want to create custom dashboards?
+- [Prometheus Query Language (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
+- [Grafana Dashboard Best Practices](https://grafana.com/docs/grafana/latest/dashboards/)
+- [Spring Boot Actuator Metrics](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics)
 
 ---
 

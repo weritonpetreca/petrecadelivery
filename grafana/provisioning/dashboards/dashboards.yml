@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: 'Default Spring Boot Dashboards' # Just a label for the UI
+    orgId: 1 # The ID of your main Grafana organization (default is always 1)
+    folder: '' # Leaves it in the "General" folder in the UI
+    type: file # Tells Grafana we are loading from a local file, not a remote database
+    disableDeletion: false # Allows you to delete it in the UI if you want
+    updateIntervalSeconds: 10 # Grafana will check the JSON file every 10s. If you edit the JSON locally, Grafana updates instantly without restarting!
+    options:
+      path: /var/lib/grafana/dashboards # The path INSIDE the Docker container where we will mount the JSON files
