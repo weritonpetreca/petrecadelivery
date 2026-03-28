@@ -37,6 +37,7 @@
         <module>Microservices/Gateway</module>
         <module>Microservices/Courier-Management</module>
         <module>Microservices/Delivery-Tracking</module>
+        <module>Coverage-Report</module>
     </modules>
 
     <!-- ================================================================

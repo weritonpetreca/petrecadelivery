@@ -31,6 +31,6 @@ jobs:
         uses: actions/upload-artifact@v6
         if: always()
         with:
-          name: jacoco-coverage-reports
-          path: '**/target/site/jacoco/'
+          name: jacoco-aggregated-reports
+          path: 'Coverage-Report/target/site/jacoco-aggregate/'
           retention-days: 7
