@@ -32,5 +32,5 @@ jobs:
         if: always()
         with:
           name: jacoco-coverage-reports
-          path: '**/target/site/jacoco/index.html'
+          path: '**/target/site/jacoco/'
           retention-days: 7
