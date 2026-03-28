@@ -17,6 +17,8 @@
 ![Resilience4j](https://img.shields.io/badge/Resilience4j_2.3-4CAF50?style=for-the-badge&logo=java&logoColor=white)
 ![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
 ![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)
+![Keycloak](https://img.shields.io/badge/Keycloak-4D4D4D?style=for-the-badge&logo=keycloak&logoColor=white)
+![OAuth2](https://img.shields.io/badge/OAuth2-3C873A?style=for-the-badge&logo=auth0&logoColor=white)
 
 </div>
 
@@ -37,10 +39,17 @@
 
 ```mermaid
 graph TD
-    Client(["🧙 External Client"]):::client --> GW
+    Client(["🧙 External Client"]):::client --> KC
+    
+    subgraph "🔐 Identity Provider"
+        KC["🔑 Keycloak\n:8082"]:::security
+    end
+    
+    KC -- "JWT Token" --> Client
+    Client -- "Bearer Token" --> GW
 
     subgraph "🏰 The City Gates"
-        GW["🚪 API Gateway\n:9999"]:::gateway
+        GW["🚪 API Gateway\n:9999\n(OAuth2 Resource Server)"]:::gateway
     end
 
     subgraph "📋 The Notice Board"
@@ -59,7 +68,7 @@ graph TD
 
     GW -- "POST/GET /api/v1/deliveries/**" --> DT
     GW -- "GET/POST /api/v1/couriers/**" --> CM
-    GW -- "GET /public/couriers/**\n(sanitized response)" --> CM
+    GW -- "GET /public/couriers/**\n(no auth required)" --> CM
 
     subgraph "🐦 The Ravens — Async Events"
         K["Apache Kafka\n:9092"]:::kafka
@@ -91,6 +100,7 @@ graph TD
     PROM -- "datasource" --> GRAF
 
     classDef client fill:#8B4513,color:#fff,stroke:#5C2D0A
+    classDef security fill:#8B0000,color:#fff,stroke:#5C0000
     classDef gateway fill:#4A0E8F,color:#fff,stroke:#2D0860
     classDef registry fill:#1A5276,color:#fff,stroke:#0E3460
     classDef service fill:#1E8449,color:#fff,stroke:#145A32
@@ -147,6 +157,118 @@ The platform is armored with **Resilience4j** at two levels:
 
 ---
 
+## 🔐 Security — The Witcher's Medallion
+
+> *"A witcher's medallion vibrates in the presence of magic. Our API Gateway vibrates in the presence of unauthorized requests."*
+
+The platform is secured with **OAuth2 and OpenID Connect** via **Keycloak**, implementing industry-standard authentication and authorization patterns.
+
+### 🎯 Security Architecture
+
+All API requests must carry a valid **JWT (JSON Web Token)** issued by Keycloak. The API Gateway acts as a **Resource Server**, validating tokens before routing requests to downstream services.
+
+```
+Client → Keycloak (Authentication) → JWT Token → API Gateway (Validation) → Microservices
+```
+
+### 🔑 Keycloak Configuration
+
+**Access:** `http://localhost:8082`
+
+**Admin Console:**
+- Username: `admin`
+- Password: `admin`
+
+**Realm:** `petreca-realm` (automatically imported on startup)
+
+**Client:** `petreca-api-client`
+- Type: Public client
+- Grant Types: `password`, `authorization_code`
+- Redirect URIs: `*` (development only)
+
+### 🧙 Pre-Configured Test User
+
+The realm comes with a ready-to-use test user:
+
+| Field | Value |
+| :--- | :--- |
+| Username | `geralt` |
+| Password | `witcher123` |
+| Email | `geralt@kaermorhen.com` |
+
+### 🔒 How Authentication Works
+
+**Step 1: Obtain Access Token**
+
+Request a JWT from Keycloak using the Resource Owner Password Credentials flow:
+
+```bash
+curl -X POST "http://localhost:8082/realms/petreca-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=petreca-api-client" \
+  -d "grant_type=password" \
+  -d "username=geralt" \
+  -d "password=witcher123"
+```
+
+**Response:**
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_in": 300,
+  "refresh_expires_in": 1800,
+  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer"
+}
+```
+
+**Step 2: Use Token in API Requests**
+
+Include the `access_token` in the `Authorization` header:
+
+```bash
+curl -X GET "http://localhost:9999/api/v1/deliveries" \
+  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+```
+
+### 🛡️ Token Validation
+
+The API Gateway validates every incoming request:
+
+1. **Signature Verification**: Ensures the token was issued by Keycloak
+2. **Expiration Check**: Rejects expired tokens (5-minute lifespan)
+3. **Issuer Validation**: Confirms `iss` claim matches `http://localhost:8082/realms/petreca-realm`
+4. **Audience Validation**: Verifies the token is intended for this API
+
+### 🔓 Public vs Protected Routes
+
+| Route Pattern | Authentication Required | Description |
+| :--- | :---: | :--- |
+| `/api/v1/deliveries/**` | ✅ Yes | Full delivery management (CRUD + lifecycle) |
+| `/api/v1/couriers/**` | ✅ Yes | Full courier management (CRUD + payouts) |
+| `/public/couriers` | ❌ No | Public courier list (sanitized, no sensitive data) |
+| `/public/couriers/{id}` | ❌ No | Public courier detail (sanitized) |
+
+### 🎯 Security Best Practices Implemented
+
+- ✅ **Centralized Authentication**: Single source of truth (Keycloak)
+- ✅ **Stateless Tokens**: No server-side session storage
+- ✅ **Short Token Lifespan**: 5-minute access tokens reduce exposure window
+- ✅ **Refresh Tokens**: 30-minute refresh tokens for seamless re-authentication
+- ✅ **HTTPS Ready**: Configuration supports TLS (use in production)
+- ✅ **Realm Isolation**: Separate realm for the application
+- ✅ **Automatic Realm Import**: `realm-export.json` ensures consistent setup
+
+### 📚 Further Reading
+
+Want to dive deeper into OAuth2 and Keycloak?
+- [OAuth 2.0 RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)
+- [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html)
+- [Keycloak Documentation](https://www.keycloak.org/documentation)
+- [Spring Security OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html)
+
+---
+
 ## 🏗️ Infrastructure — The Continent's Foundations
 
 > *Every great witcher needs a keep. Ours runs on Docker.*
@@ -161,6 +283,7 @@ All infrastructure is provisioned via `docker-compose.yml`. The databases are **
 | 📊 **Kafka UI** | `8090` | Web UI to inspect topics, partitions, and messages. |
 | 📈 **Prometheus** | `9090` | Metrics collection and time-series database. |
 | 📉 **Grafana** | `3000` | Metrics visualization and dashboards. |
+| 🔐 **Keycloak** | `8082` | Identity and Access Management (IAM). OAuth2/OpenID Connect provider. |
 
 ---
 
@@ -172,6 +295,7 @@ All infrastructure is provisioned via `docker-compose.yml`. The databases are **
 | **Framework** | Spring Boot 3.5.4 |
 | **Service Discovery** | Spring Cloud Netflix Eureka (`2025.0.0`) |
 | **API Gateway** | Spring Cloud Gateway (WebFlux) |
+| **Security** | OAuth2 + OpenID Connect (Keycloak 24.0) |
 | **Async Messaging** | Spring for Apache Kafka |
 | **Resilience** | Resilience4j 2.3 (Circuit Breaker, Retry) |
 | **Observability** | Prometheus + Grafana (Spring Boot Actuator) |
@@ -207,20 +331,15 @@ From the **project root**, start all infrastructure containers:
 docker-compose up -d
 ```
 
-This will start PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, and Grafana in the background. The databases `courierdb` and `deliverydb` are **automatically created** by the init script. No manual database creation needed.
+This will start PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, and Keycloak in the background. The databases `courierdb` and `deliverydb` are **automatically created** by the init script. The Keycloak realm `petreca-realm` is **automatically imported** with a pre-configured test user. No manual setup needed.
 
-> **pgAdmin Access**
-> | Field | Value |
-> | :--- | :--- |
-> | URL | `http://localhost:5050` |
-> | Email | `admin@admin.com` |
-> | Password | `admin` |
-
-> **Kafka UI Access:** `http://localhost:8090`
-
-> **Prometheus Access:** `http://localhost:9090`
-
-> **Grafana Access:** `http://localhost:3000` (admin / admin)
+**Access URLs:**
+- **pgAdmin**: `http://localhost:5050` (admin@admin.com / admin)
+- **Kafka UI**: `http://localhost:8090`
+- **Prometheus**: `http://localhost:9090`
+- **Grafana**: `http://localhost:3000` (admin / admin)
+- **Keycloak**: `http://localhost:8082` (admin / admin)
+  - **Test User**: geralt / witcher123
 
 ---
 
@@ -313,11 +432,11 @@ All services are up. Send all requests through the Gateway at `http://localhost:
 
 ## 🔥 Complete End-to-End Test — A Witcher's Full Contract
 
-> *"This is the way."* — Follow the path below to witness the full delivery lifecycle in action.
+> *"This is the way."* — Follow the path below to witness the full delivery lifecycle in action, including OAuth2 authentication.
 
 ### Option 1: Automated Script (Recommended)
 
-The project includes a ready-to-use test script. Simply run:
+The project includes a ready-to-use test script that handles authentication automatically. Simply run:
 
 ```bash
 chmod +x test-delivery-flow.sh
@@ -325,17 +444,22 @@ chmod +x test-delivery-flow.sh
 ```
 
 This script will automatically:
-1. Create a courier (Geralt of Rivia)
-2. Draft a delivery contract
-3. Place the delivery on the notice board (fires `DeliveryPlacedEvent` to Kafka)
-4. Assign the courier to the delivery (fires `DeliveryPickedUpEvent` to Kafka)
-5. Complete the delivery (fires `DeliveryFulfilledEvent` to Kafka)
-6. Display the final state
+1. **Authenticate with Keycloak** (obtain JWT token for user `geralt`)
+2. Create a courier (Geralt of Rivia)
+3. Draft a delivery contract
+4. Place the delivery on the notice board (fires `DeliveryPlacedEvent` to Kafka)
+5. Assign the courier to the delivery (fires `DeliveryPickedUpEvent` to Kafka)
+6. Complete the delivery (fires `DeliveryFulfilledEvent` to Kafka)
+7. Display the final state
 
 Expected output:
 ```
-⚔️ PetrecaDelivery — Full Contract Test
-========================================
+================================================
+🐺 PETRECA DELIVERY - END-TO-END DEVSECOPS TEST
+================================================
+🔑 Requesting JWT from Keycloak (User: geralt)...
+✅ Token successfully acquired!
+------------------------------------------------
 
 📍 Step 1: Recruiting a witcher...
 ✅ Courier created: <UUID>
@@ -370,6 +494,7 @@ Expected output:
 🗄️  View database at: http://localhost:5050
 📋 View service registry at: http://localhost:8761
 📉 View metrics dashboard at: http://localhost:3000
+🔐 View Keycloak admin at: http://localhost:8082
 ```
 
 ---
@@ -378,12 +503,32 @@ Expected output:
 
 > *"Patience is a virtue, especially when hunting monsters."*
 
-**Step 0: Create a Courier First**
+**Step 0: Obtain Access Token**
+
+Before making any API calls, authenticate with Keycloak:
+
+```bash
+TOKEN=$(curl -s -X POST "http://localhost:8082/realms/petreca-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=petreca-api-client" \
+  -d "grant_type=password" \
+  -d "username=geralt" \
+  -d "password=witcher123" | jq -r '.access_token')
+
+echo "Token: $TOKEN"
+```
+
+**📝 Save this token — you'll use it in all subsequent requests.**
+
+---
+
+**Step 1: Create a Courier First**
 
 Before any delivery can be assigned, you need a witcher on the notice board:
 
 ```bash
 curl -X POST http://localhost:9999/api/v1/couriers \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Geralt of Rivia",
@@ -405,10 +550,11 @@ Example response:
 
 ---
 
-**Step 1: Draft a Delivery**
+**Step 2: Draft a Delivery**
 
 ```bash
 curl -X POST http://localhost:9999/api/v1/deliveries \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "sender": {
@@ -433,24 +579,26 @@ curl -X POST http://localhost:9999/api/v1/deliveries \
 
 ---
 
-**Step 2: Place the Delivery** *(fires `DeliveryPlacedEvent` to Kafka)*
+**Step 3: Place the Delivery** *(fires `DeliveryPlacedEvent` to Kafka)*
 
 Replace `YOUR_DELIVERY_ID_HERE` with the actual UUID:
 
 ```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/placement
+curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/placement \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 The delivery is now on the notice board. Check Kafka UI at `http://localhost:8090` — you'll see the `DeliveryPlacedEvent` in the `deliveries.v1.events` topic.
 
 ---
 
-**Step 3: Assign the Courier** *(fires `DeliveryPickedUpEvent` to Kafka)*
+**Step 4: Assign the Courier** *(fires `DeliveryPickedUpEvent` to Kafka)*
 
 Replace both `YOUR_DELIVERY_ID_HERE` and `YOUR_COURIER_ID_HERE`:
 
 ```bash
 curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/pickups \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{ "courierId": "YOUR_COURIER_ID_HERE" }'
 ```
@@ -459,20 +607,22 @@ Geralt has accepted the contract. The delivery is now `IN_TRANSIT`.
 
 ---
 
-**Step 4: Complete the Delivery** *(fires `DeliveryFulfilledEvent` to Kafka)*
+**Step 5: Complete the Delivery** *(fires `DeliveryFulfilledEvent` to Kafka)*
 
 ```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/completion
+curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/completion \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 The contract is fulfilled. The delivery status is now `DELIVERED`, and Geralt's stats are updated.
 
 ---
 
-**Step 5: Verify the Final State**
+**Step 6: Verify the Final State**
 
 ```bash
-curl http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE
+curl http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 You should see:
@@ -482,7 +632,8 @@ You should see:
 
 Check the courier's updated stats:
 ```bash
-curl http://localhost:9999/api/v1/couriers/YOUR_COURIER_ID_HERE
+curl http://localhost:9999/api/v1/couriers/YOUR_COURIER_ID_HERE \
+  -H "Authorization: Bearer $TOKEN"
 ```
 
 You should see:
@@ -497,8 +648,19 @@ You should see:
 If you have `jq` installed, use this cleaner approach:
 
 ```bash
+# Obtain token
+TOKEN=$(curl -s -X POST "http://localhost:8082/realms/petreca-realm/protocol/openid-connect/token" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=petreca-api-client" \
+  -d "grant_type=password" \
+  -d "username=geralt" \
+  -d "password=witcher123" | jq -r '.access_token')
+
+echo "Token obtained: ${TOKEN:0:20}..."
+
 # Create courier and capture ID
 COURIER_ID=$(curl -s -X POST http://localhost:9999/api/v1/couriers \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"name": "Geralt of Rivia", "phone": "11987654321"}' | jq -r '.id')
 
@@ -506,6 +668,7 @@ echo "Courier ID: $COURIER_ID"
 
 # Create delivery and capture ID
 DELIVERY_ID=$(curl -s -X POST http://localhost:9999/api/v1/deliveries \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "sender": {"zipCode": "12345-000", "street": "Rua do Remetente", "number": "10", "name": "Empresa A", "phone": "11999999999"},
@@ -516,18 +679,22 @@ DELIVERY_ID=$(curl -s -X POST http://localhost:9999/api/v1/deliveries \
 echo "Delivery ID: $DELIVERY_ID"
 
 # Place delivery
-curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/placement
+curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/placement \
+  -H "Authorization: Bearer $TOKEN"
 
 # Assign courier
 curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/pickups \
+  -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d "{\"courierId\": \"$COURIER_ID\"}"
 
 # Complete delivery
-curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/completion
+curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/completion \
+  -H "Authorization: Bearer $TOKEN"
 
 # Verify
-curl http://localhost:9999/api/v1/deliveries/$DELIVERY_ID | jq
+curl http://localhost:9999/api/v1/deliveries/$DELIVERY_ID \
+  -H "Authorization: Bearer $TOKEN" | jq
 ```
 
 ---
