@@ -1,6 +1,12 @@
 server.port: 9999
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8082/realms/petreca-realm
+
   application.name: gateway
   cloud:
     gateway.server.webflux:
