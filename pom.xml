@@ -37,6 +37,7 @@
         <module>Microservices/Gateway</module>
         <module>Microservices/Courier-Management</module>
         <module>Microservices/Delivery-Tracking</module>
+        <module>Coverage-Report</module>
     </modules>
 
     <!-- ================================================================
@@ -117,6 +118,29 @@
          Plugins configurados aqui são herdados por todos os módulos.
          ================================================================ -->
     <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
 
