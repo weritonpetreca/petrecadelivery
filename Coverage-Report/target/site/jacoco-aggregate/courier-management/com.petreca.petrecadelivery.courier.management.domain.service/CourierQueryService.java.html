@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CourierQueryService.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">PetrecaDelivery :: Coverage Report Aggregator</a> &gt; <a href="../index.html" class="el_bundle">courier-management</a> &gt; <a href="index.source.html" class="el_package">com.petreca.petrecadelivery.courier.management.domain.service</a> &gt; <span class="el_source">CourierQueryService.java</span></div><h1>CourierQueryService.java</h1><pre class="source lang-java linenums">package com.petreca.petrecadelivery.courier.management.domain.service;
+
+import com.petreca.petrecadelivery.courier.management.domain.exception.DomainException;
+import com.petreca.petrecadelivery.courier.management.domain.model.Courier;
+import com.petreca.petrecadelivery.courier.management.domain.repository.CourierRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
+
+/**
+ * Serviço responsável pelas operações de consulta de entregadores.
+ *
+ * &lt;p&gt;Separado do {@link CourierRegistrationService} seguindo o princípio
+ * CQRS (Command Query Responsibility Segregation) na sua forma mais simples:
+ * operações de leitura e escrita têm responsabilidades e otimizações distintas.&lt;/p&gt;
+ *
+ * &lt;p&gt;Todas as operações são marcadas com {@code readOnly = true}, o que
+ * desativa o dirty checking do Hibernate e melhora a performance de leitura.&lt;/p&gt;
+ */
+@Service
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class CourierQueryService {
+
+    private final CourierRepository courierRepository;
+
+    /**
+     * Retorna uma página de entregadores cadastrados.
+     *
+     * @param pageable configuração de paginação e ordenação
+     * @return modelo paginado com os entregadores encontrados
+     */
+    public PagedModel&lt;Courier&gt; findAll(Pageable pageable) {
+<span class="fc" id="L38">        return new PagedModel&lt;&gt;(courierRepository.findAll(pageable));</span>
+    }
+
+    /**
+     * Busca um entregador pelo seu identificador único.
+     *
+     * @param courierId identificador do entregador
+     * @return entregador encontrado
+     * @throws DomainException se nenhum entregador for encontrado com o ID informado
+     */
+    public Courier findById(UUID courierId) {
+<span class="fc" id="L49">        return courierRepository.findById(courierId)</span>
+<span class="fc" id="L50">                .orElseThrow(() -&gt; new DomainException(&quot;Courier not found: &quot; + courierId));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
