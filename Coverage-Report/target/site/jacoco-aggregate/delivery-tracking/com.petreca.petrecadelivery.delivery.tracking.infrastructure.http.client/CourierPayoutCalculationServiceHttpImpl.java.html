@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../jacoco-resources/report.gif" type="image/gif"/><title>CourierPayoutCalculationServiceHttpImpl.java</title><link rel="stylesheet" href="../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../index.html" class="el_report">PetrecaDelivery :: Coverage Report Aggregator</a> &gt; <a href="../index.html" class="el_bundle">delivery-tracking</a> &gt; <a href="index.source.html" class="el_package">com.petreca.petrecadelivery.delivery.tracking.infrastructure.http.client</a> &gt; <span class="el_source">CourierPayoutCalculationServiceHttpImpl.java</span></div><h1>CourierPayoutCalculationServiceHttpImpl.java</h1><pre class="source lang-java linenums">package com.petreca.petrecadelivery.delivery.tracking.infrastructure.http.client;
+
+import com.petreca.petrecadelivery.delivery.tracking.domain.service.CourierPayoutCalculationService;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
+
+import java.math.BigDecimal;
+
+@RequiredArgsConstructor
+@Service
+public class CourierPayoutCalculationServiceHttpImpl implements CourierPayoutCalculationService {
+
+    private final CourierAPIClient courierAPIClient;
+
+    @Override
+    public BigDecimal calculatePayout(Double distanceInKm) {
+        try {
+<span class="fc" id="L21">            CourierPayoutResultModel courierPayoutResultModel1 = courierAPIClient.payoutCalculation(</span>
+                    new CourierPayoutCalculationInput(distanceInKm));
+<span class="fc" id="L23">            return courierPayoutResultModel1.getPayoutFee();</span>
+<span class="fc" id="L24">        } catch (ResourceAccessException e) {</span>
+<span class="fc" id="L25">            throw new GatewayTimeoutException(e);</span>
+<span class="fc" id="L26">        } catch (HttpServerErrorException | CallNotPermittedException | IllegalArgumentException e) {</span>
+<span class="fc" id="L27">            throw new BadGatewayException(e);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
