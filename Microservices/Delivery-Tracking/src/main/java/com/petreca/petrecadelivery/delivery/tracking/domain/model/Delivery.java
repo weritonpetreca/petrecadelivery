@@ -60,25 +60,21 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
      * "recipient_zip_code".
      */
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "zipCode",    column = @Column(name = "sender_zip_code")),
-            @AttributeOverride(name = "street",     column = @Column(name = "sender_street")),
-            @AttributeOverride(name = "number",     column = @Column(name = "sender_number")),
-            @AttributeOverride(name = "complement", column = @Column(name = "sender_complement")),
-            @AttributeOverride(name = "name",       column = @Column(name = "sender_name")),
-            @AttributeOverride(name = "phone",      column = @Column(name = "sender_phone"))
-    })
+    @AttributeOverride(name = "zipCode",    column = @Column(name = "sender_zip_code"))
+    @AttributeOverride(name = "street",     column = @Column(name = "sender_street"))
+    @AttributeOverride(name = "number",     column = @Column(name = "sender_number"))
+    @AttributeOverride(name = "complement", column = @Column(name = "sender_complement"))
+    @AttributeOverride(name = "name",       column = @Column(name = "sender_name"))
+    @AttributeOverride(name = "phone",      column = @Column(name = "sender_phone"))
     private ContactPoint sender;
 
     @Embedded
-    @AttributeOverrides({
-            @AttributeOverride(name = "zipCode",    column = @Column(name = "recipient_zip_code")),
-            @AttributeOverride(name = "street",     column = @Column(name = "recipient_street")),
-            @AttributeOverride(name = "number",     column = @Column(name = "recipient_number")),
-            @AttributeOverride(name = "complement", column = @Column(name = "recipient_complement")),
-            @AttributeOverride(name = "name",       column = @Column(name = "recipient_name")),
-            @AttributeOverride(name = "phone",      column = @Column(name = "recipient_phone"))
-    })
+    @AttributeOverride(name = "zipCode",    column = @Column(name = "recipient_zip_code"))
+    @AttributeOverride(name = "street",     column = @Column(name = "recipient_street"))
+    @AttributeOverride(name = "number",     column = @Column(name = "recipient_number"))
+    @AttributeOverride(name = "complement", column = @Column(name = "recipient_complement"))
+    @AttributeOverride(name = "name",       column = @Column(name = "recipient_name"))
+    @AttributeOverride(name = "phone",      column = @Column(name = "recipient_phone"))
     private ContactPoint recipient;
 
     /*
