@@ -58,6 +58,22 @@ class DeliveryCheckpointServiceTest {
     }
 
     @Test
+    @DisplayName("should place delivery, change status, and save")
+    void shouldPlaceAndSave() {
+        UUID deliveryId = UUID.randomUUID();
+
+        Delivery realDelivery = createPreparedDelivery();
+
+        given(deliveryRepository.findById(deliveryId)).willReturn(Optional.of(realDelivery));
+
+        checkpointService.place(deliveryId);
+
+        assertThat(realDelivery.getStatus()).isEqualTo(DeliveryStatus.WAITING_FOR_COURIER);
+
+        then(deliveryRepository).should().saveAndFlush(realDelivery);
+    }
+
+    @Test
     @DisplayName("should pick up delivery, change status, and save")
     void shouldPickUpAndSave() {
         UUID deliveryId = UUID.randomUUID();

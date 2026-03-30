@@ -52,17 +52,20 @@ public class DeliveryController {
     }
 
     @PostMapping("/{deliveryId}/placement")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void place(@PathVariable UUID deliveryId) {
         deliveryCheckpointService.place(deliveryId);
     }
 
     @PostMapping("/{deliveryId}/pickups")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void pickUp(@PathVariable UUID deliveryId,
                        @Valid @RequestBody CourierIdInput input) {
         deliveryCheckpointService.pickUp(deliveryId, input.courierId());
     }
 
     @PostMapping("/{deliveryId}/completion")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void complete(@PathVariable UUID deliveryId) {
         deliveryCheckpointService.complete(deliveryId);
     }
