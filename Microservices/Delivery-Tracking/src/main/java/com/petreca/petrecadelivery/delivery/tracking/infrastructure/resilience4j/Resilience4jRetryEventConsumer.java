@@ -19,11 +19,11 @@ public class Resilience4jRetryEventConsumer implements RegistryEventConsumer<Ret
 
     @Override
     public void onEntryRemovedEvent(EntryRemovedEvent<Retry> entryRemoveEvent) {
-
+        // Intentionally empty: No cleanup or logging is required when a circuit breaker is removed from the registry.
     }
 
     @Override
     public void onEntryReplacedEvent(EntryReplacedEvent<Retry> entryReplacedEvent) {
-
+        // Intentionally empty: No specific logic is required when a circuit breaker is dynamically replaced.
     }
 }

@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import static com.petreca.petrecadelivery.delivery.tracking.infrastructure.kafka.KafkaTopicConfig.deliveryEventsTopicName;
+import static com.petreca.petrecadelivery.delivery.tracking.infrastructure.kafka.KafkaTopicConfig.DELIVERY_EVENTS_TOPIC_NAME;
 
 @Component
 @Slf4j
@@ -21,20 +21,20 @@ public class DeliveryDomainEventHandler {
     public void handle(DeliveryPlacedEvent event) {
         log.info(event.toString());
         integrationEventPublisher.publish(event,
-                event.getDeliveryId().toString(),deliveryEventsTopicName);
+                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
     }
 
     @EventListener
     public void handle(DeliveryPickedUpEvent event) {
         log.info(event.toString());
         integrationEventPublisher.publish(event,
-                event.getDeliveryId().toString(),deliveryEventsTopicName);
+                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
     }
 
     @EventListener
     public void handle(DeliveryFulfilledEvent event) {
         log.info(event.toString());
         integrationEventPublisher.publish(event,
-                event.getDeliveryId().toString(),deliveryEventsTopicName);
+                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
     }
 }

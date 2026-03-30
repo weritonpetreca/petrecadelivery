@@ -79,10 +79,6 @@ class CourierControllerTest {
         );
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // POST /api/v1/couriers
-    // ─────────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("POST /")
     class Create {
@@ -158,10 +154,6 @@ class CourierControllerTest {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // PUT /api/v1/couriers/{courierId}
-    // ─────────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("PUT /{courierId}")
     class Update {
@@ -220,10 +212,6 @@ class CourierControllerTest {
         }
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // GET /api/v1/couriers
-    // ─────────────────────────────────────────────────────────────────
-
     @Nested
     @DisplayName("GET /")
     class FindAll {
@@ -257,10 +245,6 @@ class CourierControllerTest {
                     .body("content", hasSize(0));
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────
-    // GET /api/v1/couriers/{courierId}
-    // ─────────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("GET /{courierId}")
@@ -296,10 +280,6 @@ class CourierControllerTest {
                     .body("detail", containsString("not found"));
         }
     }
-
-    // ─────────────────────────────────────────────────────────────────
-    // POST /api/v1/couriers/payout-calculation
-    // ─────────────────────────────────────────────────────────────────
 
     @Nested
     @DisplayName("POST /payout-calculation")

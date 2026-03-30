@@ -23,7 +23,7 @@ class DeliveryRepositoryTest {
     private DeliveryRepository deliveryRepository;
 
     @Test
-    public void shouldPersist() {
+    void shouldPersist() {
         Delivery delivery = Delivery.draft();
 
         delivery.editPreparationDetails(createValidPreparationDetails());

@@ -9,8 +9,8 @@ spring:
     show-sql: false
   datasource:
     url: jdbc:postgresql://localhost:5432/courierdb
-    username: postgres
-    password: postgres
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
 
   kafka:
     consumer:
