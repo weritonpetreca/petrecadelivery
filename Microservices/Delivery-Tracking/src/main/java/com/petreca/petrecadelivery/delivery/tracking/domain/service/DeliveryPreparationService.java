@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.util.UUID;
 
 @Service
@@ -84,7 +83,8 @@ public class DeliveryPreparationService {
     }
 
     private BigDecimal calculateFee(Double distanceInKm) {
-        return new BigDecimal("3").multiply(new BigDecimal(distanceInKm)).setScale(2, RoundingMode.HALF_EVEN);
+        return new BigDecimal("3").multiply(BigDecimal.valueOf(distanceInKm))
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 
 

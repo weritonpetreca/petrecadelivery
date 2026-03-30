@@ -1,2 +1,3 @@
 CREATE DATABASE courierdb;
 CREATE DATABASE deliverydb;
+CREATE DATABASE keycloakdb;

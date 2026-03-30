@@ -262,10 +262,10 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
     // ─────────────────────────────────────────────────────────────────
 
     private void calculateTotalItems() {
-        int totalItems = getItems().stream()
+        int totalNumItems = getItems().stream()
                 .mapToInt(Item::getQuantity)
                 .sum();
-        setTotalItems(totalItems);
+        setTotalItems(totalNumItems);
     }
 
     private void verifyIfCanBePlaced() {

@@ -4,13 +4,13 @@ import com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryFulfil
 import com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryPickedUpEvent;
 import com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryPlacedEvent;
 import com.petreca.petrecadelivery.delivery.tracking.domain.exception.DomainException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -231,7 +231,9 @@ class DeliveryTest {
              */
             Delivery delivery = createPreparedDelivery(); // status = DRAFT
 
-            assertThatThrownBy(() -> delivery.pickUp(UUID.randomUUID()))
+            UUID courierId = UUID.randomUUID();
+
+            assertThatThrownBy(() -> delivery.pickUp(courierId))
                     .isInstanceOf(DomainException.class)
                     .hasMessageContaining("Invalid status transition");
         }
@@ -328,7 +330,9 @@ class DeliveryTest {
             Delivery delivery = Delivery.draft();
             delivery.addItem("Notebook", 1);
 
-            assertThatThrownBy(() -> delivery.getItems().clear())
+            List<Item> items = delivery.getItems();
+
+            assertThatThrownBy(items::clear)
                     .isInstanceOf(UnsupportedOperationException.class);
         }
     }
