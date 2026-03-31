@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd
+                                  https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.4.xsd">
+    <suppress>
+        <notes><![CDATA[
+        Accepting risk for CVE-2025-46392 in commons-configuration 1.10.
+        Required by Eureka Server and unexploitable in our current internal configuration context.
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/commons\-configuration/commons\-configuration@.*$</packageUrl>
+        <cve>CVE-2025-46392</cve>
+    </suppress>
+</suppressions>

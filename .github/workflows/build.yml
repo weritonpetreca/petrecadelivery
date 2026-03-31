@@ -27,6 +27,8 @@ jobs:
         run: chmod +x mvnw
 
       - name: Execute Build and Unit/Integration Tests
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
         run: ./mvnw clean verify
 
       - name: Upload JaCoCo Coverage Report
