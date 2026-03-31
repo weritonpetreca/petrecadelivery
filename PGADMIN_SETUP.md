@@ -10,7 +10,7 @@ This project includes automatic pgAdmin server configuration.
 When you run `docker-compose up -d`, pgAdmin will:
 1. Start with the server "PetrecaDelivery" already registered
 2. Automatically connect to PostgreSQL using the credentials in `pgpass`
-3. Show both `courierdb` and `deliverydb` databases ready to explore
+3. Show `courierdb`, `keycloakdb` and `deliverydb` databases ready to explore
 
 ## Manual Setup (Not Needed):
 If for some reason the automatic configuration doesn't work, you can manually register the server:

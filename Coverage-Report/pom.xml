@@ -21,21 +21,25 @@
             <artifactId>service-registry</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.petreca.petrecadelivery</groupId>
             <artifactId>gateway</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.petreca.petrecadelivery</groupId>
             <artifactId>courier-management</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
             <groupId>com.petreca.petrecadelivery</groupId>
             <artifactId>delivery-tracking</artifactId>
             <version>${project.version}</version>
         </dependency>
+
     </dependencies>
 
     <build>

@@ -4,9 +4,6 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!--
-        Herda do parent centralizado da plataforma PetrecaDelivery.
-    -->
 	<parent>
 		<groupId>com.petreca.petrecadelivery</groupId>
 		<artifactId>petrecadelivery-parent</artifactId>
@@ -25,32 +22,16 @@
 
 	<dependencies>
 
-		<!--
-            Spring Cloud Gateway (WebFlux).
-            Implementação reativa do API Gateway — usa Project Reactor
-            internamente, o que o torna não-bloqueante e altamente eficiente
-            para roteamento de requisições.
-        -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
 		</dependency>
 
-		<!--
-            Eureka Client — permite que o Gateway descubra os microsserviços
-            pelo nome (ex: "lb://delivery-tracking") em vez de IP:porta fixo.
-            O prefixo "lb://" ativa o load balancing automático entre instâncias.
-        -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
 		</dependency>
 
-		<!--
-            Circuit Breaker reativo com Resilience4j.
-            Versão específica para WebFlux (reactor) — necessária porque
-            o Gateway é reativo e precisa de um Circuit Breaker compatível.
-        -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId>
@@ -70,39 +51,7 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-tracing-bridge-otel</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-otlp</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>net.ttddyy.observation</groupId>
-			<artifactId>datasource-micrometer-spring-boot</artifactId>
-			<version>1.0.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.loki4j</groupId>
-			<artifactId>loki-logback-appender</artifactId>
-			<version>1.5.1</version>
 		</dependency>
 
 	</dependencies>
@@ -112,6 +61,10 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
 			</plugin>
 		</plugins>
 	</build>

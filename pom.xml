@@ -4,15 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <!--
-        O parent pom herda do spring-boot-starter-parent para que todos os módulos
-        filhos se beneficiem automaticamente do gerenciamento de versões do Spring Boot
-        (plugins, dependências, encoding, etc.) sem precisar declarar cada um.
-    -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.4</version>
+        <version>3.5.13</version>
         <relativePath/>
     </parent>
 
@@ -27,11 +22,6 @@
         compartilhadas e configurações de build para todos os microsserviços.
     </description>
 
-    <!--
-        Declaração dos módulos. O Maven reconhece esses caminhos relativos
-        a partir da raiz do projeto e os trata como parte do mesmo build.
-        Isso permite buildar toda a plataforma com um único "mvn install" na raiz.
-    -->
     <modules>
         <module>Microservices/Service-Registry</module>
         <module>Microservices/Gateway</module>
@@ -40,44 +30,42 @@
         <module>Coverage-Report</module>
     </modules>
 
-    <!-- ================================================================
-         PROPRIEDADES GLOBAIS
-         Declaradas aqui uma única vez e herdadas por todos os filhos.
-         Evita inconsistência de versões entre microsserviços.
-         ================================================================ -->
     <properties>
+        <datasource-micrometer.version>1.0.3</datasource-micrometer.version>
+        <loki.version>1.5.1</loki.version>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <testcontainers.version>1.21.4</testcontainers.version>
-
-        <!-- Spring Cloud BOM — gerencia todas as dependências do ecossistema
-             Spring Cloud (Eureka, Gateway, Config, etc.) de forma compatível. -->
-        <spring-cloud.version>2025.0.0</spring-cloud.version>
-
-        <!-- Resilience4j BOM — gerencia Circuit Breaker, Retry, Rate Limiter, etc. -->
         <resilience4j.version>2.3.0</resilience4j.version>
-
-        <!-- REST Assured — biblioteca para testes de integração de APIs REST -->
         <rest-assured.version>5.5.5</rest-assured.version>
+        <spring-cloud.version>2025.0.1</spring-cloud.version>
+        <testcontainers.version>1.21.4</testcontainers.version>
+        <tomcat.version>10.1.53</tomcat.version>
     </properties>
 
-    <!-- ================================================================
-         GERENCIAMENTO DE DEPENDÊNCIAS
-         Define versões centralizadas sem adicionar dependências diretamente.
-         Os módulos filhos declaram o que precisam sem repetir a versão.
-         ================================================================ -->
     <dependencyManagement>
         <dependencies>
 
-            <!--
-                Spring Cloud Dependencies BOM (Bill of Materials).
-                Um BOM é um pom especial que declara versões compatíveis
-                entre si para um conjunto de bibliotecas. Ao importá-lo aqui,
-                garantimos que todos os módulos usem versões harmonizadas
-                do ecossistema Spring Cloud.
-            -->
+            <dependency>
+                <groupId>commons-configuration2</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>2.13</version> </dependency>
+
+            <dependency>
+                <groupId>commons-jxpath</groupId>
+                <artifactId>commons-jxpath</artifactId>
+                <version>1.4.0</version> </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.14</version> </dependency>
+
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
+                <version>2.25.4</version> </dependency>
+
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-dependencies</artifactId>
@@ -86,11 +74,6 @@
                 <scope>import</scope>
             </dependency>
 
-            <!--
-                Resilience4j BOM.
-                Garante compatibilidade entre resilience4j-spring-boot3,
-                resilience4j-circuitbreaker, resilience4j-retry, etc.
-            -->
             <dependency>
                 <groupId>io.github.resilience4j</groupId>
                 <artifactId>resilience4j-bom</artifactId>
@@ -99,10 +82,18 @@
                 <scope>import</scope>
             </dependency>
 
-            <!--
-                REST Assured — versão centralizada para testes de integração.
-                Usado atualmente no Courier-Management para testes do controller.
-            -->
+            <dependency>
+                <groupId>io.github.x-stream</groupId>
+                <artifactId>mxparser</artifactId>
+                <version>1.2.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.angus</groupId>
+                <artifactId>angus-activation</artifactId>
+                <version>2.0.3</version>
+            </dependency>
+
             <dependency>
                 <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
@@ -110,15 +101,44 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-actuator</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-registry-prometheus</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>io.micrometer</groupId>
+                <artifactId>micrometer-tracing-bridge-otel</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>io.opentelemetry</groupId>
+                <artifactId>opentelemetry-exporter-otlp</artifactId>
+            </dependency>
+
+            <dependency>
+                <groupId>net.ttddyy.observation</groupId>
+                <artifactId>datasource-micrometer-spring-boot</artifactId>
+                <version>${datasource-micrometer.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.loki4j</groupId>
+                <artifactId>loki-logback-appender</artifactId>
+                <version>${loki.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
-    <!-- ================================================================
-         CONFIGURAÇÃO DE BUILD COMPARTILHADA
-         Plugins configurados aqui são herdados por todos os módulos.
-         ================================================================ -->
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -139,16 +159,12 @@
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
 
         <pluginManagement>
             <plugins>
 
-                <!--
-                    Compilador Java com suporte a Lombok via annotation processing.
-                    Centralizado aqui para que todos os módulos que usam Lombok
-                    não precisem repetir essa configuração.
-                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
@@ -162,11 +178,6 @@
                     </configuration>
                 </plugin>
 
-                <!--
-                    Spring Boot Maven Plugin centralizado.
-                    Configuração de exclusão do Lombok no fat-jar também
-                    centralizada — Lombok só é necessário em compile time.
-                -->
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
@@ -180,8 +191,53 @@
                     </configuration>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>12.2.0</version>
+                    <configuration>
+                        <failBuildOnCVSS>7.0</failBuildOnCVSS>
+                        <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                        <nvdApiDelay>16000</nvdApiDelay>
+                        <suppressionFiles>
+                            <suppressionFile>${session.executionRootDirectory}/suppression.xml</suppressionFile>
+                        </suppressionFiles>
+                        <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                        <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
 
+    <profiles>
+        <profile>
+            <id>offline-sca</id>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.owasp</groupId>
+                            <artifactId>dependency-check-maven</artifactId>
+                            <version>12.2.0</version>
+                            <configuration>
+                                <nvdDatafeedUrl>file://${user.home}/.nvd-cache/nvdcve-{0}.json.gz</nvdDatafeedUrl>
+                                <dataDirectory>${user.home}/.nvd-cache</dataDirectory>
+                                <nvdApiDelay>0</nvdApiDelay>
+                                <nvdApiKey></nvdApiKey>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+    </profiles>
 </project>

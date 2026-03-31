@@ -4,11 +4,6 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<!--
-        Herda do parent centralizado da plataforma PetrecaDelivery.
-        O relativePath aponta dois níveis acima (Microservices/Service-Registry → raiz).
-        Com isso, versões, BOMs e plugins já estão disponíveis sem redeclaração.
-    -->
 	<parent>
 		<groupId>com.petreca.petrecadelivery</groupId>
 		<artifactId>petrecadelivery-parent</artifactId>
@@ -18,27 +13,19 @@
 
 	<artifactId>service-registry</artifactId>
 	<name>PetrecaDelivery :: Service Registry</name>
+
 	<description>
 		Servidor de descoberta de serviços baseado em Netflix Eureka.
 		Todos os microsserviços da plataforma se registram aqui,
 		permitindo roteamento dinâmico sem dependência de IPs fixos.
 	</description>
 
-	<!--
-        Nota: java.version, encoding e spring-cloud.version
-        são herdados do parent — não precisam ser redeclarados.
-    -->
-
 	<dependencies>
 
-		<!--
-            Eureka Server — transforma este serviço no servidor central
-            de registro e descoberta. Os outros microsserviços usam
-            Eureka Client para se registrarem aqui.
-        -->
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
@@ -47,56 +34,21 @@
 			<scope>test</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-tracing-bridge-otel</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>io.opentelemetry</groupId>
-			<artifactId>opentelemetry-exporter-otlp</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>net.ttddyy.observation</groupId>
-			<artifactId>datasource-micrometer-spring-boot</artifactId>
-			<version>1.0.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.github.loki4j</groupId>
-			<artifactId>loki-logback-appender</artifactId>
-			<version>1.5.1</version>
-		</dependency>
-
 	</dependencies>
-
-	<!--
-        Nota: dependencyManagement com spring-cloud-dependencies BOM
-        já está no parent — removido daqui para evitar duplicação.
-    -->
 
 	<build>
 		<plugins>
-			<!--
-                O Service Registry não usa Lombok, então não precisa
-                da configuração do annotation processor.
-                Apenas o spring-boot-maven-plugin para gerar o fat-jar executável.
-            -->
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+			</plugin>
+
 		</plugins>
 	</build>
 
