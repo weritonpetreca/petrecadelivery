@@ -141,6 +141,27 @@ services:
       postgres:
         condition: service_healthy
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: petrecadelivery-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # The UI Dashboard (where you go to see the traces)
+      - "4317:4317"   # The HTTP Receiver (where Spring Boot sends the traces)
+      - "4318:4318"   # The gRPC Receiver (alternative high-speed protocol)
+    networks:
+      - petrecadelivery-net
+
+  loki:
+    image: grafana/loki:2.9.2
+    container_name: petrecadelivery-loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - petrecadelivery-net
+
 volumes:
   kafka_data:
   pgadmin_data:

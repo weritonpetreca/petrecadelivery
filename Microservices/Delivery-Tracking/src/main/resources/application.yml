@@ -20,6 +20,10 @@ spring:
           delivery-placed-event:com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryPlacedEvent,
           delivery-picked-up-event:com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryPickedUpEvent,
           delivery-fulfilled-event:com.petreca.petrecadelivery.delivery.tracking.domain.event.DeliveryFulfilledEvent
+    template:
+      observation-enabled: true
+      listener:
+        observation-enabled: true
 
 eureka:
   client:
@@ -74,3 +78,9 @@ management:
     metrics:
       export:
         enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
