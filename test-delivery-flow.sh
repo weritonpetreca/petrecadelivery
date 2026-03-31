@@ -37,6 +37,11 @@ COURIER_RESPONSE=$(curl -s -X POST "http://localhost:9999/api/v1/couriers" \
     "phone": "11987654321"
   }')
 
+if [ "$COURIER_RESPONSE" = "null" ] || [ -z "$COURIER_RESPONSE" ]; then
+  echo "❌ CRITICAL FAILURE: Could not create courier."
+  exit 1
+fi
+
 COURIER_ID=$(echo "$COURIER_RESPONSE" | jq -r '.id')
 echo "✅ Courier created: $COURIER_ID"
 echo "   Name: Geralt of Rivia"
@@ -138,3 +143,4 @@ echo "🗄️  View database at: http://localhost:5050"
 echo "📋 View service registry at: http://localhost:8761"
 echo "📉 View metrics dashboard at: http://localhost:3000"
 echo "🔐 View Keycloak admin at: http://localhost:8082"
+echo "🕵️‍♂️ View distributed traces at: http://localhost:16686"

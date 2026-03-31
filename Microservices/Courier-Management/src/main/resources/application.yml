@@ -25,6 +25,10 @@ spring:
           delivery-placed-event:com.petreca.petrecadelivery.courier.management.infrastructure.event.DeliveryPlacedIntegrationEvent,
           delivery-picked-up-event:com.fasterxml.jackson.databind.JsonNode,
           delivery-fulfilled-event:com.petreca.petrecadelivery.courier.management.infrastructure.event.DeliveryFulfilledIntegrationEvent
+    template:
+      observation-enabled: true
+      listener:
+        observation-enabled: true
 
 eureka:
   client:
@@ -51,3 +55,9 @@ management:
     metrics:
       export:
         enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces

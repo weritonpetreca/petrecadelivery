@@ -1,7 +1,7 @@
 server.port: 8761
 
 spring:
-  application.name: Service-Registry
+  application.name: service-registry
 
 eureka:
   client:
@@ -25,3 +25,9 @@ management:
     metrics:
       export:
         enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://localhost:4318/v1/traces
