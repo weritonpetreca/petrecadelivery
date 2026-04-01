@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import static com.petreca.petrecadelivery.delivery.tracking.infrastructure.kafka.KafkaTopicConfig.DELIVERY_EVENTS_TOPIC_NAME;
 
 @Component
-<span class="fc" id="L14">@Slf4j</span>
+<span class="nc" id="L14">@Slf4j</span>
 @RequiredArgsConstructor
 public class DeliveryDomainEventHandler {
 
@@ -19,23 +19,23 @@ public class DeliveryDomainEventHandler {
 
     @EventListener
     public void handle(DeliveryPlacedEvent event) {
-<span class="fc" id="L22">        log.info(event.toString());</span>
-<span class="fc" id="L23">        integrationEventPublisher.publish(event,</span>
-<span class="fc" id="L24">                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);</span>
-<span class="fc" id="L25">    }</span>
+<span class="nc" id="L22">        log.info(event.toString());</span>
+<span class="nc" id="L23">        integrationEventPublisher.publish(event,</span>
+<span class="nc" id="L24">                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);</span>
+<span class="nc" id="L25">    }</span>
 
     @EventListener
     public void handle(DeliveryPickedUpEvent event) {
-<span class="fc" id="L29">        log.info(event.toString());</span>
-<span class="fc" id="L30">        integrationEventPublisher.publish(event,</span>
-<span class="fc" id="L31">                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);</span>
-<span class="fc" id="L32">    }</span>
+<span class="nc" id="L29">        log.info(event.toString());</span>
+<span class="nc" id="L30">        integrationEventPublisher.publish(event,</span>
+<span class="nc" id="L31">                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);</span>
+<span class="nc" id="L32">    }</span>
 
     @EventListener
     public void handle(DeliveryFulfilledEvent event) {
-<span class="fc" id="L36">        log.info(event.toString());</span>
-<span class="fc" id="L37">        integrationEventPublisher.publish(event,</span>
-<span class="fc" id="L38">                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);</span>
-<span class="fc" id="L39">    }</span>
+<span class="nc" id="L36">        log.info(event.toString());</span>
+<span class="nc" id="L37">        integrationEventPublisher.publish(event,</span>
+<span class="nc" id="L38">                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);</span>
+<span class="nc" id="L39">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

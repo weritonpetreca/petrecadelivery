@@ -6,11 +6,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Service
-<span class="fc" id="L9">public class CourierPayoutService {</span>
+<span class="nc" id="L9">public class CourierPayoutService {</span>
     public BigDecimal calculate(Double distanceInKm) {
-<span class="fc" id="L11">        return new BigDecimal(10)</span>
-<span class="fc" id="L12">                .multiply(BigDecimal.valueOf(distanceInKm))</span>
-<span class="fc" id="L13">                .setScale(2, RoundingMode.HALF_EVEN);</span>
+<span class="nc" id="L11">        return new BigDecimal(10)</span>
+<span class="nc" id="L12">                .multiply(BigDecimal.valueOf(distanceInKm))</span>
+<span class="nc" id="L13">                .setScale(2, RoundingMode.HALF_EVEN);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

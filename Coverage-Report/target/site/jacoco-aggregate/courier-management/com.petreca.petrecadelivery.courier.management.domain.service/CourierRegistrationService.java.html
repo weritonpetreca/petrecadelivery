@@ -28,7 +28,7 @@ import java.util.UUID;
  * da camada de apresentação via {@code @Valid} nos controllers. Não é necessário
  * revalidar aqui, pois o service só é invocado após a validação ter ocorrido.&lt;/p&gt;
  */
-<span class="fc" id="L31">@Slf4j</span>
+<span class="nc" id="L31">@Slf4j</span>
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -47,13 +47,13 @@ public class CourierRegistrationService {
      * @return entregador persistido com ID gerado
      */
     public Courier create(CourierInput input) {
-<span class="fc" id="L50">        log.info(&quot;Creating new courier with name: {}&quot;, input.name());</span>
+<span class="nc" id="L50">        log.info(&quot;Creating new courier with name: {}&quot;, input.name());</span>
 
-<span class="fc" id="L52">        Courier courier = Courier.brandNew(input.name(), input.phone());</span>
-<span class="fc" id="L53">        Courier saved = courierRepository.saveAndFlush(courier);</span>
+<span class="nc" id="L52">        Courier courier = Courier.brandNew(input.name(), input.phone());</span>
+<span class="nc" id="L53">        Courier saved = courierRepository.saveAndFlush(courier);</span>
 
-<span class="fc" id="L55">        log.info(&quot;Courier created successfully with id: {}&quot;, saved.getId());</span>
-<span class="fc" id="L56">        return saved;</span>
+<span class="nc" id="L55">        log.info(&quot;Courier created successfully with id: {}&quot;, saved.getId());</span>
+<span class="nc" id="L56">        return saved;</span>
     }
 
     /**
@@ -69,18 +69,18 @@ public class CourierRegistrationService {
      * @throws DomainException se nenhum entregador for encontrado com o ID informado
      */
     public Courier update(UUID courierId, CourierInput input) {
-<span class="fc" id="L72">        log.info(&quot;Updating courier with id: {}&quot;, courierId);</span>
+<span class="nc" id="L72">        log.info(&quot;Updating courier with id: {}&quot;, courierId);</span>
 
-<span class="fc" id="L74">        Courier courier = courierRepository.findById(courierId)</span>
-<span class="fc" id="L75">                .orElseThrow(() -&gt; new DomainException(</span>
+<span class="nc" id="L74">        Courier courier = courierRepository.findById(courierId)</span>
+<span class="nc" id="L75">                .orElseThrow(() -&gt; new DomainException(</span>
                         &quot;Courier not found: &quot; + courierId));
 
-<span class="fc" id="L78">        courier.setPhone(input.phone());</span>
-<span class="fc" id="L79">        courier.setName(input.name());</span>
-<span class="fc" id="L80">        Courier updated = courierRepository.saveAndFlush(courier);</span>
+<span class="nc" id="L78">        courier.setPhone(input.phone());</span>
+<span class="nc" id="L79">        courier.setName(input.name());</span>
+<span class="nc" id="L80">        Courier updated = courierRepository.saveAndFlush(courier);</span>
 
-<span class="fc" id="L82">        log.info(&quot;Courier updated successfully with id: {}&quot;, courierId);</span>
-<span class="fc" id="L83">        return updated;</span>
+<span class="nc" id="L82">        log.info(&quot;Courier updated successfully with id: {}&quot;, courierId);</span>
+<span class="nc" id="L83">        return updated;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

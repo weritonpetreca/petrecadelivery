@@ -17,22 +17,22 @@ public class DeliveryCheckpointService {
     private final DeliveryRepository deliveryRepository;
 
     public void place(UUID deliveryId) {
-<span class="fc" id="L20">        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DomainException::new);</span>
-<span class="fc" id="L21">        delivery.place();</span>
-<span class="fc" id="L22">        deliveryRepository.saveAndFlush(delivery);</span>
-<span class="fc" id="L23">    }</span>
+<span class="nc" id="L20">        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DomainException::new);</span>
+<span class="nc" id="L21">        delivery.place();</span>
+<span class="nc" id="L22">        deliveryRepository.saveAndFlush(delivery);</span>
+<span class="nc" id="L23">    }</span>
 
     public void pickUp(UUID deliveryId, UUID courierId) {
-<span class="fc" id="L26">        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DomainException::new);</span>
-<span class="fc" id="L27">        delivery.pickUp(courierId);</span>
-<span class="fc" id="L28">        deliveryRepository.saveAndFlush(delivery);</span>
-<span class="fc" id="L29">    }</span>
+<span class="nc" id="L26">        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DomainException::new);</span>
+<span class="nc" id="L27">        delivery.pickUp(courierId);</span>
+<span class="nc" id="L28">        deliveryRepository.saveAndFlush(delivery);</span>
+<span class="nc" id="L29">    }</span>
 
     public void complete(UUID deliveryId) {
-<span class="fc" id="L32">        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DomainException::new);</span>
-<span class="fc" id="L33">        delivery.markAsDelivered();</span>
-<span class="fc" id="L34">        deliveryRepository.saveAndFlush(delivery);</span>
+<span class="nc" id="L32">        Delivery delivery = deliveryRepository.findById(deliveryId).orElseThrow(DomainException::new);</span>
+<span class="nc" id="L33">        delivery.markAsDelivered();</span>
+<span class="nc" id="L34">        deliveryRepository.saveAndFlush(delivery);</span>
 
-<span class="fc" id="L36">    }</span>
+<span class="nc" id="L36">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -26,65 +26,65 @@ public class DeliveryPreparationService {
 
     @Transactional
     public Delivery draft(DeliveryInput input) {
-<span class="fc" id="L29">        Delivery delivery = Delivery.draft();</span>
-<span class="fc" id="L30">        handlePreparation(input, delivery);</span>
-<span class="fc" id="L31">        return deliveryRepository.saveAndFlush(delivery);</span>
+<span class="nc" id="L29">        Delivery delivery = Delivery.draft();</span>
+<span class="nc" id="L30">        handlePreparation(input, delivery);</span>
+<span class="nc" id="L31">        return deliveryRepository.saveAndFlush(delivery);</span>
     }
 
     @Transactional
     public Delivery edit(UUID deliveryId, DeliveryInput input) {
-<span class="fc" id="L36">        Delivery delivery = deliveryRepository.findById(deliveryId)</span>
-<span class="fc" id="L37">                .orElseThrow(() -&gt; new DomainException(&quot;Delivery with ID &quot; + deliveryId + &quot; not found.&quot;));</span>
-<span class="fc" id="L38">        delivery.removeItems();</span>
-<span class="fc" id="L39">        handlePreparation(input, delivery);</span>
-<span class="fc" id="L40">        return deliveryRepository.saveAndFlush(delivery);</span>
+<span class="nc" id="L36">        Delivery delivery = deliveryRepository.findById(deliveryId)</span>
+<span class="nc" id="L37">                .orElseThrow(() -&gt; new DomainException(&quot;Delivery with ID &quot; + deliveryId + &quot; not found.&quot;));</span>
+<span class="nc" id="L38">        delivery.removeItems();</span>
+<span class="nc" id="L39">        handlePreparation(input, delivery);</span>
+<span class="nc" id="L40">        return deliveryRepository.saveAndFlush(delivery);</span>
     }
 
     private void handlePreparation(DeliveryInput input, Delivery delivery) {
-<span class="fc" id="L44">        ContactPointInput senderInput = input.sender();</span>
-<span class="fc" id="L45">        ContactPointInput recipientInput = input.recipient();</span>
+<span class="nc" id="L44">        ContactPointInput senderInput = input.sender();</span>
+<span class="nc" id="L45">        ContactPointInput recipientInput = input.recipient();</span>
 
-<span class="fc" id="L47">        ContactPoint sender = ContactPoint.builder()</span>
-<span class="fc" id="L48">                .phone(senderInput.phone())</span>
-<span class="fc" id="L49">                .name(senderInput.name())</span>
-<span class="fc" id="L50">                .complement(senderInput.complement())</span>
-<span class="fc" id="L51">                .number(senderInput.number())</span>
-<span class="fc" id="L52">                .zipCode(senderInput.zipCode())</span>
-<span class="fc" id="L53">                .street(senderInput.street())</span>
-<span class="fc" id="L54">                .build();</span>
+<span class="nc" id="L47">        ContactPoint sender = ContactPoint.builder()</span>
+<span class="nc" id="L48">                .phone(senderInput.phone())</span>
+<span class="nc" id="L49">                .name(senderInput.name())</span>
+<span class="nc" id="L50">                .complement(senderInput.complement())</span>
+<span class="nc" id="L51">                .number(senderInput.number())</span>
+<span class="nc" id="L52">                .zipCode(senderInput.zipCode())</span>
+<span class="nc" id="L53">                .street(senderInput.street())</span>
+<span class="nc" id="L54">                .build();</span>
 
-<span class="fc" id="L56">        ContactPoint recipient = ContactPoint.builder()</span>
-<span class="fc" id="L57">                .phone(recipientInput.phone())</span>
-<span class="fc" id="L58">                .name(recipientInput.name())</span>
-<span class="fc" id="L59">                .complement(recipientInput.complement())</span>
-<span class="fc" id="L60">                .number(recipientInput.number())</span>
-<span class="fc" id="L61">                .zipCode(recipientInput.zipCode())</span>
-<span class="fc" id="L62">                .street(recipientInput.street())</span>
-<span class="fc" id="L63">                .build();</span>
+<span class="nc" id="L56">        ContactPoint recipient = ContactPoint.builder()</span>
+<span class="nc" id="L57">                .phone(recipientInput.phone())</span>
+<span class="nc" id="L58">                .name(recipientInput.name())</span>
+<span class="nc" id="L59">                .complement(recipientInput.complement())</span>
+<span class="nc" id="L60">                .number(recipientInput.number())</span>
+<span class="nc" id="L61">                .zipCode(recipientInput.zipCode())</span>
+<span class="nc" id="L62">                .street(recipientInput.street())</span>
+<span class="nc" id="L63">                .build();</span>
 
-<span class="fc" id="L65">        DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);</span>
-<span class="fc" id="L66">        BigDecimal calculatedPayout = courierPayoutCalculationService.calculatePayout(estimate.getDistanceInKm());</span>
+<span class="nc" id="L65">        DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);</span>
+<span class="nc" id="L66">        BigDecimal calculatedPayout = courierPayoutCalculationService.calculatePayout(estimate.getDistanceInKm());</span>
         
-<span class="fc" id="L68">        BigDecimal distanceFee = calculateFee(estimate.getDistanceInKm());</span>
+<span class="nc" id="L68">        BigDecimal distanceFee = calculateFee(estimate.getDistanceInKm());</span>
 
 
-<span class="fc" id="L71">        Delivery.PreparationDetails preparationDetails = Delivery.PreparationDetails.builder()</span>
-<span class="fc" id="L72">                .recipient(recipient)</span>
-<span class="fc" id="L73">                .sender(sender)</span>
-<span class="fc" id="L74">                .expectedDeliveryTime(estimate.getEstimatedTime())</span>
-<span class="fc" id="L75">                .courierPayout(calculatedPayout)</span>
-<span class="fc" id="L76">                .distanceFee(distanceFee)</span>
-<span class="fc" id="L77">                .build();</span>
+<span class="nc" id="L71">        Delivery.PreparationDetails preparationDetails = Delivery.PreparationDetails.builder()</span>
+<span class="nc" id="L72">                .recipient(recipient)</span>
+<span class="nc" id="L73">                .sender(sender)</span>
+<span class="nc" id="L74">                .expectedDeliveryTime(estimate.getEstimatedTime())</span>
+<span class="nc" id="L75">                .courierPayout(calculatedPayout)</span>
+<span class="nc" id="L76">                .distanceFee(distanceFee)</span>
+<span class="nc" id="L77">                .build();</span>
 
-<span class="fc" id="L79">        delivery.editPreparationDetails(preparationDetails);</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">        for (ItemInput itemInput: input.items()) {</span>
-<span class="fc" id="L81">            delivery.addItem(itemInput.name(), itemInput.quantity());</span>
-<span class="fc" id="L82">        }</span>
-<span class="fc" id="L83">    }</span>
+<span class="nc" id="L79">        delivery.editPreparationDetails(preparationDetails);</span>
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        for (ItemInput itemInput: input.items()) {</span>
+<span class="nc" id="L81">            delivery.addItem(itemInput.name(), itemInput.quantity());</span>
+<span class="nc" id="L82">        }</span>
+<span class="nc" id="L83">    }</span>
 
     private BigDecimal calculateFee(Double distanceInKm) {
-<span class="fc" id="L86">        return new BigDecimal(&quot;3&quot;).multiply(BigDecimal.valueOf(distanceInKm))</span>
-<span class="fc" id="L87">                .setScale(2, RoundingMode.HALF_EVEN);</span>
+<span class="nc" id="L86">        return new BigDecimal(&quot;3&quot;).multiply(BigDecimal.valueOf(distanceInKm))</span>
+<span class="nc" id="L87">                .setScale(2, RoundingMode.HALF_EVEN);</span>
     }
 
 

@@ -18,13 +18,13 @@ public class CourierPayoutCalculationServiceHttpImpl implements CourierPayoutCal
     @Override
     public BigDecimal calculatePayout(Double distanceInKm) {
         try {
-<span class="fc" id="L21">            CourierPayoutResultModel courierPayoutResultModel1 = courierAPIClient.payoutCalculation(</span>
+<span class="nc" id="L21">            CourierPayoutResultModel courierPayoutResultModel1 = courierAPIClient.payoutCalculation(</span>
                     new CourierPayoutCalculationInput(distanceInKm));
-<span class="fc" id="L23">            return courierPayoutResultModel1.getPayoutFee();</span>
-<span class="fc" id="L24">        } catch (ResourceAccessException e) {</span>
-<span class="fc" id="L25">            throw new GatewayTimeoutException(e);</span>
-<span class="fc" id="L26">        } catch (HttpServerErrorException | CallNotPermittedException | IllegalArgumentException e) {</span>
-<span class="fc" id="L27">            throw new BadGatewayException(e);</span>
+<span class="nc" id="L23">            return courierPayoutResultModel1.getPayoutFee();</span>
+<span class="nc" id="L24">        } catch (ResourceAccessException e) {</span>
+<span class="nc" id="L25">            throw new GatewayTimeoutException(e);</span>
+<span class="nc" id="L26">        } catch (HttpServerErrorException | CallNotPermittedException | IllegalArgumentException e) {</span>
+<span class="nc" id="L27">            throw new BadGatewayException(e);</span>
         }
     }
 }

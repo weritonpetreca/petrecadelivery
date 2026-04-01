@@ -33,7 +33,7 @@ import java.time.Instant;
  * }&lt;/pre&gt;
  */
 @RestControllerAdvice
-<span class="fc" id="L36">public class GlobalExceptionHandler {</span>
+<span class="nc" id="L36">public class GlobalExceptionHandler {</span>
 
     /**
      * Trata {@link DomainException} mapeando para HTTP 404 Not Found.
@@ -48,10 +48,10 @@ import java.time.Instant;
      */
     @ExceptionHandler(DomainException.class)
     public ProblemDetail handleDomainException(DomainException ex) {
-<span class="fc" id="L51">        ProblemDetail problem = ProblemDetail</span>
-<span class="fc" id="L52">                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
-<span class="fc" id="L53">        problem.setProperty(&quot;timestamp&quot;, Instant.now());</span>
-<span class="fc" id="L54">        return problem;</span>
+<span class="nc" id="L51">        ProblemDetail problem = ProblemDetail</span>
+<span class="nc" id="L52">                .forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());</span>
+<span class="nc" id="L53">        problem.setProperty(&quot;timestamp&quot;, Instant.now());</span>
+<span class="nc" id="L54">        return problem;</span>
     }
 
     @ExceptionHandler(NoCouriersAvailableException.class)
