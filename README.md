@@ -116,6 +116,8 @@ graph TD
     classDef observability fill:#E6522C,color:#fff,stroke:#C13C1A
 ```
 
+---
+
 ## 🏰 The Four Schools — Microservices
 
 | School | Port | The Sign It Casts |
