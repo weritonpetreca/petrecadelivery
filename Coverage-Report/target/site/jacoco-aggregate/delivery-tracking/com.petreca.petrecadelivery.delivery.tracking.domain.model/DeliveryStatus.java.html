@@ -3,20 +3,20 @@
 import java.util.Arrays;
 import java.util.List;
 
-<span class="nc" id="L6">public enum DeliveryStatus {</span>
-<span class="nc" id="L7">    DRAFT,</span>
-<span class="nc" id="L8">    WAITING_FOR_COURIER(DRAFT),</span>
-<span class="nc" id="L9">    IN_TRANSIT(WAITING_FOR_COURIER),</span>
-<span class="nc" id="L10">    DELIVERED(IN_TRANSIT);</span>
+<span class="fc" id="L6">public enum DeliveryStatus {</span>
+<span class="fc" id="L7">    DRAFT,</span>
+<span class="fc" id="L8">    WAITING_FOR_COURIER(DRAFT),</span>
+<span class="fc" id="L9">    IN_TRANSIT(WAITING_FOR_COURIER),</span>
+<span class="fc" id="L10">    DELIVERED(IN_TRANSIT);</span>
 
     private final List&lt;DeliveryStatus&gt; previousStatuses;
 
-<span class="nc" id="L14">    DeliveryStatus(DeliveryStatus... previousStatuses) {</span>
-<span class="nc" id="L15">        this.previousStatuses = Arrays.asList(previousStatuses);</span>
-<span class="nc" id="L16">    }</span>
+<span class="fc" id="L14">    DeliveryStatus(DeliveryStatus... previousStatuses) {</span>
+<span class="fc" id="L15">        this.previousStatuses = Arrays.asList(previousStatuses);</span>
+<span class="fc" id="L16">    }</span>
 
     public boolean canChangeTo(DeliveryStatus newStatus) {
-<span class="nc" id="L19">        return newStatus.previousStatuses.contains(this);</span>
+<span class="fc" id="L19">        return newStatus.previousStatuses.contains(this);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

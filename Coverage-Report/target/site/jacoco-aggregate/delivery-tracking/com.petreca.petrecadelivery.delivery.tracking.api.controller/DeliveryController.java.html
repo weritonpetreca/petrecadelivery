@@ -30,7 +30,7 @@ public class DeliveryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Delivery draft(@RequestBody @Valid DeliveryInput input) {
-<span class="nc" id="L33">        return deliveryPreparationService.draft(input);</span>
+<span class="fc" id="L33">        return deliveryPreparationService.draft(input);</span>
     }
 
     @PutMapping(&quot;/{deliveryId}&quot;)
@@ -47,15 +47,15 @@ public class DeliveryController {
 
     @GetMapping(&quot;/{deliveryId}&quot;)
     public Delivery findById(@PathVariable UUID deliveryId) {
-<span class="nc" id="L50">        return deliveryRepository.findById(deliveryId)</span>
-<span class="nc" id="L51">                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND));</span>
+<span class="fc" id="L50">        return deliveryRepository.findById(deliveryId)</span>
+<span class="fc" id="L51">                .orElseThrow(() -&gt; new ResponseStatusException(HttpStatus.NOT_FOUND));</span>
     }
 
     @PostMapping(&quot;/{deliveryId}/placement&quot;)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void place(@PathVariable UUID deliveryId) {
-<span class="nc" id="L57">        deliveryCheckpointService.place(deliveryId);</span>
-<span class="nc" id="L58">    }</span>
+<span class="fc" id="L57">        deliveryCheckpointService.place(deliveryId);</span>
+<span class="fc" id="L58">    }</span>
 
     @PostMapping(&quot;/{deliveryId}/pickups&quot;)
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -67,7 +67,7 @@ public class DeliveryController {
     @PostMapping(&quot;/{deliveryId}/completion&quot;)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void complete(@PathVariable UUID deliveryId) {
-<span class="nc" id="L70">        deliveryCheckpointService.complete(deliveryId);</span>
-<span class="nc" id="L71">    }</span>
+<span class="fc" id="L70">        deliveryCheckpointService.complete(deliveryId);</span>
+<span class="fc" id="L71">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

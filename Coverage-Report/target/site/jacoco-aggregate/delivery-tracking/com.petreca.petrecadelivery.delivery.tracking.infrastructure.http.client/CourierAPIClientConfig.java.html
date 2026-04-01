@@ -12,29 +12,29 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import java.time.Duration;
 
 @Configuration
-<span class="nc" id="L15">public class CourierAPIClientConfig {</span>
+<span class="fc" id="L15">public class CourierAPIClientConfig {</span>
 
     @Bean
     @LoadBalanced
     public RestClient.Builder loadBalancedRestClientBuilder() {
-<span class="nc" id="L20">        return RestClient.builder();</span>
+<span class="fc" id="L20">        return RestClient.builder();</span>
     }
 
     @Bean
     public CourierAPIClient courierAPIClient(RestClient.Builder builder) {
-<span class="nc" id="L25">        RestClient restClient = builder.baseUrl(&quot;http://courier-management&quot;)</span>
-<span class="nc" id="L26">                .requestFactory(generateClientRequestFactory())</span>
-<span class="nc" id="L27">                .build();</span>
-<span class="nc" id="L28">        RestClientAdapter adapter = RestClientAdapter.create(restClient);</span>
-<span class="nc" id="L29">        HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(adapter).build();</span>
-<span class="nc" id="L30">        return proxyFactory.createClient(CourierAPIClient.class);</span>
+<span class="fc" id="L25">        RestClient restClient = builder.baseUrl(&quot;http://courier-management&quot;)</span>
+<span class="fc" id="L26">                .requestFactory(generateClientRequestFactory())</span>
+<span class="fc" id="L27">                .build();</span>
+<span class="fc" id="L28">        RestClientAdapter adapter = RestClientAdapter.create(restClient);</span>
+<span class="fc" id="L29">        HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(adapter).build();</span>
+<span class="fc" id="L30">        return proxyFactory.createClient(CourierAPIClient.class);</span>
     }
 
     private ClientHttpRequestFactory generateClientRequestFactory() {
-<span class="nc" id="L34">        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();</span>
-<span class="nc" id="L35">        factory.setConnectTimeout(Duration.ofMillis(10));</span>
-<span class="nc" id="L36">        factory.setReadTimeout(Duration.ofMillis(200));</span>
-<span class="nc" id="L37">        return factory;</span>
+<span class="fc" id="L34">        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();</span>
+<span class="fc" id="L35">        factory.setConnectTimeout(Duration.ofMillis(10));</span>
+<span class="fc" id="L36">        factory.setReadTimeout(Duration.ofMillis(200));</span>
+<span class="fc" id="L37">        return factory;</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

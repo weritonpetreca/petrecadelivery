@@ -14,25 +14,25 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
-<span class="nc" id="L17">@Slf4j</span>
+<span class="fc" id="L17">@Slf4j</span>
 public class CourierDeliveryService {
 
     private final CourierRepository courierRepository;
 
     public void assign(UUID deliveryId){
-<span class="nc" id="L23">        Courier courier = courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc()</span>
-<span class="nc" id="L24">                .orElseThrow(() -&gt; new NoCouriersAvailableException(&quot;No couriers available for assignment.&quot;));</span>
-<span class="nc" id="L25">        courier.assign(deliveryId);</span>
-<span class="nc" id="L26">        courierRepository.saveAndFlush(courier);</span>
-<span class="nc" id="L27">        log.info(&quot;Courier {} assigned to delivery {}&quot;, courier.getId(), deliveryId);</span>
-<span class="nc" id="L28">    }</span>
+<span class="fc" id="L23">        Courier courier = courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc()</span>
+<span class="fc" id="L24">                .orElseThrow(() -&gt; new NoCouriersAvailableException(&quot;No couriers available for assignment.&quot;));</span>
+<span class="fc" id="L25">        courier.assign(deliveryId);</span>
+<span class="fc" id="L26">        courierRepository.saveAndFlush(courier);</span>
+<span class="fc" id="L27">        log.info(&quot;Courier {} assigned to delivery {}&quot;, courier.getId(), deliveryId);</span>
+<span class="fc" id="L28">    }</span>
 
     public void fulfill(UUID deliveryId) {
-<span class="nc" id="L31">        Courier courier = courierRepository.findByPendingDeliveries_id(deliveryId)</span>
-<span class="nc" id="L32">                .orElseThrow(() -&gt; new DomainException(&quot;No courier found currently assigned to delivery: &quot; + deliveryId));</span>
-<span class="nc" id="L33">        courier.fulfill(deliveryId);</span>
-<span class="nc" id="L34">        courierRepository.saveAndFlush(courier);</span>
-<span class="nc" id="L35">        log.info(&quot;Courier {} fulfilled delivery {}&quot;, courier.getId(), deliveryId);</span>
-<span class="nc" id="L36">    }</span>
+<span class="fc" id="L31">        Courier courier = courierRepository.findByPendingDeliveries_id(deliveryId)</span>
+<span class="fc" id="L32">                .orElseThrow(() -&gt; new DomainException(&quot;No courier found currently assigned to delivery: &quot; + deliveryId));</span>
+<span class="fc" id="L33">        courier.fulfill(deliveryId);</span>
+<span class="fc" id="L34">        courierRepository.saveAndFlush(courier);</span>
+<span class="fc" id="L35">        log.info(&quot;Courier {} fulfilled delivery {}&quot;, courier.getId(), deliveryId);</span>
+<span class="fc" id="L36">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
