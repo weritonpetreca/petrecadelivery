@@ -39,15 +39,15 @@ public class Courier {
     private List&lt;AssignedDelivery&gt; pendingDeliveries = new ArrayList&lt;&gt;();
 
     public List&lt;AssignedDelivery&gt; getPendingDeliveries() {
-<span class="fc" id="L42">        return Collections.unmodifiableList(this.pendingDeliveries);</span>
+<span class="nc" id="L42">        return Collections.unmodifiableList(this.pendingDeliveries);</span>
     }
 
     public static Courier brandNew(String name, String phone) {
-<span class="fc" id="L46">        Courier courier = new Courier();</span>
-<span class="fc" id="L47">        courier.setId(UUID.randomUUID());</span>
-<span class="fc" id="L48">        courier.setName(name);</span>
-<span class="fc" id="L49">        courier.setPhone(phone);</span>
-<span class="fc" id="L50">        return courier;</span>
+<span class="nc" id="L46">        Courier courier = new Courier();</span>
+<span class="nc" id="L47">        courier.setId(UUID.randomUUID());</span>
+<span class="nc" id="L48">        courier.setName(name);</span>
+<span class="nc" id="L49">        courier.setPhone(phone);</span>
+<span class="nc" id="L50">        return courier;</span>
     }
 
     public void assign(UUID deliveryId) {

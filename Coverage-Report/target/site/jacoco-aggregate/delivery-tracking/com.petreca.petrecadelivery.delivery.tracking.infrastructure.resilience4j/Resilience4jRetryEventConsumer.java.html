@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
-<span class="fc" id="L12">@Slf4j</span>
-<span class="fc" id="L13">public class Resilience4jRetryEventConsumer implements RegistryEventConsumer&lt;Retry&gt; {</span>
+<span class="nc" id="L12">@Slf4j</span>
+<span class="nc" id="L13">public class Resilience4jRetryEventConsumer implements RegistryEventConsumer&lt;Retry&gt; {</span>
     @Override
     public void onEntryAddedEvent(EntryAddedEvent&lt;Retry&gt; entryAddedEvent) {
 <span class="nc" id="L16">        entryAddedEvent.getAddedEntry().getEventPublisher()</span>

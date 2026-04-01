@@ -8,19 +8,19 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
 @EnableWebFluxSecurity
-<span class="fc" id="L11">public class SecurityConfig {</span>
+<span class="nc" id="L11">public class SecurityConfig {</span>
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-<span class="fc" id="L15">        http</span>
-<span class="fc" id="L16">                .csrf(ServerHttpSecurity.CsrfSpec::disable)</span>
-<span class="fc" id="L17">                .authorizeExchange(exchanges -&gt; exchanges</span>
-<span class="fc" id="L18">                        .pathMatchers(&quot;/public/**&quot;).permitAll()</span>
-<span class="fc" id="L19">                        .pathMatchers(&quot;/actuator/**&quot;).permitAll()</span>
-<span class="fc" id="L20">                        .anyExchange().authenticated()</span>
+<span class="nc" id="L15">        http</span>
+<span class="nc" id="L16">                .csrf(ServerHttpSecurity.CsrfSpec::disable)</span>
+<span class="nc" id="L17">                .authorizeExchange(exchanges -&gt; exchanges</span>
+<span class="nc" id="L18">                        .pathMatchers(&quot;/public/**&quot;).permitAll()</span>
+<span class="nc" id="L19">                        .pathMatchers(&quot;/actuator/**&quot;).permitAll()</span>
+<span class="nc" id="L20">                        .anyExchange().authenticated()</span>
                 )
-<span class="fc" id="L22">                .oauth2ResourceServer(oauth2 -&gt; oauth2.jwt(jwt -&gt; {}));</span>
-<span class="fc" id="L23">        return http.build();</span>
+<span class="nc" id="L22">                .oauth2ResourceServer(oauth2 -&gt; oauth2.jwt(jwt -&gt; {}));</span>
+<span class="nc" id="L23">        return http.build();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -35,7 +35,7 @@ public class CourierQueryService {
      * @return modelo paginado com os entregadores encontrados
      */
     public PagedModel&lt;Courier&gt; findAll(Pageable pageable) {
-<span class="fc" id="L38">        return new PagedModel&lt;&gt;(courierRepository.findAll(pageable));</span>
+<span class="nc" id="L38">        return new PagedModel&lt;&gt;(courierRepository.findAll(pageable));</span>
     }
 
     /**
@@ -46,8 +46,8 @@ public class CourierQueryService {
      * @throws DomainException se nenhum entregador for encontrado com o ID informado
      */
     public Courier findById(UUID courierId) {
-<span class="fc" id="L49">        return courierRepository.findById(courierId)</span>
-<span class="fc" id="L50">                .orElseThrow(() -&gt; new DomainException(&quot;Courier not found: &quot; + courierId));</span>
+<span class="nc" id="L49">        return courierRepository.findById(courierId)</span>
+<span class="nc" id="L50">                .orElseThrow(() -&gt; new DomainException(&quot;Courier not found: &quot; + courierId));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

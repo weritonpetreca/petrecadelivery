@@ -1,26 +1,33 @@
-<div align="center">
-
 # ⚔️ PetrecaDelivery
 
 ### *"Evil is evil. Lesser, greater, middling — it's all the same. But a witcher must choose."*
 ### *— And this witcher chose microservices.*
 
-<br/>
+&nbsp;
 
-![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
-![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.5-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![Spring Cloud](https://img.shields.io/badge/Spring_Cloud_2025-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL_17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
-![Resilience4j](https://img.shields.io/badge/Resilience4j_2.3-4CAF50?style=for-the-badge&logo=java&logoColor=white)
-![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)
-![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)
-![Keycloak](https://img.shields.io/badge/Keycloak-4D4D4D?style=for-the-badge&logo=keycloak&logoColor=white)
-![OAuth2](https://img.shields.io/badge/OAuth2-3C873A?style=for-the-badge&logo=auth0&logoColor=white)
+[![Java](https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot_3.5-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Spring Cloud](https://img.shields.io/badge/Spring_Cloud_2025-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-cloud)
+[![Apache Kafka](https://img.shields.io/badge/Apache_Kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white)](https://kafka.apache.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL_17-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
+[![Resilience4j](https://img.shields.io/badge/Resilience4j_2.3-4CAF50?style=for-the-badge&logo=java&logoColor=white)](https://resilience4j.readme.io/)
+[![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io/)
+[![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
+[![Keycloak](https://img.shields.io/badge/Keycloak-4D4D4D?style=for-the-badge&logo=keycloak&logoColor=white)](https://www.keycloak.org/)
+[![OAuth2](https://img.shields.io/badge/OAuth2-3C873A?style=for-the-badge&logo=auth0&logoColor=white)](https://oauth.net/2/)
+[![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-000000?style=for-the-badge&logo=opentelemetry&logoColor=white)](https://opentelemetry.io/)
+[![Jaeger](https://img.shields.io/badge/Jaeger-66CFE3?style=for-the-badge&logo=jaeger&logoColor=white)](https://www.jaegertracing.io/)
+[![Loki](https://img.shields.io/badge/Loki-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/oss/loki/)
 
-</div>
+&nbsp;
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=alert_status)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=coverage)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=bugs)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=vulnerabilities)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=security_rating)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
 
 ---
 
@@ -29,7 +36,6 @@
 > *In the Continent, monsters lurk in every shadow. In the world of distributed systems, the monsters have different names: cascading failures, tight coupling, single points of failure. Just as Geralt of Rivia wanders the Continent slaying beasts with silver and steel, **PetrecaDelivery** was forged to slay the complexity of modern delivery logistics — with microservices and resilience patterns.*
 
 **PetrecaDelivery** is a production-grade delivery platform built on a microservices architecture. Each service is an independent witcher school — specialized, autonomous, and battle-hardened. They communicate through a **Service Registry** (the Witchers' notice board), an **API Gateway** (the city gates), and **Apache Kafka** (the ravens carrying messages across the Continent).
-
 
 ---
 
@@ -85,6 +91,8 @@ graph TD
 
     subgraph "🔭 Observability"
         PROM["📈 Prometheus :9090"]:::observability
+        LOKI["📝 Loki :3100"]:::observability
+        JAEG["🕸️ Jaeger :16686"]:::observability
         GRAF["📉 Grafana :3000"]:::observability
     end
 
@@ -93,11 +101,10 @@ graph TD
     PGA --- PG
     KUI --- K
 
-    DT -- "exposes /actuator/prometheus" --> PROM
-    CM -- "exposes /actuator/prometheus" --> PROM
-    GW -- "exposes /actuator/prometheus" --> PROM
-    SR -- "exposes /actuator/prometheus" --> PROM
-    PROM -- "datasource" --> GRAF
+    DT & CM & GW & SR -- "Metrics" --> PROM
+    DT & CM & GW & SR -- "Logs" --> LOKI
+    DT & CM & GW & SR -- "Traces" --> JAEG
+    PROM & LOKI & JAEG -- "Datasources" --> GRAF
 
     classDef client fill:#8B4513,color:#fff,stroke:#5C2D0A
     classDef security fill:#8B0000,color:#fff,stroke:#5C0000
@@ -113,280 +120,310 @@ graph TD
 
 ## 🏰 The Four Schools — Microservices
 
-> *Every witcher school has its own mutations, its own signs, its own purpose. So do our services.*
-
 | School | Port | The Sign It Casts |
-| :--- | :---: | :--- |
+| --- | --- | --- |
 | 📍 **Service Registry** | `8761` | The **Axii** sign — bends all services to register and be found. The Eureka Server that holds the map of the Continent. |
-| 🚪 **API Gateway** | `9999` | The **Quen** shield — the single protective barrier between the outside world and the inner services. Routes traffic and applies **Retry** and **Circuit Breaker** patterns via Resilience4j. Also exposes sanitized `/public/couriers` routes, stripping sensitive fields from responses. |
-| 🚚 **Delivery Tracking** | `8080` | The **Igni** flame — ignites the delivery lifecycle. Manages creation, editing, and every checkpoint of a delivery. Publishes domain events to Kafka and calls Courier Management via HTTP (also protected by its own Resilience4j Retry + Circuit Breaker). |
-| 🛵 **Courier Management** | `8081` | The **Aard** blast — the force that assigns couriers to deliveries. Manages the full courier lifecycle, calculates payouts, and reacts to Kafka events from Delivery Tracking. |
+| 🚪 **API Gateway** | `9999` | The **Quen** shield — the single protective barrier between the outside world and the inner services. Routes traffic and applies **Retry** and **Circuit Breaker** patterns via Resilience4j. |
+| 🚚 **Delivery Tracking** | `8080` | The **Igni** flame — ignites the delivery lifecycle. Manages creation, editing, and every checkpoint of a delivery. Publishes domain events to Kafka. |
+| 🛵 **Courier Management** | `8081` | The **Aard** blast — assigns couriers to deliveries, manages the full courier lifecycle, and reacts to Kafka events from Delivery Tracking. |
 
 ---
 
 ## 🔄 The Delivery Lifecycle — A Witcher Contract
-
-> *Every contract has stages. So does every delivery.*
 
 ```
   [DRAFT] ──place()──► [WAITING_FOR_COURIER] ──pickUp()──► [IN_TRANSIT] ──complete()──► [DELIVERED]
 ```
 
 | Status | Meaning |
-| :--- | :--- |
-| `DRAFT` | The contract is written but not yet posted on the notice board. |
-| `WAITING_FOR_COURIER` | Posted on the board. A `DeliveryPlacedEvent` is fired to Kafka. Couriers are notified. |
-| `IN_TRANSIT` | A witcher (courier) accepted the contract. A `DeliveryPickedUpEvent` is fired. |
-| `DELIVERED` | The contract is fulfilled. A `DeliveryFulfilledEvent` is fired. The courier's stats are updated. |
+| --- | --- |
+| `DRAFT` | The contract is written but not yet posted. |
+| `WAITING_FOR_COURIER` | Posted on the board. A `DeliveryPlacedEvent` is fired to Kafka. |
+| `IN_TRANSIT` | A courier accepted the contract. A `DeliveryPickedUpEvent` is fired. |
+| `DELIVERED` | The contract is fulfilled. A `DeliveryFulfilledEvent` is fired. Courier stats updated. |
 
 ---
 
 ## ⚡ Resilience Patterns — The Witcher's Armor
 
-> *"Monsters don't play fair. Neither does a distributed network."*
-
 The platform is armored with **Resilience4j** at two levels:
 
 **At the Gateway (protecting inbound traffic):**
-- **Retry** on `delivery-tracking-route`: 3 attempts with exponential backoff (`10ms → 20ms → 30ms`) on `5xx` errors for `GET` and `PUT`.
-- **Circuit Breaker** (`delivery-tracking-route-circuit-breaker`): Opens after 50% failure rate over 5 calls. Stays open for **5 seconds**, then enters `HALF_OPEN` to probe recovery.
+- **Retry** on `delivery-tracking-route`: 3 attempts with exponential backoff (`10ms → 20ms → 30ms`) on `5xx` errors.
+- **Circuit Breaker**: Opens after 50% failure rate over 5 calls. Stays open for **5 seconds**, then enters `HALF_OPEN`.
 
 **At Delivery Tracking (protecting outbound HTTP to Courier Management):**
-- **Retry** (`Retry_CourierAPIClient_payoutCalculation`): 3 attempts on `ResourceAccessException`.
-- **Circuit Breaker** (`CircuitBreaker_CourierAPIClient_payoutCalculation`): Same sliding window policy, opens for **5 seconds**.
+- **Retry**: 3 attempts on `ResourceAccessException`.
+- **Circuit Breaker**: Same sliding window policy, opens for **5 seconds**.
 
 ---
 
 ## 🔐 Security — The Witcher's Medallion
 
-> *"A witcher's medallion vibrates in the presence of magic. Our API Gateway vibrates in the presence of unauthorized requests."*
-
-The platform is secured with **OAuth2 and OpenID Connect** via **Keycloak**, implementing industry-standard authentication and authorization patterns.
-
-### 🎯 Security Architecture
-
-All API requests must carry a valid **JWT (JSON Web Token)** issued by Keycloak. The API Gateway acts as a **Resource Server**, validating tokens before routing requests to downstream services.
+The platform is secured with **OAuth2 and OpenID Connect** via **Keycloak**.
 
 ```
 Client → Keycloak (Authentication) → JWT Token → API Gateway (Validation) → Microservices
 ```
 
-### 🔑 Keycloak Configuration
+**Keycloak Admin:** http://localhost:8082 | admin / admin  
+**Realm:** `petreca-realm` (auto-imported on startup)
 
-**Access:** `http://localhost:8082`
-
-**Admin Console:**
-- Username: `admin`
-- Password: `admin`
-
-**Realm:** `petreca-realm` (automatically imported on startup)
-
-**Client:** `petreca-api-client`
-- Type: Public client
-- Grant Types: `password`, `authorization_code`
-- Redirect URIs: `*` (development only)
-
-### 🧙 Pre-Configured Test User
-
-The realm comes with a ready-to-use test user:
+**Test User** (created by `create-test-user.sh`):
 
 | Field | Value |
-| :--- | :--- |
+| --- | --- |
 | Username | `geralt` |
 | Password | `witcher123` |
 | Email | `geralt@kaermorhen.com` |
 
-### 🔒 How Authentication Works
+**Public vs Protected Routes:**
 
-**Step 1: Obtain Access Token**
+| Route Pattern | Auth Required |
+| --- | --- |
+| `/api/v1/deliveries/**` | ✅ Yes |
+| `/api/v1/couriers/**` | ✅ Yes |
+| `/public/couriers/**` | ❌ No |
 
-Request a JWT from Keycloak using the Resource Owner Password Credentials flow:
-
-```bash
-curl -X POST "http://localhost:8082/realms/petreca-realm/protocol/openid-connect/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=petreca-api-client" \
-  -d "grant_type=password" \
-  -d "username=geralt" \
-  -d "password=witcher123"
-```
-
-**Response:**
-```json
-{
-  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "expires_in": 300,
-  "refresh_expires_in": 1800,
-  "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-  "token_type": "Bearer"
-}
-```
-
-**Step 2: Use Token in API Requests**
-
-Include the `access_token` in the `Authorization` header:
-
-```bash
-curl -X GET "http://localhost:9999/api/v1/deliveries" \
-  -H "Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
-```
-
-### 🛡️ Token Validation
-
-The API Gateway validates every incoming request:
-
-1. **Signature Verification**: Ensures the token was issued by Keycloak
-2. **Expiration Check**: Rejects expired tokens (5-minute lifespan)
-3. **Issuer Validation**: Confirms `iss` claim matches `http://localhost:8082/realms/petreca-realm`
-4. **Audience Validation**: Verifies the token is intended for this API
-
-### 🔓 Public vs Protected Routes
-
-| Route Pattern | Authentication Required | Description |
-| :--- | :---: | :--- |
-| `/api/v1/deliveries/**` | ✅ Yes | Full delivery management (CRUD + lifecycle) |
-| `/api/v1/couriers/**` | ✅ Yes | Full courier management (CRUD + payouts) |
-| `/public/couriers` | ❌ No | Public courier list (sanitized, no sensitive data) |
-| `/public/couriers/{id}` | ❌ No | Public courier detail (sanitized) |
-
-### 🎯 Security Best Practices Implemented
-
-- ✅ **Centralized Authentication**: Single source of truth (Keycloak)
-- ✅ **Stateless Tokens**: No server-side session storage
-- ✅ **Short Token Lifespan**: 5-minute access tokens reduce exposure window
-- ✅ **Refresh Tokens**: 30-minute refresh tokens for seamless re-authentication
-- ✅ **HTTPS Ready**: Configuration supports TLS (use in production)
-- ✅ **Realm Isolation**: Separate realm for the application
-- ✅ **Automatic Realm Import**: `realm-export.json` ensures consistent setup
-
-### 📚 Further Reading
-
-Want to dive deeper into OAuth2 and Keycloak?
-- [OAuth 2.0 RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)
-- [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html)
-- [Keycloak Documentation](https://www.keycloak.org/documentation)
-- [Spring Security OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html)
+**Security practices implemented:** centralized auth, stateless JWT, 5-min token lifespan, 30-min refresh token, realm isolation, automatic realm import.
 
 ---
 
 ## 🏗️ Infrastructure — The Continent's Foundations
 
-> *Every great witcher needs a keep. Ours runs on Docker.*
-
-All infrastructure is provisioned via `docker-compose.yml`. The databases are **automatically created** on first boot via `init-databases.sql` — no manual steps required.
+All infrastructure is provisioned via `docker-compose.yml`.
 
 | Service | Port | Purpose |
-| :--- | :---: | :--- |
+| --- | --- | --- |
 | 🐘 **PostgreSQL 17** | `5432` | Relational persistence. Hosts `courierdb` and `deliverydb`. |
 | 🖥️ **pgAdmin 4** | `5050` | Web UI for PostgreSQL management. |
 | 📨 **Apache Kafka** (KRaft) | `9092` | Event streaming backbone. No Zookeeper needed. |
 | 📊 **Kafka UI** | `8090` | Web UI to inspect topics, partitions, and messages. |
+| 📡 **OTel Collector** | `4317` / `4318` | Receives traces and metrics from all services (gRPC/HTTP) and forwards to Jaeger and Prometheus. |
+| 🔍 **Jaeger** | `16686` | Distributed tracing UI. Visualizes end-to-end request traces. |
+| 📜 **Loki** | `3100` | Log aggregation engine. Collects and indexes logs from all services. |
 | 📈 **Prometheus** | `9090` | Metrics collection and time-series database. |
-| 📉 **Grafana** | `3000` | Metrics visualization and dashboards. |
-| 🔐 **Keycloak** | `8082` | Identity and Access Management (IAM). OAuth2/OpenID Connect provider. |
+| 📉 **Grafana** | `3000` | Unified observability dashboard hosting the **Petreca War Room**. |
+| 🔐 **Keycloak** | `8082` | Identity and Access Management. OAuth2/OIDC provider. |
 
 ---
 
 ## 🛠️ The Witcher's Arsenal — Tech Stack
 
-| Layer | Technology |
-| :--- | :--- |
-| **Language** | Java 21 (Virtual Threads ready) |
-| **Framework** | Spring Boot 3.5.4 |
-| **Service Discovery** | Spring Cloud Netflix Eureka (`2025.0.0`) |
-| **API Gateway** | Spring Cloud Gateway (WebFlux) |
-| **Security** | OAuth2 + OpenID Connect (Keycloak 24.0) |
-| **Async Messaging** | Spring for Apache Kafka |
-| **Resilience** | Resilience4j 2.3 (Circuit Breaker, Retry) |
-| **Observability** | Prometheus + Grafana (Spring Boot Actuator) |
-| **Persistence** | Spring Data JPA + Hibernate |
-| **Database** | PostgreSQL 17 |
-| **Containerization** | Docker & Docker Compose |
-| **Build** | Maven (multi-module from root) |
-| **Utilities** | Lombok, Bean Validation |
+| Layer | Technology                                     |
+| --- |------------------------------------------------|
+| **Language** | Java 21                                        |
+| **Framework** | Spring Boot 3.5.13                             |
+| **Service Discovery** | Spring Cloud Netflix Eureka (`2025.0.1`)       |
+| **API Gateway** | Spring Cloud Gateway (WebFlux)                 |
+| **Security** | OAuth2 + OIDC (Keycloak 24.0)                  |
+| **Async Messaging** | Spring for Apache Kafka                        |
+| **Resilience** | Resilience4j 2.3 (Circuit Breaker, Retry)      |
+| **Distributed Tracing** | OpenTelemetry + Jaeger                         |
+| **Log Aggregation** | Grafana Loki                                   |
+| **Observability** | Prometheus + Grafana (Spring Boot Actuator)    |
+| **Persistence** | Spring Data JPA + Hibernate                    |
+| **Database** | PostgreSQL 17                                  |
+| **Containerization** | Docker & Docker Compose                        |
+| **Build** | Maven (multi-module from root)                 |
+| **Code Quality & SAST** | SonarCloud (Quality Gate enforced on every PR) |
+| **Dependency Security** | OWASP Dependency-Check (NVD CVE scan)          |
+| **Test Coverage** | JaCoCo (reported to SonarCloud)                |
+| **Utilities** | Lombok, Bean Validation                        |
 
 ---
 
 ## 📋 Prerequisites — Before You Draw Your Sword
 
-Ensure the following are installed on your machine:
-
 - ☕ **JDK 21+**
 - 🐳 **Docker & Docker Compose**
 - 📦 **Apache Maven** (or use the included `./mvnw` wrapper)
-- 🖥️ An IDE of your choice (IntelliJ IDEA recommended)
+- 🖥️ IntelliJ IDEA (recommended)
+
+---
+
+## 🔑 Setting Up Repository Secrets
+
+> *"Knowledge is power. Guard it well — especially in GitHub Secrets."*
+
+This project uses two external services that require API keys: **OWASP Dependency-Check** (CVE scanning) and **SonarCloud** (SAST analysis). Both keys live as **GitHub Actions Secrets** — never hardcoded.
+
+---
+
+### 🛡️ Secret 1 — NVD API Key (OWASP Dependency-Check)
+
+The OWASP Dependency-Check plugin fetches CVEs from NIST's **National Vulnerability Database (NVD)**. Without an API key, requests are heavily rate-limited and builds may time out.
+
+**How to obtain (free, no account required):**
+
+1. Go to **https://nvd.nist.gov/developers/request-an-api-key**
+2. Enter your email and submit. No account creation needed.
+3. Check your inbox — click the verification link in the first email.
+4. A second email will contain your API key. Copy it.
+
+**How to add to GitHub:**
+
+1. Repository → **Settings → Secrets and variables → Actions → New repository secret**
+2. Name: `NVD_API_KEY` | Value: your key
+3. Click **Add secret**
+
+The workflow passes it to Maven via `-DnvdApiKey=${{ secrets.NVD_API_KEY }}`.
+
+---
+
+### 📊 Secret 2 — SonarCloud Token (SAST + Coverage)
+
+**SonarCloud** analyzes every push and pull request for bugs, vulnerabilities, code smells, and coverage. **Pull requests that fail the Quality Gate are blocked from merging into `main`.**
+
+**How to set up SonarCloud:**
+
+1. Go to **https://sonarcloud.io** → **Log in with GitHub**
+2. Click **+ → Analyze new project** → select `petrecadelivery` → **Set up**
+3. Choose **With GitHub Actions** as the analysis method
+4. Note your **project key** (typically `weritonpetreca_petrecadelivery`) — confirm it matches `sonar.projectKey` in `pom.xml`
+
+**How to generate your token:**
+
+1. SonarCloud → avatar → **My Account → Security**
+2. Under **Generate Tokens**, enter a name (e.g., `petrecadelivery-ci`) and click **Generate**
+3. Copy the token immediately — **it will not be shown again**
+
+**How to add to GitHub:**
+
+1. Repository → **Settings → Secrets and variables → Actions → New repository secret**
+2. Name: `SONAR_TOKEN` | Value: your token
+3. Click **Add secret**
+
+> After completing these steps, the **Quality Gate** and **Coverage** badges at the top of this README will display live data from your next CI run.
+
+---
+
+## 🛡️ CI/CD Pipeline — The Witcher's Preparation Ritual
+
+> *"A witcher who doesn't prepare is a witcher who doesn't return."*
+
+Every push and pull request triggers the pipeline. **No code enters `main` without passing the Quality Gate.**
+
+```
+Push / Pull Request
+       │
+       ▼
+┌─────────────────────────────────────────────┐
+│  1. Checkout & Set up Java 21               │
+│  2. Cache Maven dependencies                │
+│  3. mvn verify                              │
+│     ├── Unit + integration tests            │
+│     ├── JaCoCo coverage report              │
+│     └── OWASP Dependency-Check (NVD CVEs)   │
+│  4. SonarCloud SAST Analysis                │
+│     ├── Uploads JaCoCo coverage             │
+│     ├── Detects bugs, smells, vulns         │
+│     └── Evaluates Quality Gate              │
+│  5. ✅ PASSED → PR can merge                │
+│     ❌ FAILED → PR is blocked               │
+└─────────────────────────────────────────────┘
+```
+
+**To enforce the Quality Gate as a required PR check:**
+
+1. **Settings → Branches → Add rule** (branch pattern: `main`)
+2. Enable **Require status checks to pass before merging**
+3. Add `SonarCloud Code Analysis` as a required check
+4. Enable **Require branches to be up to date before merging**
+5. **Save changes**
+
+With this active, no pull request can merge if SonarCloud detects a new vulnerability, security hotspot, or coverage regression that breaks the gate.
 
 ---
 
 ## ⚡ How to Run — Summoning the Continent
 
-> *"If I'm to choose between one evil and another, I'd rather not choose at all."*
-> *— But here, you must follow the order below.*
+> *Follow the order below exactly.*
+
+### Step 0 — Clone the Repository
+
+```bash
+git clone https://github.com/weritonpetreca/petrecadelivery.git
+cd petrecadelivery
+```
 
 ### Step 1 — Raise the Infrastructure
-
-From the **project root**, start all infrastructure containers:
 
 ```bash
 docker-compose up -d
 ```
 
-This will start PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, and Keycloak in the background. The databases `courierdb` and `deliverydb` are **automatically created** by the init script. The Keycloak realm `petreca-realm` is **automatically imported** with a pre-configured test user. No manual setup needed.
+Starts PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, Loki, Jaeger, OTel Collector, and Keycloak. Wait **20–30 seconds** for all containers — especially Keycloak — to fully initialize.
 
-**Access URLs:**
-- **pgAdmin**: `http://localhost:5050` (admin@admin.com / admin)
-- **Kafka UI**: `http://localhost:8090`
-- **Prometheus**: `http://localhost:9090`
-- **Grafana**: `http://localhost:3000` (admin / admin)
-- **Keycloak**: `http://localhost:8082` (admin / admin)
-  - **Test User**: geralt / witcher123
+| Service | URL | Credentials |
+| --- | --- | --- |
+| pgAdmin | http://localhost:5050 | admin@admin.com / admin |
+| Kafka UI | http://localhost:8090 | — |
+| Prometheus | http://localhost:9090 | — |
+| Grafana (War Room) | http://localhost:3000 | admin / admin |
+| Jaeger | http://localhost:16686 | — |
+| Keycloak | http://localhost:8082 | admin / admin |
 
 ---
 
-### Step 2 — Build All Modules
+### Step 2 — Create the Test User in Keycloak
 
-From the **project root**, build the entire platform with a single command:
+> ⚠️ **Mandatory.** The user `geralt` must exist in the realm before authentication can succeed. Run this **before** starting microservices and **before** running the test script.
 
 ```bash
-./mvnw install -DskipTests
+chmod +x create-test-user.sh
+./create-test-user.sh
+```
+
+This calls the Keycloak Admin API to create `geralt / witcher123` in `petreca-realm`. If you get a connection error, Keycloak is still starting — wait a few seconds and try again.
+
+---
+
+### Step 3 — Build All Modules
+
+Before compiling, the Emperor's guards (OWASP Dependency-Check) will scan the project. You must provide your NVD API key to the local environment to prevent the build from crashing due to rate limits.
+
+```bash
+# 1. Export your API key
+export NVD_API_KEY="your_api_key_here"
+
+# 2. Build the platform (skipping tests for speed)
+./mvnw clean install -DskipTests
+````
+### **⚔️ The Witcher's Shortcut (Fast Build):**
+
+If you are just developing locally and want to completely skip the 3-minute security scan, you can bypass the OWASP plugin entirely:
+
+```bash
+./mvnw clean install -DskipTests -Ddependency-check.skip=true
 ```
 
 ---
 
-### Step 3 — Start the Microservices
+### Step 4 — Start the Microservices
 
-Start the services in the order below. Open a separate terminal for each.
-
-**A. Service Registry** *(start first — all others depend on it)*
+**A. Service Registry** *(start first)*
 
 ```bash
 cd Microservices/Service-Registry
 ./mvnw spring-boot:run
 ```
 
-Wait until the Eureka dashboard is available at `http://localhost:8761`.
+Wait for the Eureka dashboard at http://localhost:8761.
 
----
-
-**B. Delivery Tracking & Courier Management** *(order between them doesn't matter)*
+**B. Delivery Tracking & Courier Management** *(either order)*
 
 ```bash
 # Terminal 2
 cd Microservices/Delivery-Tracking
 ./mvnw spring-boot:run
-```
 
-```bash
 # Terminal 3
 cd Microservices/Courier-Management
 ./mvnw spring-boot:run
 ```
 
-> Delivery Tracking runs on port `8080` (default). Courier Management runs on port `8081` (configured in `application.yml`).
-
----
-
-**C. API Gateway** *(start last — it discovers already-registered services)*
+**C. API Gateway** *(start last)*
 
 ```bash
 # Terminal 4
@@ -398,507 +435,242 @@ cd Microservices/Gateway
 
 ### ✅ The Continent is Alive
 
-All services are up. Send all requests through the Gateway at `http://localhost:9999`.
+All services are up at `http://localhost:9999`.
+
+**Full startup sequence:**
+
+```
+1. docker-compose up -d           ← infrastructure + Keycloak
+2. ./create-test-user.sh           ← insert geralt into the realm  ← DO NOT SKIP
+3. Service-Registry                ← first microservice
+4. Delivery-Tracking               ← either order
+   Courier-Management              ← either order
+5. Gateway                         ← last microservice
+```
 
 ---
 
-## 🗡️ API Reference — The Witcher's Contracts
+## 🗡️ API Reference
 
-### Delivery Tracking Endpoints
+### Delivery Tracking
 
 | Method | Path | Description |
-| :--- | :--- | :--- |
+| --- | --- | --- |
 | `POST` | `/api/v1/deliveries` | Create a new delivery draft |
 | `PUT` | `/api/v1/deliveries/{id}` | Edit a draft delivery |
 | `GET` | `/api/v1/deliveries` | List all deliveries (paginated) |
 | `GET` | `/api/v1/deliveries/{id}` | Get a delivery by ID |
-| `POST` | `/api/v1/deliveries/{id}/placement` | Place the delivery (post to notice board) |
-| `POST` | `/api/v1/deliveries/{id}/pickups` | Assign a courier (pick up) |
-| `POST` | `/api/v1/deliveries/{id}/completion` | Mark delivery as completed |
+| `POST` | `/api/v1/deliveries/{id}/placement` | Place the delivery |
+| `POST` | `/api/v1/deliveries/{id}/pickups` | Assign a courier |
+| `POST` | `/api/v1/deliveries/{id}/completion` | Mark as completed |
 
-### Courier Management Endpoints
+### Courier Management
 
 | Method | Path | Description |
-| :--- | :--- | :--- |
+| --- | --- | --- |
 | `POST` | `/api/v1/couriers` | Register a new courier |
 | `PUT` | `/api/v1/couriers/{id}` | Update courier data |
 | `GET` | `/api/v1/couriers` | List all couriers (paginated) |
 | `GET` | `/api/v1/couriers/{id}` | Get a courier by ID |
-| `POST` | `/api/v1/couriers/payout-calculation` | Calculate payout for a given distance |
-| `GET` | `/public/couriers` | Public courier list (sensitive fields removed) |
-| `GET` | `/public/couriers/{id}` | Public courier detail (sensitive fields removed) |
+| `POST` | `/api/v1/couriers/payout-calculation` | Calculate payout for a distance |
+| `GET` | `/public/couriers` | Public list (sanitized) |
+| `GET` | `/public/couriers/{id}` | Public detail (sanitized) |
 
 ---
 
-## 🔥 Complete End-to-End Test — A Witcher's Full Contract
-
-> *"This is the way."* — Follow the path below to witness the full delivery lifecycle in action, including OAuth2 authentication.
+## 🔥 End-to-End Test — A Witcher's Full Contract
 
 ### Option 1: Automated Script (Recommended)
 
-The project includes a ready-to-use test script that handles authentication automatically. Simply run:
+> ⚠️ Run `./create-test-user.sh` first. The script authenticates as `geralt` — the user must already exist.
 
 ```bash
 chmod +x test-delivery-flow.sh
 ./test-delivery-flow.sh
 ```
 
-This script will automatically:
-1. **Authenticate with Keycloak** (obtain JWT token for user `geralt`)
-2. Create a courier (Geralt of Rivia)
-3. Draft a delivery contract
-4. Place the delivery on the notice board (fires `DeliveryPlacedEvent` to Kafka)
-5. Assign the courier to the delivery (fires `DeliveryPickedUpEvent` to Kafka)
-6. Complete the delivery (fires `DeliveryFulfilledEvent` to Kafka)
-7. Display the final state
+The script authenticates, creates a courier, drafts a delivery, places it, assigns the courier, and completes the delivery — firing all three Kafka events along the way.
 
-Expected output:
+Expected final output:
+
 ```
-================================================
-🐺 PETRECA DELIVERY - END-TO-END DEVSECOPS TEST
-================================================
-🔑 Requesting JWT from Keycloak (User: geralt)...
-✅ Token successfully acquired!
-------------------------------------------------
-
-📍 Step 1: Recruiting a witcher...
-✅ Courier created: <UUID>
-   Name: Geralt of Rivia
-
-📦 Step 2: Drafting a delivery contract...
-✅ Delivery drafted: <UUID>
-   Status: DRAFT
-
-📋 Step 3: Posting contract on the notice board...
-✅ Delivery placed
-   Status: WAITING_FOR_COURIER
-   Event: DeliveryPlacedEvent → Kafka
-
-🛵 Step 4: Geralt accepts the contract...
-✅ Delivery picked up by Geralt
-   Status: IN_TRANSIT
-   Event: DeliveryPickedUpEvent → Kafka
-
-🏆 Step 5: Contract fulfilled...
-✅ Delivery completed
-   Status: DELIVERED
-   Event: DeliveryFulfilledEvent → Kafka
-
-🔍 Step 6: Inspecting the completed contract...
-   Final Status: DELIVERED
-
 ========================================
 ⚔️ Contract complete. Toss a coin to your witcher.
 
-📊 View Kafka events at: http://localhost:8090
-🗄️  View database at: http://localhost:5050
-📋 View service registry at: http://localhost:8761
-📉 View metrics dashboard at: http://localhost:3000
-🔐 View Keycloak admin at: http://localhost:8082
+📊 View Kafka events at:         http://localhost:8090
+🗄️ View database at:            http://localhost:5050
+📋 View service registry at:     http://localhost:8761
+📉 View War Room dashboard at:   http://localhost:3000
+🔍 View distributed traces at:   http://localhost:16686
+🔐 View Keycloak admin at:       http://localhost:8082
 ```
 
 ---
 
-### Option 2: Manual Step-by-Step (For Learning)
+### Option 2: Manual Step-by-Step
 
-> *"Patience is a virtue, especially when hunting monsters."*
-
-**Step 0: Obtain Access Token**
-
-Before making any API calls, authenticate with Keycloak:
+**Obtain token:**
 
 ```bash
 TOKEN=$(curl -s -X POST "http://localhost:8082/realms/petreca-realm/protocol/openid-connect/token" \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=petreca-api-client" \
-  -d "grant_type=password" \
-  -d "username=geralt" \
-  -d "password=witcher123" | jq -r '.access_token')
-
-echo "Token: $TOKEN"
+  -d "client_id=petreca-api-client&grant_type=password&username=geralt&password=witcher123" \
+  | jq -r '.access_token')
 ```
 
-**📝 Save this token — you'll use it in all subsequent requests.**
-
----
-
-**Step 1: Create a Courier First**
-
-Before any delivery can be assigned, you need a witcher on the notice board:
+**Create courier → copy COURIER_ID:**
 
 ```bash
 curl -X POST http://localhost:9999/api/v1/couriers \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Geralt of Rivia",
-    "phone": "11987654321"
-  }'
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"name": "Geralt of Rivia", "phone": "11987654321"}'
 ```
 
-**📝 Copy the `id` from the response — this is your `COURIER_ID`.**
-
-Example response:
-```json
-{
-  "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "name": "Geralt of Rivia",
-  "phone": "11987654321",
-  ...
-}
-```
-
----
-
-**Step 2: Draft a Delivery**
+**Create delivery → copy DELIVERY_ID:**
 
 ```bash
 curl -X POST http://localhost:9999/api/v1/deliveries \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sender": {
-      "zipCode": "12345-000",
-      "street": "Rua do Remetente",
-      "number": "10",
-      "name": "Empresa A",
-      "phone": "11999999999"
-    },
-    "recipient": {
-      "zipCode": "54321-000",
-      "street": "Avenida do Destinatário",
-      "number": "20",
-      "name": "Cliente B",
-      "phone": "11888888888"
-    },
-    "items": [{ "name": "Silver Sword", "quantity": 1 }]
-  }'
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"sender":{"zipCode":"12345-000","street":"Rua A","number":"10","name":"Empresa A","phone":"11999999999"},"recipient":{"zipCode":"54321-000","street":"Av B","number":"20","name":"Cliente B","phone":"11888888888"},"items":[{"name":"Silver Sword","quantity":1}]}'
 ```
 
-**📝 Copy the `id` from the response — this is your `DELIVERY_ID`.**
-
----
-
-**Step 3: Place the Delivery** *(fires `DeliveryPlacedEvent` to Kafka)*
-
-Replace `YOUR_DELIVERY_ID_HERE` with the actual UUID:
+**Place → pick up → complete:**
 
 ```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/placement \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-The delivery is now on the notice board. Check Kafka UI at `http://localhost:8090` — you'll see the `DeliveryPlacedEvent` in the `deliveries.v1.events` topic.
-
----
-
-**Step 4: Assign the Courier** *(fires `DeliveryPickedUpEvent` to Kafka)*
-
-Replace both `YOUR_DELIVERY_ID_HERE` and `YOUR_COURIER_ID_HERE`:
-
-```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/pickups \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{ "courierId": "YOUR_COURIER_ID_HERE" }'
-```
-
-Geralt has accepted the contract. The delivery is now `IN_TRANSIT`.
-
----
-
-**Step 5: Complete the Delivery** *(fires `DeliveryFulfilledEvent` to Kafka)*
-
-```bash
-curl -X POST http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE/completion \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-The contract is fulfilled. The delivery status is now `DELIVERED`, and Geralt's stats are updated.
-
----
-
-**Step 6: Verify the Final State**
-
-```bash
-curl http://localhost:9999/api/v1/deliveries/YOUR_DELIVERY_ID_HERE \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-You should see:
-- `"status": "DELIVERED"`
-- `"fulfilledAt"` timestamp populated
-- `"courierId"` matching Geralt's UUID
-
-Check the courier's updated stats:
-```bash
-curl http://localhost:9999/api/v1/couriers/YOUR_COURIER_ID_HERE \
-  -H "Authorization: Bearer $TOKEN"
-```
-
-You should see:
-- `"fulfilledDeliveriesQuantity": 1`
-- `"pendingDeliveriesQuantity": 0`
-- `"lastFulfilledDeliveryAt"` timestamp
-
----
-
-### Option 3: Using jq for Automatic ID Extraction
-
-If you have `jq` installed, use this cleaner approach:
-
-```bash
-# Obtain token
-TOKEN=$(curl -s -X POST "http://localhost:8082/realms/petreca-realm/protocol/openid-connect/token" \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=petreca-api-client" \
-  -d "grant_type=password" \
-  -d "username=geralt" \
-  -d "password=witcher123" | jq -r '.access_token')
-
-echo "Token obtained: ${TOKEN:0:20}..."
-
-# Create courier and capture ID
-COURIER_ID=$(curl -s -X POST http://localhost:9999/api/v1/couriers \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"name": "Geralt of Rivia", "phone": "11987654321"}' | jq -r '.id')
-
-echo "Courier ID: $COURIER_ID"
-
-# Create delivery and capture ID
-DELIVERY_ID=$(curl -s -X POST http://localhost:9999/api/v1/deliveries \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "sender": {"zipCode": "12345-000", "street": "Rua do Remetente", "number": "10", "name": "Empresa A", "phone": "11999999999"},
-    "recipient": {"zipCode": "54321-000", "street": "Avenida do Destinatário", "number": "20", "name": "Cliente B", "phone": "11888888888"},
-    "items": [{"name": "Silver Sword", "quantity": 1}]
-  }' | jq -r '.id')
-
-echo "Delivery ID: $DELIVERY_ID"
-
-# Place delivery
-curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/placement \
-  -H "Authorization: Bearer $TOKEN"
-
-# Assign courier
-curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/pickups \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d "{\"courierId\": \"$COURIER_ID\"}"
-
-# Complete delivery
-curl -X POST http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/completion \
-  -H "Authorization: Bearer $TOKEN"
-
-# Verify
-curl http://localhost:9999/api/v1/deliveries/$DELIVERY_ID \
-  -H "Authorization: Bearer $TOKEN" | jq
+curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/placement -H "Authorization: Bearer $TOKEN"
+curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/pickups -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"courierId":"COURIER_ID"}'
+curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/completion -H "Authorization: Bearer $TOKEN"
 ```
 
 ---
 
-## 🛡️ Testing the Circuit Breaker — Watching the Shield Break
+## 🛡️ Testing the Circuit Breaker
 
-> *"The sword of destiny has two edges. One of them is you."* — So is the Circuit Breaker.
+1. Stop `Delivery-Tracking`.
+2. Fire several `GET http://localhost:9999/api/v1/deliveries` requests.
+3. First responses: `502 BAD_GATEWAY` (Retry exhausted).
+4. After 5 failures: circuit **opens** → `503 Service Unavailable` instantly.
+5. After 5 seconds: circuit enters `HALF_OPEN` and probes recovery.
 
-1. Stop the `Delivery-Tracking` service.
-2. Fire several `GET` requests to `http://localhost:9999/api/v1/deliveries`.
-3. The first requests will fail with `502 BAD_GATEWAY` (Retry exhausted).
-4. After **5 failed calls**, the circuit **opens**. Subsequent requests fail instantly with `503 Service Unavailable` — no attempt is made to reach the dead service.
-5. After **5 seconds**, the circuit enters `HALF_OPEN` and probes for recovery.
-
-Watch the Gateway logs for state transitions: `CLOSED → OPEN → HALF_OPEN → CLOSED`.
+Watch Gateway logs: `CLOSED → OPEN → HALF_OPEN → CLOSED`.
 
 ---
 
 ## 🐦 Inspecting Kafka Events
 
-Access **Kafka UI** at `http://localhost:8090` to explore the `deliveries.v1.events` topic.
+**Kafka UI:** http://localhost:8090 → topic `deliveries.v1.events`
 
-After placing a delivery, you will see the `DeliveryPlacedEvent` message published by Delivery Tracking and consumed by Courier Management — the ravens have delivered their message.
+After placing a delivery you'll see `DeliveryPlacedEvent` published by Delivery Tracking and consumed by Courier Management.
 
 ---
 
 ## 🗄️ Inspecting the Database
 
-> *"Knowledge is power. Guard it well."*
+**pgAdmin:** http://localhost:5050
 
-Access **pgAdmin** at `http://localhost:5050` to inspect the PostgreSQL databases.
-
-**Login credentials:**
+**1. Web UI Login Credentials:**
 - Email: `admin@admin.com`
 - Password: `admin`
 
-The PostgreSQL server is **automatically configured** when you start the containers. You'll see:
+**2. Database Connection:**
+Once logged in, expand `Servers` -> `PetrecaDelivery`.
 
-**Server: PetrecaDelivery** (already connected)
-- **Database: `courierdb`** → Courier Management data
-  - Tables: `courier`, `assigned_delivery`
-- **Database: `deliverydb`** → Delivery Tracking data
-  - Tables: `delivery`, `item`, `contact_point`
+*Note: If pgAdmin prompts you for a password to connect to the database, enter `postgres` and check "Save Password". (This happens because Docker sometimes ignores the auto-login `pgpass` file due to host OS file permissions).*
 
-### Viewing Data
+You will then see:
+- `deliverydb` → `delivery`, `item`, `contact_point`
+- `courierdb` → `courier`, `assigned_delivery`
+- `keycloakdb` → Keycloak internal tables
 
-**Option 1: Using the GUI**
-1. Expand: `Servers` → `PetrecaDelivery` → `Databases` → `deliverydb` → `Schemas` → `public` → `Tables`
-2. Right-click on `delivery` → "View/Edit Data" → "All Rows"
+---
 
-**Option 2: Using SQL Queries**
+## 🔭 Observability — The Witcher's Heightened Senses
 
-Right-click on `deliverydb` → "Query Tool" and run:
+> *"A witcher's senses are heightened beyond those of ordinary men. So too must our platform see what others cannot."*
 
-```sql
--- View all deliveries
-SELECT id, status, courier_id, placed_at, fulfilled_at 
-FROM delivery 
-ORDER BY placed_at DESC;
+The platform implements **full-stack observability**: metrics via Prometheus, logs via Loki, and distributed traces via OpenTelemetry + Jaeger — all unified in the **Petreca War Room**.
 
--- View all couriers
-SELECT c.id, c.name, c.phone, 
-       c.fulfilled_deliveries_quantity, 
-       c.pending_deliveries_quantity,
-       c.last_fulfilled_delivery_at
-FROM courierdb.public.courier c;
+### 📡 OpenTelemetry — The Medallion That Vibrates Across Services
 
--- View pending deliveries for couriers
-SELECT * FROM courierdb.public.assigned_delivery;
+Every microservice emits **traces** and **metrics** to the OTel Collector, which forwards them to the appropriate backends:
+
+```
+Microservice → OTel Collector ──► Jaeger      (traces)
+                               └──► Prometheus  (metrics)
+```
+
+A single HTTP request entering the Gateway can be traced end-to-end — latency broken down per service, per database query, per Kafka publish.
+
+### 🔍 Jaeger — The Trace Hunter
+
+**Access:** http://localhost:16686
+
+1. Run `./test-delivery-flow.sh` to generate traces.
+2. Select a service from the **Service** dropdown → **Find Traces**.
+3. Open any trace to see the full span tree.
+
+You'll see: total duration per service, JPA query spans, Kafka producer spans, HTTP client spans, and error spans in red.
+
+### 📜 Loki — The Scroll Keeper
+
+**Access:** Grafana → **Explore** → **Loki** datasource
+
+```logql
+{service="delivery-tracking"}
+{job="petrecadelivery"} |= "ERROR"
+{job="petrecadelivery"} |= "YOUR_DELIVERY_UUID"
+{service="courier-management"} |= "kafka"
+```
+
+### 📈 Prometheus — The Memory Keeper
+
+**Access:** http://localhost:9090
+
+```promql
+rate(http_server_requests_seconds_count[1m])
+resilience4j_circuitbreaker_state
+(jvm_memory_used_bytes{area="heap"} / jvm_memory_max_bytes{area="heap"}) * 100
 ```
 
 ---
 
-## 🔭 Observability — The Witcher's Senses
+### 📊 Grafana Dashboards — The Command Fortress
 
-> *"A witcher's senses are heightened beyond those of ordinary men. So too must our platform see what others cannot."*
+> *"War is never black and white. But our dashboards are always green."*
 
-The platform is equipped with **production-grade observability** through Prometheus and Grafana, allowing you to monitor every heartbeat of your microservices in real-time.
+Grafana (`http://localhost:3000`) is pre-provisioned with two critical dashboards to monitor the Continent. No manual imports are required.
 
-### 🎯 What We Monitor
+**1. The Petreca War Room (Custom Business Metrics)**
+This is the custom command center built specifically for this platform. It tracks the health and behavior of the entire distributed system:
+- **Platform Health:** Real-time HTTP error rates, Circuit Breaker states (CLOSED / OPEN / HALF_OPEN), and retry counts.
+- **Delivery Intelligence:** Deliveries by lifecycle stage, Kafka event throughput, and active courier count.
+- **Trace Explorer:** Direct links to Jaeger traces for the most recent requests — one-click root cause investigation.
 
-Every microservice exposes metrics via **Spring Boot Actuator** at `/actuator/prometheus`:
+**2. JVM Micrometer (Standard Dashboard ID: 4701)**
+The gold standard for Spring Boot infrastructure monitoring. This dashboard provides microscopic visibility into the Java Virtual Machine for each microservice:
+- **Memory:** Heap and Non-Heap utilization.
+- **Garbage Collection:** GC pause durations and frequency.
+- **Threads & Connections:** Active JVM threads, Tomcat sessions, and HikariCP database connection pool saturation.
 
-- **JVM Metrics**: Memory usage, garbage collection, thread pools
-- **HTTP Metrics**: Request rates, response times, error rates
-- **Resilience4j Metrics**: Circuit breaker states, retry attempts, rate limiter stats
-- **Kafka Metrics**: Message production/consumption rates
-- **Database Metrics**: Connection pool stats, query performance
-- **Custom Business Metrics**: Deliveries created, couriers assigned, contracts fulfilled
+**🔍 Bonus — Trace Explorer:** Direct links to Jaeger traces for the most recent requests — one-click root cause investigation for any error spike.
 
-### 📈 Prometheus — The Memory Keeper
+> All panels, datasources (Prometheus, Loki, Jaeger), and the War Room dashboard are **automatically provisioned on startup** — no manual Grafana setup required.
 
-**Prometheus** scrapes metrics from all microservices every **5 seconds** and stores them in a time-series database.
+---
 
-**Access:** `http://localhost:9090`
+## 📚 Further Reading
 
-**Configuration:** All targets are automatically configured in `prometheus.yml`:
-```yaml
-scrape_configs:
-  - job_name: 'petrecadelivery-microservices'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets:
-        - 'host.docker.internal:8080' # Delivery-Tracking
-        - 'host.docker.internal:8081' # Courier-Management
-        - 'host.docker.internal:8761' # Service-Registry
-        - 'host.docker.internal:9999' # API Gateway
-```
-
-**Try it:** Open Prometheus and run this query to see HTTP request rates:
-```promql
-rate(http_server_requests_seconds_count[1m])
-```
-
-### 📉 Grafana — The Storyteller
-
-**Grafana** transforms raw metrics into beautiful, actionable dashboards.
-
-**Access:** `http://localhost:3000`
-
-**Login credentials:**
-- Username: `admin`
-- Password: `admin`
-
-### ✨ Pre-Configured Dashboard
-
-The platform includes a **pre-loaded Spring Boot dashboard** (ID: 4701) that visualizes:
-
-- 🟢 **System Health**: CPU usage, memory consumption, uptime
-- 🔵 **HTTP Performance**: Request throughput, latency percentiles (p50, p95, p99), error rates
-- 🟡 **JVM Internals**: Heap/non-heap memory, garbage collection frequency, thread states
-- 🟠 **Resilience Patterns**: Circuit breaker states, retry success/failure rates
-- 🟣 **Database**: Active connections, query execution times
-
-**How to access:**
-1. Open Grafana at `http://localhost:3000`
-2. Login with `admin` / `admin`
-3. Navigate to **Dashboards** → **General**
-4. Select **"JVM (Micrometer)"** dashboard
-5. Use the dropdown at the top to switch between services:
-   - `delivery-tracking`
-   - `courier-management`
-   - `gateway`
-   - `service-registry`
-
-### 🔍 Example Queries
-
-**1. Total deliveries created (last 5 minutes):**
-```promql
-increase(http_server_requests_seconds_count{uri="/api/v1/deliveries", method="POST"}[5m])
-```
-
-**2. Average response time for delivery placement:**
-```promql
-rate(http_server_requests_seconds_sum{uri=~".*/placement"}[1m]) 
-/ 
-rate(http_server_requests_seconds_count{uri=~".*/placement"}[1m])
-```
-
-**3. Circuit breaker state (0=CLOSED, 1=OPEN, 2=HALF_OPEN):**
-```promql
-resilience4j_circuitbreaker_state
-```
-
-**4. JVM memory usage percentage:**
-```promql
-(jvm_memory_used_bytes / jvm_memory_max_bytes) * 100
-```
-
-### 🛡️ Automatic Configuration
-
-Everything is **pre-configured** and **auto-provisioned**:
-
-- ✅ **Prometheus datasource** automatically added to Grafana
-- ✅ **Dashboard** automatically imported on startup
-- ✅ **Scrape targets** automatically configured in Prometheus
-- ✅ **Metrics endpoints** automatically exposed by Spring Boot Actuator
-
-**No manual setup required.** Just start the services and open Grafana.
-
-### 🎯 Real-World Use Cases
-
-**Scenario 1: Detecting Performance Degradation**
-- Run the test script multiple times
-- Watch the "HTTP Request Duration" panel in Grafana
-- If p99 latency spikes, investigate slow database queries or external API calls
-
-**Scenario 2: Monitoring Circuit Breaker Behavior**
-- Stop the Delivery-Tracking service
-- Fire requests through the Gateway
-- Watch the circuit breaker transition from `CLOSED` → `OPEN` in real-time
-- See retry attempts and failure rates in the dashboard
-
-**Scenario 3: Capacity Planning**
-- Monitor JVM heap usage over time
-- Track HTTP request rates during peak load
-- Identify when to scale horizontally (add more instances)
-
-### 📚 Further Reading
-
-Want to create custom dashboards?
-- [Prometheus Query Language (PromQL)](https://prometheus.io/docs/prometheus/latest/querying/basics/)
-- [Grafana Dashboard Best Practices](https://grafana.com/docs/grafana/latest/dashboards/)
-- [Spring Boot Actuator Metrics](https://docs.spring.io/spring-boot/docs/current/reference/html/actuator.html#actuator.metrics)
+- [OAuth 2.0 RFC 6749](https://datatracker.ietf.org/doc/html/rfc6749)
+- [Keycloak Documentation](https://www.keycloak.org/documentation)
+- [Spring Security OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/index.html)
+- [OpenTelemetry Java Agent](https://opentelemetry.io/docs/zero-code/java/agent/)
+- [Jaeger Documentation](https://www.jaegertracing.io/docs/)
+- [Grafana Loki Documentation](https://grafana.com/docs/loki/latest/)
+- [Prometheus PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/)
+- [Resilience4j Documentation](https://resilience4j.readme.io/docs)
+- [SonarCloud Documentation](https://docs.sonarsource.com/sonarqube-cloud/)
+- [OWASP Dependency-Check](https://owasp.org/www-project-dependency-check/)
+- [NVD API Key Request](https://nvd.nist.gov/developers/request-an-api-key)
 
 ---
 
@@ -912,10 +684,6 @@ Feel free to explore, test, open issues, or submit pull requests. The notice boa
 
 ---
 
-<div align="center">
-
 *"Not all those who wander are lost — some are just tracing delivery routes."*
 
 **⚔️ Toss a coin to your witcher ⚔️**
-
-</div>
