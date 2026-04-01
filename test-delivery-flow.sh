@@ -1,11 +1,45 @@
 #!/bin/bash
 
+# =========================================================
+# 🪄 THE GRANDMASTER'S RUNES: Reusable Validation Functions
+# =========================================================
+
+verify_not_null() {
+  local VALUE=$1
+  local ERROR_MESSAGE=$2
+  if [ "$VALUE" = "null" ] || [ -z "$VALUE" ]; then
+    echo "❌ CRITICAL FAILURE: $ERROR_MESSAGE"
+    exit 1
+  fi
+}
+
+verify_execution() {
+  local EXIT_CODE=$1
+  local ERROR_MESSAGE=$2
+  if [ $EXIT_CODE -ne 0 ]; then
+    echo "❌ CRITICAL FAILURE: $ERROR_MESSAGE"
+    exit 1
+  fi
+}
+
+verify_delivery_status() {
+  local EXPECTED_STATUS=$1
+  local CURRENT_STATUS=$(curl -s "http://localhost:9999/api/v1/deliveries/$DELIVERY_ID" \
+    -H "Authorization: Bearer $TOKEN" | jq -r '.status')
+
+  if [ "$CURRENT_STATUS" != "$EXPECTED_STATUS" ]; then
+    echo "❌ CRITICAL FAILURE: Expected $EXPECTED_STATUS, but status is $CURRENT_STATUS"
+    exit 1
+  fi
+  echo "   Current Status: $CURRENT_STATUS"
+}
+
 echo "================================================"
 echo "🐺 PETRECA DELIVERY - END-TO-END DEVSECOPS TEST"
 echo "================================================"
 
 # ---------------------------------------------------------
-# PHASE 1: THE AUTHENTICATION (The New Code)
+# PHASE 1: THE AUTHENTICATION
 # ---------------------------------------------------------
 echo "🔑 Requesting JWT from Keycloak (User: geralt)..."
 
@@ -16,33 +50,26 @@ TOKEN=$(curl -s -X POST "http://localhost:8082/realms/petreca-realm/protocol/ope
   -d "username=geralt" \
   -d "password=witcher123" | jq -r '.access_token')
 
-if [ -z "$TOKEN" ] || [ "$TOKEN" == "null" ]; then
-  echo "❌ CRITICAL FAILURE: Could not retrieve token."
-  exit 1
-fi
+verify_not_null "$TOKEN" "Could not retrieve token from Keycloak."
 echo "✅ Token successfully acquired!"
 echo "------------------------------------------------"
 
 # ---------------------------------------------------------
-# PHASE 2: YOUR ORIGINAL LIFECYCLE LOGIC (The Old Code)
+# PHASE 2: THE LIFECYCLE
 # ---------------------------------------------------------
 
-# Step 1: Create a Courier (Geralt of Rivia)
+# Step 1: Create a Courier
 echo "📍 Step 1: Recruiting a witcher..."
 COURIER_RESPONSE=$(curl -s -X POST "http://localhost:9999/api/v1/couriers" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "Geralt of Rivia",
-    "phone": "11987654321"
-  }')
+  -d '{"name": "Geralt of Rivia", "phone": "11987654321"}')
 
-if [ "$COURIER_RESPONSE" = "null" ] || [ -z "$COURIER_RESPONSE" ]; then
-  echo "❌ CRITICAL FAILURE: Could not create courier."
-  exit 1
-fi
+verify_not_null "$COURIER_RESPONSE" "Could not connect to Gateway to create courier."
 
 COURIER_ID=$(echo "$COURIER_RESPONSE" | jq -r '.id')
+verify_not_null "$COURIER_ID" "Could not extract Courier ID. Gateway cache might be cold."
+
 echo "✅ Courier created: $COURIER_ID"
 echo "   Name: Geralt of Rivia"
 echo ""
@@ -53,31 +80,18 @@ DELIVERY_RESPONSE=$(curl -s -X POST "http://localhost:9999/api/v1/deliveries" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
-    "sender": {
-      "zipCode": "12345-000",
-      "street": "Rua do Remetente",
-      "number": "10",
-      "name": "Empresa A",
-      "phone": "11999999999"
-    },
-    "recipient": {
-      "zipCode": "54321-000",
-      "street": "Avenida do Destinatário",
-      "number": "20",
-      "name": "Cliente B",
-      "phone": "11888888888"
-    },
+    "sender": {"zipCode": "12345-000", "street": "Rua A", "number": "10", "name": "Emp A", "phone": "119"},
+    "recipient": {"zipCode": "54321-000", "street": "Av B", "number": "20", "name": "Cli B", "phone": "118"},
     "items": [{ "name": "Silver Sword", "quantity": 1 }]
   }')
 
-if [ "$DELIVERY_RESPONSE" = "null" ] || [ -z "$DELIVERY_RESPONSE" ]; then
-  echo "❌ CRITICAL FAILURE: Could not create delivery."
-  exit 1
-fi
+verify_not_null "$DELIVERY_RESPONSE" "Could not connect to Gateway to create delivery."
 
 DELIVERY_ID=$(echo "$DELIVERY_RESPONSE" | jq -r '.id')
+verify_not_null "$DELIVERY_ID" "Could not extract Delivery ID. Wait a moment for routes to sync and try again."
+
 echo "✅ Delivery drafted: $DELIVERY_ID"
-echo "   Status: DRAFT"
+verify_delivery_status "DRAFT"
 echo ""
 
 # Step 3: Place the Delivery
@@ -85,13 +99,9 @@ echo "📋 Step 3: Posting contract on the notice board..."
 curl -s -X POST "http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/placement" \
   -H "Authorization: Bearer $TOKEN" > /dev/null
 
-if [ $? -ne 0 ]; then
-  echo "❌ CRITICAL FAILURE: Could not place delivery."
-  exit 1
-fi
+verify_execution $? "Could not place delivery on the notice board."
 
-echo "✅ Delivery placed"
-echo "   Status: WAITING_FOR_COURIER"
+verify_delivery_status "WAITING_FOR_COURIER"
 echo "   Event: DeliveryPlacedEvent → Kafka"
 echo ""
 
@@ -102,13 +112,9 @@ curl -s -X POST "http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/pickups" \
   -H "Content-Type: application/json" \
   -d "{\"courierId\": \"$COURIER_ID\"}" > /dev/null
 
-if [ $? -ne 0 ]; then
-  echo "❌ CRITICAL FAILURE: Could not assign courier."
-  exit 1
-fi
+verify_execution $? "Could not assign courier to the delivery."
 
-echo "✅ Delivery picked up by Geralt"
-echo "   Status: IN_TRANSIT"
+verify_delivery_status "IN_TRANSIT"
 echo "   Event: DeliveryPickedUpEvent → Kafka"
 echo ""
 
@@ -117,29 +123,17 @@ echo "🏆 Step 5: Contract fulfilled..."
 curl -s -X POST "http://localhost:9999/api/v1/deliveries/$DELIVERY_ID/completion" \
   -H "Authorization: Bearer $TOKEN" > /dev/null
 
-if [ $? -ne 0 ]; then
-  echo "❌ CRITICAL FAILURE: Could not complete delivery."
-  exit 1
-fi
+verify_execution $? "Could not complete the delivery."
 
-echo "✅ Delivery completed"
-echo "   Status: DELIVERED"
+verify_delivery_status "DELIVERED"
 echo "   Event: DeliveryFulfilledEvent → Kafka"
-echo ""
-
-# Step 6: Check Final State
-echo "🔍 Step 6: Inspecting the completed contract..."
-FINAL_DELIVERY=$(curl -s "http://localhost:9999/api/v1/deliveries/$DELIVERY_ID" \
-  -H "Authorization: Bearer $TOKEN")
-STATUS=$(echo "$FINAL_DELIVERY" | jq -r '.status')
-echo "   Final Status: $STATUS"
 echo ""
 
 echo "========================================"
 echo "⚔️ Contract complete. Toss a coin to your witcher."
 echo ""
 echo "📊 View Kafka events at: http://localhost:8090"
-echo "🗄️  View database at: http://localhost:5050"
+echo "🗄️ View database at: http://localhost:5050"
 echo "📋 View service registry at: http://localhost:8761"
 echo "📉 View metrics dashboard at: http://localhost:3000"
 echo "🔐 View Keycloak admin at: http://localhost:8082"

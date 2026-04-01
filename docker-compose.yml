@@ -93,6 +93,7 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
+    container_name: petrecadelivery-prometheus
     ports:
       - "9090:9090"
     volumes:

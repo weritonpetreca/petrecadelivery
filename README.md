@@ -233,12 +233,23 @@ All infrastructure is provisioned via `docker-compose.yml`.
 
 ---
 
-## 📋 Prerequisites — Before You Draw Your Sword
+## 🛠️ Getting Started
+
+### 📋 Prerequisites — Before You Draw Your Sword
 
 - ☕ **JDK 21+**
 - 🐳 **Docker & Docker Compose**
 - 📦 **Apache Maven** (or use the included `./mvnw` wrapper)
 - 🖥️ IntelliJ IDEA (recommended)
+
+### Environment Configuration (The Campfire)
+This project uses environment variables to manage sensitive data and infrastructure coordinates.
+
+Before starting any services, you must create your local configuration file. Copy the provided example file to create your own `.env`:
+
+```bash
+cp .env.example .env
+````
 
 ---
 
@@ -578,7 +589,7 @@ Once logged in, expand `Servers` -> `PetrecaDelivery`.
 *Note: If pgAdmin prompts you for a password to connect to the database, enter `postgres` and check "Save Password". (This happens because Docker sometimes ignores the auto-login `pgpass` file due to host OS file permissions).*
 
 You will then see:
-- `deliverydb` → `delivery`, `item`, `contact_point`
+- `deliverydb` → `delivery` (contains embedded ContactPoint columns), `item`
 - `courierdb` → `courier`, `assigned_delivery`
 - `keycloakdb` → Keycloak internal tables
 
