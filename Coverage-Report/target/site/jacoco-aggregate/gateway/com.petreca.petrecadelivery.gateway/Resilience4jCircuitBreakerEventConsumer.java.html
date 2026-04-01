@@ -10,15 +10,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-<span class="nc" id="L13">public class Resilience4jCircuitBreakerEventConsumer implements RegistryEventConsumer&lt;CircuitBreaker&gt; {</span>
+<span class="fc" id="L13">public class Resilience4jCircuitBreakerEventConsumer implements RegistryEventConsumer&lt;CircuitBreaker&gt; {</span>
 
-<span class="nc" id="L15">    private static final Logger log = LoggerFactory.getLogger(Resilience4jCircuitBreakerEventConsumer.class);</span>
+<span class="fc" id="L15">    private static final Logger log = LoggerFactory.getLogger(Resilience4jCircuitBreakerEventConsumer.class);</span>
 
     @Override
     public void onEntryAddedEvent(EntryAddedEvent&lt;CircuitBreaker&gt; entryAddedEvent) {
-<span class="nc" id="L19">        entryAddedEvent.getAddedEntry().getEventPublisher()</span>
-<span class="nc" id="L20">                .onEvent(event -&gt; log.info(event.toString()));</span>
-<span class="nc" id="L21">    }</span>
+<span class="fc" id="L19">        entryAddedEvent.getAddedEntry().getEventPublisher()</span>
+<span class="pc" id="L20">                .onEvent(event -&gt; log.info(event.toString()));</span>
+<span class="fc" id="L21">    }</span>
 
     @Override
     public void onEntryRemovedEvent(EntryRemovedEvent&lt;CircuitBreaker&gt; entryRemoveEvent) {

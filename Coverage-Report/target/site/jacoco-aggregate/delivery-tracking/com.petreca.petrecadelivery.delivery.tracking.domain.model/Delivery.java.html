@@ -105,14 +105,14 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @return nova instância de {@link Delivery} com status {@code DRAFT}
      */
     public static Delivery draft() {
-<span class="nc" id="L108">        Delivery delivery = new Delivery();</span>
-<span class="nc" id="L109">        delivery.setId(UUID.randomUUID());</span>
-<span class="nc" id="L110">        delivery.setStatus(DeliveryStatus.DRAFT);</span>
-<span class="nc" id="L111">        delivery.setTotalItems(0);</span>
-<span class="nc" id="L112">        delivery.setTotalCost(BigDecimal.ZERO);</span>
-<span class="nc" id="L113">        delivery.setCourierPayout(BigDecimal.ZERO);</span>
-<span class="nc" id="L114">        delivery.setDistanceFee(BigDecimal.ZERO);</span>
-<span class="nc" id="L115">        return delivery;</span>
+<span class="fc" id="L108">        Delivery delivery = new Delivery();</span>
+<span class="fc" id="L109">        delivery.setId(UUID.randomUUID());</span>
+<span class="fc" id="L110">        delivery.setStatus(DeliveryStatus.DRAFT);</span>
+<span class="fc" id="L111">        delivery.setTotalItems(0);</span>
+<span class="fc" id="L112">        delivery.setTotalCost(BigDecimal.ZERO);</span>
+<span class="fc" id="L113">        delivery.setCourierPayout(BigDecimal.ZERO);</span>
+<span class="fc" id="L114">        delivery.setDistanceFee(BigDecimal.ZERO);</span>
+<span class="fc" id="L115">        return delivery;</span>
     }
 
     // ─────────────────────────────────────────────────────────────────
@@ -127,10 +127,10 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @return ID gerado para o item adicionado
      */
     public UUID addItem(String name, int quantity) {
-<span class="nc" id="L130">        Item item = Item.brandNew(name, quantity, this);</span>
-<span class="nc" id="L131">        items.add(item);</span>
-<span class="nc" id="L132">        calculateTotalItems();</span>
-<span class="nc" id="L133">        return item.getId();</span>
+<span class="fc" id="L130">        Item item = Item.brandNew(name, quantity, this);</span>
+<span class="fc" id="L131">        items.add(item);</span>
+<span class="fc" id="L132">        calculateTotalItems();</span>
+<span class="fc" id="L133">        return item.getId();</span>
     }
 
     /**
@@ -139,9 +139,9 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @param itemId ID do item a ser removido
      */
     public void removeItem(UUID itemId) {
-<span class="nc" id="L142">        items.removeIf(item -&gt; item.getId().equals(itemId));</span>
-<span class="nc" id="L143">        calculateTotalItems();</span>
-<span class="nc" id="L144">    }</span>
+<span class="fc" id="L142">        items.removeIf(item -&gt; item.getId().equals(itemId));</span>
+<span class="fc" id="L143">        calculateTotalItems();</span>
+<span class="fc" id="L144">    }</span>
 
     /**
      * Altera a quantidade de um item existente e recalcula o total.
@@ -150,22 +150,22 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @param quantity nova quantidade
      */
     public void changeItemQuantity(UUID itemId, int quantity) {
-<span class="nc" id="L153">        Item item = getItems().stream()</span>
-<span class="nc" id="L154">                .filter(i -&gt; i.getId().equals(itemId))</span>
-<span class="nc" id="L155">                .findFirst()</span>
-<span class="nc" id="L156">                .orElseThrow(() -&gt; new DomainException(&quot;Item not found: &quot; + itemId));</span>
-<span class="nc" id="L157">        item.setQuantity(quantity);</span>
-<span class="nc" id="L158">        calculateTotalItems();</span>
-<span class="nc" id="L159">    }</span>
+<span class="fc" id="L153">        Item item = getItems().stream()</span>
+<span class="fc" id="L154">                .filter(i -&gt; i.getId().equals(itemId))</span>
+<span class="fc" id="L155">                .findFirst()</span>
+<span class="pc" id="L156">                .orElseThrow(() -&gt; new DomainException(&quot;Item not found: &quot; + itemId));</span>
+<span class="fc" id="L157">        item.setQuantity(quantity);</span>
+<span class="fc" id="L158">        calculateTotalItems();</span>
+<span class="fc" id="L159">    }</span>
 
     /**
      * Remove todos os itens da entrega.
      * Utilizado antes de uma reedição completa dos dados.
      */
     public void removeItems() {
-<span class="nc" id="L166">        items.clear();</span>
-<span class="nc" id="L167">        calculateTotalItems();</span>
-<span class="nc" id="L168">    }</span>
+<span class="fc" id="L166">        items.clear();</span>
+<span class="fc" id="L167">        calculateTotalItems();</span>
+<span class="fc" id="L168">    }</span>
 
     // ─────────────────────────────────────────────────────────────────
     // Comportamentos de domínio — ciclo de vida da entrega
@@ -179,14 +179,14 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @throws DomainException se a entrega não estiver em estado editável
      */
     public void editPreparationDetails(PreparationDetails details) {
-<span class="nc" id="L182">        verifyIfCanBeEdited();</span>
-<span class="nc" id="L183">        setSender(details.getSender());</span>
-<span class="nc" id="L184">        setRecipient(details.getRecipient());</span>
-<span class="nc" id="L185">        setDistanceFee(details.getDistanceFee());</span>
-<span class="nc" id="L186">        setCourierPayout(details.getCourierPayout());</span>
-<span class="nc" id="L187">        setExpectedDeliveryAt(OffsetDateTime.now().plus(details.getExpectedDeliveryTime()));</span>
-<span class="nc" id="L188">        setTotalCost(this.getDistanceFee().add(this.getCourierPayout()));</span>
-<span class="nc" id="L189">    }</span>
+<span class="fc" id="L182">        verifyIfCanBeEdited();</span>
+<span class="fc" id="L183">        setSender(details.getSender());</span>
+<span class="fc" id="L184">        setRecipient(details.getRecipient());</span>
+<span class="fc" id="L185">        setDistanceFee(details.getDistanceFee());</span>
+<span class="fc" id="L186">        setCourierPayout(details.getCourierPayout());</span>
+<span class="fc" id="L187">        setExpectedDeliveryAt(OffsetDateTime.now().plus(details.getExpectedDeliveryTime()));</span>
+<span class="fc" id="L188">        setTotalCost(this.getDistanceFee().add(this.getCourierPayout()));</span>
+<span class="fc" id="L189">    }</span>
 
     /**
      * Publica a entrega, tornando-a disponível para atribuição a um entregador.
@@ -195,12 +195,12 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @throws DomainException se a entrega não estiver preenchida ou não estiver em DRAFT
      */
     public void place() {
-<span class="nc" id="L198">        verifyIfCanBePlaced();</span>
-<span class="nc" id="L199">        this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);</span>
-<span class="nc" id="L200">        this.setPlacedAt(OffsetDateTime.now());</span>
-<span class="nc" id="L201">        super.registerEvent(</span>
+<span class="fc" id="L198">        verifyIfCanBePlaced();</span>
+<span class="fc" id="L199">        this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);</span>
+<span class="fc" id="L200">        this.setPlacedAt(OffsetDateTime.now());</span>
+<span class="fc" id="L201">        super.registerEvent(</span>
                 new DeliveryPlacedEvent(this.placedAt, this.id));
-<span class="nc" id="L203">    }</span>
+<span class="fc" id="L203">    }</span>
 
     /**
      * Registra a retirada da entrega por um entregador.
@@ -209,23 +209,23 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @param courierId ID do entregador que retirou a entrega
      */
     public void pickUp(UUID courierId) {
-<span class="nc" id="L212">        this.setCourierId(courierId);</span>
-<span class="nc" id="L213">        this.changeStatusTo(DeliveryStatus.IN_TRANSIT);</span>
-<span class="nc" id="L214">        this.setAssignedAt(OffsetDateTime.now());</span>
-<span class="nc" id="L215">        super.registerEvent(</span>
+<span class="fc" id="L212">        this.setCourierId(courierId);</span>
+<span class="fc" id="L213">        this.changeStatusTo(DeliveryStatus.IN_TRANSIT);</span>
+<span class="fc" id="L214">        this.setAssignedAt(OffsetDateTime.now());</span>
+<span class="fc" id="L215">        super.registerEvent(</span>
                 new DeliveryPickedUpEvent(this.assignedAt, this.id));
-<span class="nc" id="L217">    }</span>
+<span class="fc" id="L217">    }</span>
 
     /**
      * Marca a entrega como concluída.
      * Registra um {@link DeliveryFulfilledEvent} para publicação assíncrona via Kafka.
      */
     public void markAsDelivered() {
-<span class="nc" id="L224">        this.changeStatusTo(DeliveryStatus.DELIVERED);</span>
-<span class="nc" id="L225">        this.setFulfilledAt(OffsetDateTime.now());</span>
-<span class="nc" id="L226">        super.registerEvent(</span>
-<span class="nc" id="L227">                new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));</span>
-<span class="nc" id="L228">    }</span>
+<span class="fc" id="L224">        this.changeStatusTo(DeliveryStatus.DELIVERED);</span>
+<span class="fc" id="L225">        this.setFulfilledAt(OffsetDateTime.now());</span>
+<span class="fc" id="L226">        super.registerEvent(</span>
+<span class="fc" id="L227">                new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));</span>
+<span class="fc" id="L228">    }</span>
 
     // ─────────────────────────────────────────────────────────────────
     // Getters com proteção adicional
@@ -237,7 +237,7 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * forçando o uso dos métodos de domínio (addItem, removeItem...).
      */
     public List&lt;Item&gt; getItems() {
-<span class="nc" id="L240">        return Collections.unmodifiableList(this.items);</span>
+<span class="fc" id="L240">        return Collections.unmodifiableList(this.items);</span>
     }
 
     /**
@@ -250,7 +250,7 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      */
     @Override
     public Collection&lt;Object&gt; domainEvents() {
-<span class="nc" id="L253">        return super.domainEvents();</span>
+<span class="fc" id="L253">        return super.domainEvents();</span>
     }
 
     // ─────────────────────────────────────────────────────────────────
@@ -258,29 +258,29 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
     // ─────────────────────────────────────────────────────────────────
 
     private void calculateTotalItems() {
-<span class="nc" id="L261">        int totalNumItems = getItems().stream()</span>
-<span class="nc" id="L262">                .mapToInt(Item::getQuantity)</span>
-<span class="nc" id="L263">                .sum();</span>
-<span class="nc" id="L264">        setTotalItems(totalNumItems);</span>
-<span class="nc" id="L265">    }</span>
+<span class="fc" id="L261">        int totalNumItems = getItems().stream()</span>
+<span class="fc" id="L262">                .mapToInt(Item::getQuantity)</span>
+<span class="fc" id="L263">                .sum();</span>
+<span class="fc" id="L264">        setTotalItems(totalNumItems);</span>
+<span class="fc" id="L265">    }</span>
 
     private void verifyIfCanBePlaced() {
-<span class="nc bnc" id="L268" title="All 2 branches missed.">        if (!isFilled()) {</span>
-<span class="nc" id="L269">            throw new DomainException(</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (!isFilled()) {</span>
+<span class="fc" id="L269">            throw new DomainException(</span>
                     &quot;Delivery cannot be placed: preparation details are incomplete.&quot;);
         }
-<span class="nc bnc" id="L272" title="All 2 branches missed.">        if (!getStatus().equals(DeliveryStatus.DRAFT)) {</span>
-<span class="nc" id="L273">            throw new DomainException(</span>
-<span class="nc" id="L274">                    &quot;Delivery cannot be placed: current status is &quot; + getStatus());</span>
+<span class="fc bfc" id="L272" title="All 2 branches covered.">        if (!getStatus().equals(DeliveryStatus.DRAFT)) {</span>
+<span class="fc" id="L273">            throw new DomainException(</span>
+<span class="fc" id="L274">                    &quot;Delivery cannot be placed: current status is &quot; + getStatus());</span>
         }
-<span class="nc" id="L276">    }</span>
+<span class="fc" id="L276">    }</span>
 
     private void verifyIfCanBeEdited() {
-<span class="nc bnc" id="L279" title="All 2 branches missed.">        if (!getStatus().equals(DeliveryStatus.DRAFT)) {</span>
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">        if (!getStatus().equals(DeliveryStatus.DRAFT)) {</span>
 <span class="nc" id="L280">            throw new DomainException(</span>
 <span class="nc" id="L281">                    &quot;Delivery cannot be edited: current status is &quot; + getStatus());</span>
         }
-<span class="nc" id="L283">    }</span>
+<span class="fc" id="L283">    }</span>
 
     /**
      * Verifica se os dados mínimos de preparação foram preenchidos.
@@ -288,10 +288,10 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * já que draft() inicializa totalCost com ZERO.
      */
     private boolean isFilled() {
-<span class="nc bnc" id="L291" title="All 2 branches missed.">        return this.getSender() != null</span>
-<span class="nc bnc" id="L292" title="All 2 branches missed.">                &amp;&amp; this.getRecipient() != null</span>
-<span class="nc bnc" id="L293" title="All 2 branches missed.">                &amp;&amp; this.getTotalCost() != null</span>
-<span class="nc bnc" id="L294" title="All 2 branches missed.">                &amp;&amp; this.getTotalCost().compareTo(BigDecimal.ZERO) &gt; 0;</span>
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        return this.getSender() != null</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">                &amp;&amp; this.getRecipient() != null</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">                &amp;&amp; this.getTotalCost() != null</span>
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">                &amp;&amp; this.getTotalCost().compareTo(BigDecimal.ZERO) &gt; 0;</span>
     }
 
     /**
@@ -301,12 +301,12 @@ public class Delivery extends AbstractAggregateRoot&lt;Delivery&gt; {
      * @throws DomainException se a transição não for permitida
      */
     private void changeStatusTo(DeliveryStatus newStatus) {
-<span class="nc bnc" id="L304" title="All 4 branches missed.">        if (newStatus != null &amp;&amp; !this.getStatus().canChangeTo(newStatus)) {</span>
-<span class="nc" id="L305">            throw new DomainException(</span>
-<span class="nc" id="L306">                    &quot;Invalid status transition from &quot; + this.getStatus() + &quot; to &quot; + newStatus);</span>
+<span class="pc bpc" id="L304" title="1 of 4 branches missed.">        if (newStatus != null &amp;&amp; !this.getStatus().canChangeTo(newStatus)) {</span>
+<span class="fc" id="L305">            throw new DomainException(</span>
+<span class="fc" id="L306">                    &quot;Invalid status transition from &quot; + this.getStatus() + &quot; to &quot; + newStatus);</span>
         }
-<span class="nc" id="L308">        this.setStatus(newStatus);</span>
-<span class="nc" id="L309">    }</span>
+<span class="fc" id="L308">        this.setStatus(newStatus);</span>
+<span class="fc" id="L309">    }</span>
 
     // ─────────────────────────────────────────────────────────────────
     // Inner class — PreparationDetails (Value Object)

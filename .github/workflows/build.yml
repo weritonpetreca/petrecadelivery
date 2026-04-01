@@ -23,6 +23,14 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
+      - name: Cache NVD Vulnerability Database
+        uses: actions/cache@v5
+        with:
+          path: ~/.ndd-data
+          key: nvd-data-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            nvd-data-${{ runner.os }}-
+
       - name: Grant Execution Permission for Maven Wrapper
         run: chmod +x mvnw
 

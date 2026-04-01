@@ -206,6 +206,7 @@
                         <failBuildOnCVSS>7.0</failBuildOnCVSS>
                         <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                         <nvdApiDelay>16000</nvdApiDelay>
+                        <dataDirectory>${user.home}/.nvd-data</dataDirectory>
                         <suppressionFiles>
                             <suppressionFile>${session.executionRootDirectory}/suppression.xml</suppressionFile>
                         </suppressionFiles>

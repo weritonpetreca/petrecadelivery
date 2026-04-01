@@ -1,5 +1,6 @@
 package com.petreca.petrecadelivery.gateway.infrastructure.exception;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
@@ -44,7 +45,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
             errorPropertiesMap.put("status", status.value());
             errorPropertiesMap.put("error", status.getReasonPhrase());
             errorPropertiesMap.put("message", "Upstream service is unreachable. Connection Refused.");
-        } else if (error.getClass().getSimpleName().equals("CallNotPermittedException")) {
+        } else if (error instanceof CallNotPermittedException) {
             status = HttpStatus.SERVICE_UNAVAILABLE;
             errorPropertiesMap.put("status", status.value());
             errorPropertiesMap.put("error", status.getReasonPhrase());
