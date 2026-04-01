@@ -39,6 +39,83 @@
 
 ---
 
+## 🗺️ The Continent — Architecture Overview
+
+> *"The world doesn't need a hero. It needs a professional."* — The architecture agrees.
+
+```mermaid
+graph TD
+    Client(["🧙 External Client"]):::client --> KC
+    
+    subgraph "🔐 Identity Provider"
+        KC["🔑 Keycloak\n:8082"]:::security
+    end
+    
+    KC -- "JWT Token" --> Client
+    Client -- "Bearer Token" --> GW
+
+    subgraph "🏰 The City Gates"
+        GW["🚪 API Gateway\n:9999\n(OAuth2 Resource Server)"]:::gateway
+    end
+
+    subgraph "📋 The Notice Board"
+        SR["📍 Service Registry\nEureka :8761"]:::registry
+    end
+
+    GW -- "discovers services" --> SR
+
+    subgraph "⚔️ The Witcher Schools"
+        DT["🚚 Delivery Tracking\n:8080"]:::service
+        CM["🛵 Courier Management\n:8081"]:::service
+    end
+
+    DT -- "registers" --> SR
+    CM -- "registers" --> SR
+
+    GW -- "POST/GET /api/v1/deliveries/**" --> DT
+    GW -- "GET/POST /api/v1/couriers/**" --> CM
+    GW -- "GET /public/couriers/**\n(no auth required)" --> CM
+
+    subgraph "🐦 The Ravens — Async Events"
+        K["Apache Kafka\n:9092"]:::kafka
+    end
+
+    DT -- "DeliveryPlacedEvent\nDeliveryPickedUpEvent\nDeliveryFulfilledEvent" --> K
+    K -- "consumes events" --> CM
+
+    subgraph "🏗️ Infrastructure"
+        PG[("🐘 PostgreSQL :5432\ncourierdb | deliverydb")]:::infra
+        PGA["🖥️ pgAdmin :5050"]:::infra
+        KUI["📊 Kafka UI :8090"]:::infra
+    end
+
+    subgraph "🔭 Observability"
+        PROM["📈 Prometheus :9090"]:::observability
+        LOKI["📝 Loki :3100"]:::observability
+        JAEG["🕸️ Jaeger :16686"]:::observability
+        GRAF["📉 Grafana :3000"]:::observability
+    end
+
+    DT --- PG
+    CM --- PG
+    PGA --- PG
+    KUI --- K
+
+    DT & CM & GW & SR -- "Metrics" --> PROM
+    DT & CM & GW & SR -- "Logs" --> LOKI
+    DT & CM & GW & SR -- "Traces" --> JAEG
+    PROM & LOKI & JAEG -- "Datasources" --> GRAF
+
+    classDef client fill:#8B4513,color:#fff,stroke:#5C2D0A
+    classDef security fill:#8B0000,color:#fff,stroke:#5C0000
+    classDef gateway fill:#4A0E8F,color:#fff,stroke:#2D0860
+    classDef registry fill:#1A5276,color:#fff,stroke:#0E3460
+    classDef service fill:#1E8449,color:#fff,stroke:#145A32
+    classDef kafka fill:#231F20,color:#fff,stroke:#000
+    classDef infra fill:#555,color:#fff,stroke:#333
+    classDef observability fill:#E6522C,color:#fff,stroke:#C13C1A
+```
+
 ## 🏰 The Four Schools — Microservices
 
 | School | Port | The Sign It Casts |
@@ -419,7 +496,7 @@ Expected final output:
 ⚔️ Contract complete. Toss a coin to your witcher.
 
 📊 View Kafka events at:         http://localhost:8090
-🗄️  View database at:            http://localhost:5050
+🗄️ View database at:            http://localhost:5050
 📋 View service registry at:     http://localhost:8761
 📉 View War Room dashboard at:   http://localhost:3000
 🔍 View distributed traces at:   http://localhost:16686
@@ -487,15 +564,21 @@ After placing a delivery you'll see `DeliveryPlacedEvent` published by Delivery 
 
 ## 🗄️ Inspecting the Database
 
-**pgAdmin:** http://localhost:5050 | admin@admin.com / admin
+**pgAdmin:** http://localhost:5050
 
+**1. Web UI Login Credentials:**
+- Email: `admin@admin.com`
+- Password: `admin`
+
+**2. Database Connection:**
+Once logged in, expand `Servers` -> `PetrecaDelivery`.
+
+*Note: If pgAdmin prompts you for a password to connect to the database, enter `postgres` and check "Save Password". (This happens because Docker sometimes ignores the auto-login `pgpass` file due to host OS file permissions).*
+
+You will then see:
 - `deliverydb` → `delivery`, `item`, `contact_point`
 - `courierdb` → `courier`, `assigned_delivery`
-
-```sql
-SELECT id, status, courier_id, placed_at, fulfilled_at FROM delivery ORDER BY placed_at DESC;
-SELECT id, name, fulfilled_deliveries_quantity, pending_deliveries_quantity FROM courierdb.public.courier;
-```
+- `keycloakdb` → Keycloak internal tables
 
 ---
 
@@ -549,19 +632,23 @@ resilience4j_circuitbreaker_state
 
 ---
 
-## ⚔️ Petreca War Room — The Command Fortress
+### 📊 Grafana Dashboards — The Command Fortress
 
 > *"War is never black and white. But our dashboards are always green."*
 
-The **Petreca War Room** is the custom Grafana dashboard built for this platform — the single screen that shows the health, performance, and behavior of the entire Continent.
+Grafana (`http://localhost:3000`) is pre-provisioned with two critical dashboards to monitor the Continent. No manual imports are required.
 
-**Access:** http://localhost:3000 → **Dashboards** → **Petreca War Room**
+**1. The Petreca War Room (Custom Business Metrics)**
+This is the custom command center built specifically for this platform. It tracks the health and behavior of the entire distributed system:
+- **Platform Health:** Real-time HTTP error rates, Circuit Breaker states (CLOSED / OPEN / HALF_OPEN), and retry counts.
+- **Delivery Intelligence:** Deliveries by lifecycle stage, Kafka event throughput, and active courier count.
+- **Trace Explorer:** Direct links to Jaeger traces for the most recent requests — one-click root cause investigation.
 
-**⚔️ Panel 1 — Platform Health:** Real-time HTTP error rates, Circuit Breaker states (CLOSED / OPEN / HALF_OPEN), uptime, and retry counts per service.
-
-**📦 Panel 2 — Delivery Intelligence:** Deliveries by lifecycle stage, average fulfillment time, Kafka event throughput, active courier count.
-
-**🏗️ Panel 3 — Infrastructure Vitals:** JVM heap/non-heap memory per service, CPU usage, HikariCP connection pool saturation, Kafka consumer lag, GC frequency.
+**2. JVM Micrometer (Standard Dashboard ID: 4701)**
+The gold standard for Spring Boot infrastructure monitoring. This dashboard provides microscopic visibility into the Java Virtual Machine for each microservice:
+- **Memory:** Heap and Non-Heap utilization.
+- **Garbage Collection:** GC pause durations and frequency.
+- **Threads & Connections:** Active JVM threads, Tomcat sessions, and HikariCP database connection pool saturation.
 
 **🔍 Bonus — Trace Explorer:** Direct links to Jaeger traces for the most recent requests — one-click root cause investigation for any error spike.
 
