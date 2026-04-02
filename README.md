@@ -1,3 +1,5 @@
+<div align="center">
+
 # ⚔️ PetrecaDelivery
 
 ### *"Evil is evil. Lesser, greater, middling — it's all the same. But a witcher must choose."*
@@ -28,6 +30,23 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=bugs)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=vulnerabilities)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
 [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=weritonpetreca_petrecadelivery&metric=security_rating)](https://sonarcloud.io/project/overview?id=weritonpetreca_petrecadelivery)
+
+</div>
+
+---
+
+## 🎯 Project Objective
+
+**PetrecaDelivery is a Grandmaster-level portfolio project.** It is not a commercial product, but rather a comprehensive demonstration of advanced backend engineering, DevSecOps pipelines, and cloud-native patterns.
+
+By exploring this repository, engineering managers and technical recruiters will find:
+* **Event-Driven Architecture:** Decoupled domains communicating asynchronously via Apache Kafka.
+* **Fault Tolerance:** Strategic implementation of Circuit Breakers and Retries (Resilience4j) to prevent cascading failures.
+* **Zero-Trust Security:** Centralized Identity and Access Management (IAM) using Keycloak with OAuth2/OIDC standards.
+* **Full-Stack Observability:** A complete telemetry ecosystem (Prometheus, Grafana, Loki, Jaeger) configured via Infrastructure as Code.
+* **DevSecOps Maturity:** Automated CI/CD pipelines enforcing strict Quality Gates (SonarCloud) and vulnerability scanning (OWASP).
+
+Running this project locally provides a fully operational, observable, and secure microservices ecosystem.
 
 ---
 
@@ -115,6 +134,42 @@ graph TD
     classDef infra fill:#555,color:#fff,stroke:#333
     classDef observability fill:#E6522C,color:#fff,stroke:#C13C1A
 ```
+
+---
+
+## ⚖️ Architectural Decisions & Trade-offs
+
+> *"Evil is evil... but architectural choices always come with trade-offs."*
+
+As a Software Engineer, I designed this platform by weighing strict decoupling against system complexity and user experience.
+
+### 1. Hybrid Communication (Sync vs. Async)
+**The Choice:** Delivery Tracking publishes state changes to Courier Management asynchronously via Kafka (e.g., `DeliveryPlacedEvent`). However, when calculating a courier's payout before finalizing a delivery, the services communicate synchronously via HTTP.
+
+**The Trade-off:** While making the payout calculation asynchronous (Kafka) would achieve 100% decoupling, it would severely degrade the Developer Experience (DevEx) and Frontend UI. The client would have to implement complex polling or WebSockets just to wait for a simple calculation result.
+
+**The Verdict:** A hybrid approach—Sync for immediate reads/calculations, Async for state mutations—provides the optimal balance of decoupling and client-side simplicity.
+
+### 2. Gateway Registration (Eureka)
+**The Choice:** The API Gateway is explicitly registered as a client within the Eureka Service Registry (`register-with-eureka: true`).
+
+**The Trade-off:** While a Gateway technically only needs to *fetch* the registry to route traffic, hiding it from the registry creates an observability blind spot.
+
+**The Verdict:** Registering the Gateway allows Prometheus to dynamically discover and scrape its metrics, providing a unified, complete view of the entire infrastructure in Grafana.
+
+### 3. Embedded Value Objects (Database Design)
+**The Choice:** In `deliverydb`, the `ContactPoint` (address) is not an independent table with a foreign key. It is an `@Embeddable` Value Object flattened directly into the `delivery` table.
+
+**The Trade-off:** We sacrifice database normalization (3NF) and the ability to easily query "all deliveries to a specific street independently of the delivery entity."
+
+**The Verdict:** Following Domain-Driven Design (DDD), a contact point has no identity outside of its delivery. Flattening it via `@AttributeOverride` eliminates slow SQL `JOIN` operations, massively optimizing read performance.
+
+### 4. Authentication Flow (grant_type=password)
+**The Choice:** The automated end-to-end test script uses the Resource Owner Password Credentials flow (`grant_type=password`) to obtain a JWT from Keycloak.
+
+**The Trade-off:** This flow is deprecated in OAuth 2.1 for production web applications because it exposes raw credentials to the client.
+
+**The Verdict:** For automated, headless shell scripts running in a trusted CI/CD or local test environment, it remains a highly efficient and valid mechanism. A production frontend UI for this platform would strictly use the Authorization Code Flow with PKCE.
 
 ---
 
@@ -509,7 +564,7 @@ Expected final output:
 ⚔️ Contract complete. Toss a coin to your witcher.
 
 📊 View Kafka events at:         http://localhost:8090
-🗄️ View database at:            http://localhost:5050
+🗄️ View database at:             http://localhost:5050
 📋 View service registry at:     http://localhost:8761
 📉 View War Room dashboard at:   http://localhost:3000
 🔍 View distributed traces at:   http://localhost:16686
