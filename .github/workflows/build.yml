@@ -37,7 +37,7 @@ jobs:
       - name: Execute Build and Unit/Integration Tests
         env:
           NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
-        run: ./mvnw clean verify
+        run: ./mvnw clean verify -P security-scan
 
       - name: Upload JaCoCo Coverage Report
         uses: actions/upload-artifact@v6
