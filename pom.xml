@@ -198,54 +198,48 @@
                     </configuration>
                 </plugin>
 
-                <plugin>
-                    <groupId>org.owasp</groupId>
-                    <artifactId>dependency-check-maven</artifactId>
-                    <version>12.2.0</version>
-                    <configuration>
-                        <failBuildOnCVSS>7.0</failBuildOnCVSS>
-                        <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
-                        <nvdApiDelay>16000</nvdApiDelay>
-                        <dataDirectory>${user.home}/.nvd-data</dataDirectory>
-                        <suppressionFiles>
-                            <suppressionFile>${session.executionRootDirectory}/suppression.xml</suppressionFile>
-                        </suppressionFiles>
-                        <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
-                        <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
             </plugins>
         </pluginManagement>
     </build>
 
     <profiles>
         <profile>
-            <id>offline-sca</id>
+            <id>security-scan</id>
             <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.owasp</groupId>
-                            <artifactId>dependency-check-maven</artifactId>
-                            <version>12.2.0</version>
-                            <configuration>
-                                <nvdDatafeedUrl>file://${user.home}/.nvd-cache/nvdcve-{0}.json.gz</nvdDatafeedUrl>
-                                <dataDirectory>${user.home}/.nvd-cache</dataDirectory>
-                                <nvdApiDelay>0</nvdApiDelay>
-                                <nvdApiKey></nvdApiKey>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <version>12.2.0</version>
+                        <configuration>
+                            <failBuildOnCVSS>7.0</failBuildOnCVSS>
+                            <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                            <nvdApiDelay>16000</nvdApiDelay>
+                            <dataDirectory>${user.home}/.nvd-data</dataDirectory>
+                            <suppressionFiles>
+                                <suppressionFile>${session.executionRootDirectory}/suppression.xml</suppressionFile>
+                            </suppressionFiles>
+                            <assemblyAnalyzerEnabled>false</assemblyAnalyzerEnabled>
+                            <ossindexAnalyzerEnabled>false</ossindexAnalyzerEnabled>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
             </build>
+        </profile>
+
+        <profile>
+            <id>offline-sca</id>
+            <properties>
+                <nvd.api.delay>0</nvd.api.delay>
+            </properties>
         </profile>
     </profiles>
 </project>
