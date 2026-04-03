@@ -58,6 +58,18 @@ spring:
             - RewritePath=/public/couriers/?(?<segment>.*), /api/v1/couriers/$\{segment}
             - RemoveJsonAttributesResponseBody=pendingDeliveries,pendingDeliveriesQuantity,phone,true
 
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    persist-authorization: true
+    urls:
+      - name: Courier Management API
+        url: /api/v1/couriers/v3/api-docs
+      - name: Delivery Tracking API
+        url: /api/v1/deliveries/v3/api-docs
+    oauth:
+      clientId: petreca-api-client
+
 
 eureka:
   client:

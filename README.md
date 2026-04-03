@@ -35,18 +35,28 @@
 
 ---
 
-## 🎯 Project Objective
+## 🎯 Project Objective & Dual Personas
 
 **PetrecaDelivery is a Grandmaster-level portfolio project.** It is not a commercial product, but rather a comprehensive demonstration of advanced backend engineering, DevSecOps pipelines, and cloud-native patterns.
 
-By exploring this repository, engineering managers and technical recruiters will find:
-* **Event-Driven Architecture:** Decoupled domains communicating asynchronously via Apache Kafka.
-* **Fault Tolerance:** Strategic implementation of Circuit Breakers and Retries (Resilience4j) to prevent cascading failures.
-* **Zero-Trust Security:** Centralized Identity and Access Management (IAM) using Keycloak with OAuth2/OIDC standards.
-* **Full-Stack Observability:** A complete telemetry ecosystem (Prometheus, Grafana, Loki, Jaeger) configured via Infrastructure as Code.
-* **DevSecOps Maturity:** Automated CI/CD pipelines enforcing strict Quality Gates (SonarCloud) and vulnerability scanning (OWASP).
+Whether you are a Business Stakeholder looking for ROI, or a Senior Architect inspecting the code, this stronghold was built for you.
 
-Running this project locally provides a fully operational, observable, and secure microservices ecosystem.
+### 👔 For the Business Stakeholder (The Alderman's Ledger)
+**The Problem:** Traditional, monolithic logistics platforms bleed coin. During peak hours (like Black Friday), the system crashes under load, losing delivery contracts and frustrating couriers. Furthermore, tightly coupled systems mean a bug in courier payouts takes down the entire delivery tracking system, halting operations completely.
+**The Solution (How this saves money):**
+* **Zero Lost Revenue:** By utilizing Circuit Breakers and Asynchronous Kafka events, if the Courier system goes down for maintenance, Deliveries can still be created and queued safely. No dropped orders.
+* **Operational Efficiency:** Automated, precise payout calculations based on distance traveled eliminate overpayment and manual auditing.
+* **Rapid Onboarding:** The fully interactive, auto-authenticated API Documentation Portal allows front-end teams and B2B partners to integrate with the platform in minutes, not weeks.
+
+👉 **The Fast Path:** Want to see it working without reading code? Jump down to the [How to Run](#-how-to-run--summoning-the-continent) section to spin up the infrastructure, and you can interact with the entire platform through our centralized, auto-authenticating Swagger UI portal. No Postman or terminal required.
+
+### 🛠️ For the Technical Engineer (The Witcher's Inspection)
+By exploring this repository, engineering managers and technical recruiters will find enterprise-grade patterns:
+* **Interface Segregation (API Contracts):** REST controllers are stripped of web annotations, implementing pure Java interfaces that act as strict OpenAPI contracts.
+* **REST Maturity Level 3 (HATEOAS-lite):** Endpoints strictly adhere to returning `201 Created` with dynamic `Location` headers instead of bloated JSON bodies.
+* **Gateway-Aggregated OpenAPI:** A single, central Swagger UI on the Spring Cloud Gateway that dynamically routes and authenticates requests to underlying microservices using Keycloak OAuth2.
+* **Event-Driven Architecture:** Decoupled domains communicating asynchronously via Apache Kafka.
+* **Full-Stack Observability:** A complete telemetry ecosystem (Prometheus, Grafana, Loki, Jaeger) configured via Infrastructure as Code.
 
 ---
 
@@ -297,72 +307,10 @@ All infrastructure is provisioned via `docker-compose.yml`.
 - 📦 **Apache Maven** (or use the included `./mvnw` wrapper)
 - 🖥️ IntelliJ IDEA (recommended)
 
-### Environment Configuration (The Campfire)
-This project uses environment variables to manage sensitive data and infrastructure coordinates.
-
-Before starting any services, you must create your local configuration file. Copy the provided example file to create your own `.env`:
-
-```bash
-cp .env.example .env
-````
 
 ---
 
-## 🔑 Setting Up Repository Secrets
 
-> *"Knowledge is power. Guard it well — especially in GitHub Secrets."*
-
-This project uses two external services that require API keys: **OWASP Dependency-Check** (CVE scanning) and **SonarCloud** (SAST analysis). Both keys live as **GitHub Actions Secrets** — never hardcoded.
-
----
-
-### 🛡️ Secret 1 — NVD API Key (OWASP Dependency-Check)
-
-The OWASP Dependency-Check plugin fetches CVEs from NIST's **National Vulnerability Database (NVD)**. Without an API key, requests are heavily rate-limited and builds may time out.
-
-**How to obtain (free, no account required):**
-
-1. Go to **https://nvd.nist.gov/developers/request-an-api-key**
-2. Enter your email and submit. No account creation needed.
-3. Check your inbox — click the verification link in the first email.
-4. A second email will contain your API key. Copy it.
-
-**How to add to GitHub:**
-
-1. Repository → **Settings → Secrets and variables → Actions → New repository secret**
-2. Name: `NVD_API_KEY` | Value: your key
-3. Click **Add secret**
-
-The workflow passes it to Maven via `-DnvdApiKey=${{ secrets.NVD_API_KEY }}`.
-
----
-
-### 📊 Secret 2 — SonarCloud Token (SAST + Coverage)
-
-**SonarCloud** analyzes every push and pull request for bugs, vulnerabilities, code smells, and coverage. **Pull requests that fail the Quality Gate are blocked from merging into `main`.**
-
-**How to set up SonarCloud:**
-
-1. Go to **https://sonarcloud.io** → **Log in with GitHub**
-2. Click **+ → Analyze new project** → select `petrecadelivery` → **Set up**
-3. Choose **With GitHub Actions** as the analysis method
-4. Note your **project key** (typically `weritonpetreca_petrecadelivery`) — confirm it matches `sonar.projectKey` in `pom.xml`
-
-**How to generate your token:**
-
-1. SonarCloud → avatar → **My Account → Security**
-2. Under **Generate Tokens**, enter a name (e.g., `petrecadelivery-ci`) and click **Generate**
-3. Copy the token immediately — **it will not be shown again**
-
-**How to add to GitHub:**
-
-1. Repository → **Settings → Secrets and variables → Actions → New repository secret**
-2. Name: `SONAR_TOKEN` | Value: your token
-3. Click **Add secret**
-
-> After completing these steps, the **Quality Gate** and **Coverage** badges at the top of this README will display live data from your next CI run.
-
----
 
 ## 🛡️ CI/CD Pipeline — The Witcher's Preparation Ritual
 
@@ -434,7 +382,7 @@ Starts PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, Loki, Jaeger, 
 
 ### Step 2 — Create the Test User in Keycloak
 
-> ⚠️ **Mandatory.** The user `geralt` must exist in the realm before authentication can succeed. Run this **before** starting microservices and **before** running the test script.
+> ⚠️ **Mandatory.** The user `geralt` must exist in the realm before authentication can succeed. Run this **before** starting microservices and **before** running the test script or creating a delivery manually.
 
 ```bash
 chmod +x create-test-user.sh
@@ -447,21 +395,18 @@ This calls the Keycloak Admin API to create `geralt / witcher123` in `petreca-re
 
 ### Step 3 — Build All Modules
 
-Before compiling, the Emperor's guards (OWASP Dependency-Check) will scan the project. You must provide your NVD API key to the local environment to prevent the build from crashing due to rate limits.
+**The Witcher's Path (Fast Local Build):** For local development, heavy security scans are locked behind a Maven profile. Your default build is blazing fast.
 
 ```bash
-# 1. Export your API key
-export NVD_API_KEY="your_api_key_here"
-
-# 2. Build the platform (skipping tests for speed)
 ./mvnw clean install -DskipTests
 ````
-### **⚔️ The Witcher's Shortcut (Fast Build):**
 
-If you are just developing locally and want to completely skip the 3-minute security scan, you can bypass the OWASP plugin entirely:
+### 🛡️ The Grandmaster's Audit (Local Security Scan):
+If you want to run the full OWASP Dependency-Check locally (exactly as it runs in the CI/CD pipeline) to check for CVEs before pushing, you must activate the security profile and provide your NVD API key (more details given on [Setting Up Keys](#-setting-up-secrets)):
 
 ```bash
-./mvnw clean install -DskipTests -Ddependency-check.skip=true
+export NVD_API_KEY="your_api_key_here"
+./mvnw clean install -Psecurity-scan
 ```
 
 ---
@@ -516,39 +461,13 @@ All services are up at `http://localhost:9999`.
 
 ---
 
-## 🗡️ API Reference
 
-### Delivery Tracking
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `POST` | `/api/v1/deliveries` | Create a new delivery draft |
-| `PUT` | `/api/v1/deliveries/{id}` | Edit a draft delivery |
-| `GET` | `/api/v1/deliveries` | List all deliveries (paginated) |
-| `GET` | `/api/v1/deliveries/{id}` | Get a delivery by ID |
-| `POST` | `/api/v1/deliveries/{id}/placement` | Place the delivery |
-| `POST` | `/api/v1/deliveries/{id}/pickups` | Assign a courier |
-| `POST` | `/api/v1/deliveries/{id}/completion` | Mark as completed |
-
-### Courier Management
-
-| Method | Path | Description |
-| --- | --- | --- |
-| `POST` | `/api/v1/couriers` | Register a new courier |
-| `PUT` | `/api/v1/couriers/{id}` | Update courier data |
-| `GET` | `/api/v1/couriers` | List all couriers (paginated) |
-| `GET` | `/api/v1/couriers/{id}` | Get a courier by ID |
-| `POST` | `/api/v1/couriers/payout-calculation` | Calculate payout for a distance |
-| `GET` | `/public/couriers` | Public list (sanitized) |
-| `GET` | `/public/couriers/{id}` | Public detail (sanitized) |
-
----
 
 ## 🔥 End-to-End Test — A Witcher's Full Contract
 
 ### Option 1: Automated Script (Recommended)
 
-> ⚠️ Run `./create-test-user.sh` first. The script authenticates as `geralt` — the user must already exist.
+> ⚠️ Run `./create-test-user.sh` first. The script authenticates as `geralt` — the user must already exist. After that we are ready to our E2E script.
 
 ```bash
 chmod +x test-delivery-flow.sh
@@ -584,18 +503,18 @@ TOKEN=$(curl -s -X POST "http://localhost:8082/realms/petreca-realm/protocol/ope
   | jq -r '.access_token')
 ```
 
-**Create courier → copy COURIER_ID:**
+**Create courier → copy COURIER_ID (the end of the `Location`):**
 
 ```bash
-curl -X POST http://localhost:9999/api/v1/couriers \
+curl -s -D - -X POST http://localhost:9999/api/v1/couriers \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d '{"name": "Geralt of Rivia", "phone": "11987654321"}'
 ```
 
-**Create delivery → copy DELIVERY_ID:**
+**Create delivery → copy DELIVERY_ID (the end of the `Location`):**
 
 ```bash
-curl -X POST http://localhost:9999/api/v1/deliveries \
+curl -s -D - -X POST http://localhost:9999/api/v1/deliveries \
   -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
   -d '{"sender":{"zipCode":"12345-000","street":"Rua A","number":"10","name":"Empresa A","phone":"11999999999"},"recipient":{"zipCode":"54321-000","street":"Av B","number":"20","name":"Cliente B","phone":"11888888888"},"items":[{"name":"Silver Sword","quantity":1}]}'
 ```
@@ -607,6 +526,37 @@ curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/placement -H "A
 curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/pickups -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"courierId":"COURIER_ID"}'
 curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/completion -H "Authorization: Bearer $TOKEN"
 ```
+
+---
+
+### Option 3 — Centralized API Documentation
+
+> *"A witcher's signs are useless if he forgets the incantations. An API is useless if it lacks documentation."*
+
+Instead of forcing frontend teams to hunt down endpoints across multiple microservices, **PetrecaDelivery** features an enterprise-grade, centralized documentation portal hosted directly on the **API Gateway**.
+
+**Access the Portal:** `http://localhost:9999/swagger-ui.html`
+
+### 🧩 1. Interface Segregation (Pristine Controllers)
+We strictly separate the HTTP/OpenAPI contract from the business logic execution to maintain a clean architecture.
+* **The Notice Board (`*Doc.java` Interfaces):** All `@GetMapping`, `@RequestBody`, `@Valid`, and Swagger `@Operation` annotations live strictly in Java Interfaces. These act as the immutable contracts for the web layer.
+* **The Execution (`*Controller.java`):** The concrete Spring controllers implement these interfaces. Free of web-layer clutter, they remain terrifyingly clean and focused purely on delegating tasks to the Domain Services.
+
+### 🔐 2. Integrated Identity (Zero-Friction DevEx)
+Developers do not need to juggle Postman environments or terminal to generate JWTs. The Swagger UI is deeply integrated with our Keycloak server, after you generate the user with the `./create-test-user.sh`:
+* Click **Authorize** in the UI.
+* The Gateway auto-injects the required `petreca-api-client` ID.
+* Enter the test credentials (`geralt` / `witcher123`).
+* Swagger securely negotiates the **OAuth2 Password Flow** with Keycloak, retrieves the JWT, and automatically attaches the `Bearer` token to all subsequent requests.
+* **Persistence:** The token is saved in Local Storage. It survives page reloads and remains active even when you swap the dropdown between the Courier and Delivery API definitions.
+
+### 🛡️ 3. Defeating the CORS Monster
+A common trap with Gateway-hosted Swagger UIs is Cross-Origin Resource Sharing (CORS) blocks when the UI attempts to call child services directly on their internal ports.
+We bypassed this by configuring the child `OpenApiConfig` files to explicitly declare the Gateway (`http://localhost:9999`) as their single `@Server` origin. All UI traffic routes flawlessly through the Gateway, respecting all underlying Resilience4j circuit breakers and retry policies.
+
+### 📍 4. REST Maturity Level 3 (HATEOAS-lite)
+This platform adheres to strict Enterprise REST standards to optimize bandwidth and client routing.
+When creating a new resource (e.g., `POST /api/v1/deliveries`), the API **does not** return the entire JSON body. Instead, it returns a hyper-efficient `201 Created` status with an exact **`Location` HTTP header** pointing to the newly forged resource URI (e.g., `Location: http://localhost:9999/api/v1/deliveries/12345`).
 
 ---
 
@@ -723,6 +673,74 @@ The gold standard for Spring Boot infrastructure monitoring. This dashboard prov
 > All panels, datasources (Prometheus, Loki, Jaeger), and the War Room dashboard are **automatically provisioned on startup** — no manual Grafana setup required.
 
 ---
+
+## 🔑 Setting Up Secrets
+
+> *"Knowledge is power. Guard it well — especially in GitHub Secrets."*
+
+This project uses two external services that require API keys: **OWASP Dependency-Check** (CVE scanning) and **SonarCloud** (SAST analysis). Both keys live as **GitHub Actions Secrets** — never hardcoded.
+
+---
+
+### 🛡️ Secret 1 — NVD API Key (OWASP Dependency-Check)
+
+The OWASP Dependency-Check plugin fetches CVEs from NIST's **National Vulnerability Database (NVD)**. Without an API key, requests are heavily rate-limited and builds may time out.
+
+**How to obtain (free, no account required):**
+
+1. Go to **https://nvd.nist.gov/developers/request-an-api-key**
+2. Enter your email and submit. No account creation needed.
+3. Check your inbox — click the verification link in the first email.
+4. A second email will contain your API key. Copy it.
+
+**How to add to GitHub:**
+
+1. Repository → **Settings → Secrets and variables → Actions → New repository secret**
+2. Name: `NVD_API_KEY` | Value: your key
+3. Click **Add secret**
+
+The CI/CD workflow activates the security profile and passes the key to Maven via `-Psecurity-scan` which uses `-DnvdApiKey=${{ secrets.NVD_API_KEY }}`.
+
+(**Note**: This heavy scan is disabled by default for local development to keep your build times blazing fast).
+
+---
+
+### 📊 Secret 2 — SonarCloud Token (SAST + Coverage)
+
+**SonarCloud** analyzes every push and pull request for bugs, vulnerabilities, code smells, and coverage. **Pull requests that fail the Quality Gate are blocked from merging into `main`.**
+
+**How to set up SonarCloud:**
+
+1. Go to **https://sonarcloud.io** → **Log in with GitHub**
+2. Click **+ → Analyze new project** → select `petrecadelivery` → **Set up**
+3. Choose **With GitHub Actions** as the analysis method
+4. Note your **project key** (typically `weritonpetreca_petrecadelivery`) — confirm it matches `sonar.projectKey` in `pom.xml`
+
+**How to generate your token:**
+
+1. SonarCloud → avatar → **My Account → Security**
+2. Under **Generate Tokens**, enter a name (e.g., `petrecadelivery-ci`) and click **Generate**
+3. Copy the token immediately — **it will not be shown again**
+
+**How to add to GitHub:**
+
+1. Repository → **Settings → Secrets and variables → Actions → New repository secret**
+2. Name: `SONAR_TOKEN` | Value: your token
+3. Click **Add secret**
+
+> After completing these steps, the **Quality Gate** and **Coverage** badges at the top of this README will display live data from your next CI run.
+
+### Environment Configuration (The Campfire)
+This project uses environment variables to manage sensitive data and infrastructure coordinates.
+
+Before starting any services, you must create your local configuration file. Copy the provided example file to create your own `.env`:
+
+```bash
+cp .env.example .env
+````
+
+---
+
 
 ## 📚 Further Reading
 

@@ -61,6 +61,10 @@ resilience4j:
         baseConfig: default
         waitDurationInOpenState: 5000
 
+springdoc:
+  api-docs:
+    path: /api/v1/deliveries/v3/api-docs
+
 management:
   endpoints:
     web:

@@ -1,5 +1,6 @@
 package com.petreca.petrecadelivery.courier.management.api.controller;
 
+import com.petreca.petrecadelivery.courier.management.api.doc.CourierControllerDoc;
 import com.petreca.petrecadelivery.courier.management.api.exception.GlobalExceptionHandler;
 import com.petreca.petrecadelivery.courier.management.api.model.CourierInput;
 import com.petreca.petrecadelivery.courier.management.api.model.CourierPayoutCalculationInput;
@@ -8,16 +9,16 @@ import com.petreca.petrecadelivery.courier.management.domain.model.Courier;
 import com.petreca.petrecadelivery.courier.management.domain.service.CourierPayoutService;
 import com.petreca.petrecadelivery.courier.management.domain.service.CourierQueryService;
 import com.petreca.petrecadelivery.courier.management.domain.service.CourierRegistrationService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.math.BigDecimal;
+import java.net.URI;
 import java.util.UUID;
 
 /**
@@ -30,10 +31,9 @@ import java.util.UUID;
  * <p>Tratamento de exceções centralizado em {@link GlobalExceptionHandler}.</p>
  */
 @RestController
-@RequestMapping("/api/v1/couriers")
 @RequiredArgsConstructor
 @Slf4j
-public class CourierController {
+public class CourierController implements CourierControllerDoc {
 
     /*
      * Injeção via construtor — padrão recomendado pelo Spring.
@@ -55,10 +55,18 @@ public class CourierController {
      * @param input dados do entregador a ser criado
      * @return entregador criado com status HTTP 201 Created
      */
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Courier create(@Valid @RequestBody CourierInput input) {
-        return courierRegistrationService.create(input);
+    @Override
+    public ResponseEntity<Void> create(CourierInput input) {
+        log.info("Creating new courier via API");
+        Courier createdCourier = courierRegistrationService.create(input);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createdCourier.getId())
+                .toUri();
+        log.info("Courier registered successfully. Resource Location: {}", location);
+        return ResponseEntity.created(location).build();
     }
 
     /**
@@ -68,10 +76,11 @@ public class CourierController {
      * @param input     novos dados do entregador
      * @return entregador atualizado com status HTTP 200 OK
      */
-    @PutMapping("/{courierId}")
-    public Courier update(@PathVariable UUID courierId,
-                          @Valid @RequestBody CourierInput input) {
-        return courierRegistrationService.update(courierId, input);
+    @Override
+    public ResponseEntity<Courier> update(UUID courierId, CourierInput input) {
+        log.info("Updating courier profile for ID: {}", courierId);
+        Courier updatedCourier = courierRegistrationService.update(courierId, input);
+        return ResponseEntity.ok(updatedCourier);
     }
 
     /**
@@ -80,10 +89,11 @@ public class CourierController {
      * @param pageable configuração de paginação (page, size, sort)
      * @return página de entregadores
      */
-    @GetMapping
-    public PagedModel<Courier> findAll(@PageableDefault Pageable pageable) {
+    @Override
+    public ResponseEntity<PagedModel<Courier>> findAll(Pageable pageable) {
         log.info("FindAll couriers requested");
-        return courierQueryService.findAll(pageable);
+        PagedModel<Courier> couriers = courierQueryService.findAll(pageable);
+        return ResponseEntity.ok(couriers);
     }
 
     /**
@@ -92,9 +102,11 @@ public class CourierController {
      * @param courierId identificador do entregador
      * @return entregador encontrado ou HTTP 404 via GlobalExceptionHandler
      */
-    @GetMapping("/{courierId}")
-    public Courier findById(@PathVariable UUID courierId) {
-        return courierQueryService.findById(courierId);
+    @Override
+    public ResponseEntity<Courier> findById(UUID courierId) {
+        log.info("Fetching courier by ID: {}", courierId);
+        Courier courier =courierQueryService.findById(courierId);
+        return ResponseEntity.ok(courier);
     }
 
     /**
@@ -103,12 +115,11 @@ public class CourierController {
      * @param input distância em km
      * @return valor calculado do pagamento
      */
-    @PostMapping("/payout-calculation")
-    public CourierPayoutResultModel calculate(
-            @RequestBody CourierPayoutCalculationInput input) {
-        log.info("Payout calculation requested for distance: {} km",
-                input.distanceInKm());
+    @Override
+    public ResponseEntity<CourierPayoutResultModel> calculate(CourierPayoutCalculationInput input) {
+        log.info("Payout calculation requested for distance: {} km", input.distanceInKm());
         BigDecimal payoutFee = courierPayoutService.calculate(input.distanceInKm());
-        return new CourierPayoutResultModel(payoutFee);
+        CourierPayoutResultModel resultModel = new CourierPayoutResultModel(payoutFee);
+        return ResponseEntity.ok(resultModel);
     }
 }

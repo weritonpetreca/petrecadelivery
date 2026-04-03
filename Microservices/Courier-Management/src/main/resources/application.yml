@@ -38,6 +38,10 @@ eureka:
     instance-id: ${random.value}
     prefer-ip-address: true
 
+springdoc:
+  api-docs:
+    path: /api/v1/couriers/v3/api-docs
+
 management:
   endpoints:
     web:
