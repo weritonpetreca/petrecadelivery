@@ -101,11 +101,8 @@ class CourierControllerTest {
                     .post()
                     .then()
                     .statusCode(HttpStatus.CREATED.value())
-                    .body("id",    notNullValue())
-                    .body("name",  equalTo("João Silva"))
-                    .body("phone", equalTo("35998754561"))
-                    .body("pendingDeliveriesQuantity",  equalTo(0))
-                    .body("fulfilledDeliveriesQuantity", equalTo(0));
+                    .body(emptyOrNullString())
+                    .header("Location", containsString("/api/v1/couriers/"));
         }
 
         @Test

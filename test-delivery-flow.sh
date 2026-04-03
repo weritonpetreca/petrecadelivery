@@ -60,14 +60,15 @@ echo "------------------------------------------------"
 
 # Step 1: Create a Courier
 echo "📍 Step 1: Recruiting a witcher..."
-COURIER_RESPONSE=$(curl -s -X POST "http://localhost:9999/api/v1/couriers" \
+# -D - dumps headers, -o /dev/null hides body. grep finds Location, awk gets the last segment (the ID), tr removes carriage returns.
+COURIER_LOCATION=$(curl -s -D - -X POST "http://localhost:9999/api/v1/couriers" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{"name": "Geralt of Rivia", "phone": "11987654321"}')
+  -d '{"name": "Geralt of Rivia", "phone": "11987654321"}' -o /dev/null | grep -i ^Location)
 
-verify_not_null "$COURIER_RESPONSE" "Could not connect to Gateway to create courier."
+verify_not_null "$COURIER_LOCATION" "Could not get Location header for Courier."
 
-COURIER_ID=$(echo "$COURIER_RESPONSE" | jq -r '.id')
+COURIER_ID=$(echo "$COURIER_LOCATION" | awk -F'/' '{print $NF}' | tr -d '\r')
 verify_not_null "$COURIER_ID" "Could not extract Courier ID. Gateway cache might be cold."
 
 echo "✅ Courier created: $COURIER_ID"
@@ -76,18 +77,18 @@ echo ""
 
 # Step 2: Create a Delivery (Draft)
 echo "📦 Step 2: Drafting a delivery contract..."
-DELIVERY_RESPONSE=$(curl -s -X POST "http://localhost:9999/api/v1/deliveries" \
+DELIVERY_LOCATION=$(curl -s -D - -X POST "http://localhost:9999/api/v1/deliveries" \
   -H "Authorization: Bearer $TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
     "sender": {"zipCode": "12345-000", "street": "Rua A", "number": "10", "name": "Emp A", "phone": "119"},
     "recipient": {"zipCode": "54321-000", "street": "Av B", "number": "20", "name": "Cli B", "phone": "118"},
     "items": [{ "name": "Silver Sword", "quantity": 1 }]
-  }')
+  }' -o /dev/null | grep -i ^Location)
 
-verify_not_null "$DELIVERY_RESPONSE" "Could not connect to Gateway to create delivery."
+verify_not_null "$DELIVERY_LOCATION" "Could not get Location header for Delivery."
 
-DELIVERY_ID=$(echo "$DELIVERY_RESPONSE" | jq -r '.id')
+DELIVERY_ID=$(echo "$DELIVERY_LOCATION" | awk -F'/' '{print $NF}' | tr -d '\r')
 verify_not_null "$DELIVERY_ID" "Could not extract Delivery ID. Wait a moment for routes to sync and try again."
 
 echo "✅ Delivery drafted: $DELIVERY_ID"
