@@ -131,6 +131,7 @@ services:
       - KC_DB_USERNAME=${POSTGRES_USER:-postgres}
       - KC_DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
       - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
     command: start-dev --import-realm
     volumes:
       - ./keycloak:/opt/keycloak/data/import
@@ -141,6 +142,19 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+
+  keycloak-setup:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: petrecadelivery-keycloak-setup
+    depends_on:
+      - keycloak
+    networks:
+      - petrecadelivery-net
+    environment:
+      - KEYCLOAK_URL=http://keycloak:8080
+    volumes:
+      - ./create-test-user.sh:/tmp/create-test-user.sh
+    entrypoint: ["bash", "/tmp/create-test-user.sh"]
 
   jaeger:
     image: jaegertracing/all-in-one:latest
