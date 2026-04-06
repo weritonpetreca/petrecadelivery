@@ -59,6 +59,11 @@
 			<artifactId>springdoc-openapi-starter-webflux-ui</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>context-propagation</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
