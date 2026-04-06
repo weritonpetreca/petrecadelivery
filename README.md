@@ -17,6 +17,7 @@
 [![Resilience4j](https://img.shields.io/badge/Resilience4j_2.3-4CAF50?style=for-the-badge&logo=java&logoColor=white)](https://resilience4j.readme.io/)
 [![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io/)
 [![Grafana](https://img.shields.io/badge/Grafana-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
+[![K6](https://img.shields.io/badge/k6-7D64FF?style=for-the-badge&logo=k6&logoColor=white)](https://k6.io/)
 [![Keycloak](https://img.shields.io/badge/Keycloak-4D4D4D?style=for-the-badge&logo=keycloak&logoColor=white)](https://www.keycloak.org/)
 [![OAuth2](https://img.shields.io/badge/OAuth2-3C873A?style=for-the-badge&logo=auth0&logoColor=white)](https://oauth.net/2/)
 [![OpenTelemetry](https://img.shields.io/badge/OpenTelemetry-000000?style=for-the-badge&logo=opentelemetry&logoColor=white)](https://opentelemetry.io/)
@@ -294,6 +295,7 @@ All infrastructure is provisioned via `docker-compose.yml`.
 | **Code Quality & SAST** | SonarCloud (Quality Gate enforced on every PR) |
 | **Dependency Security** | OWASP Dependency-Check (NVD CVE scan)          |
 | **Test Coverage** | JaCoCo (reported to SonarCloud)                |
+| **Performance Testing** | Grafana K6 (Containerized Siege Engine)      |
 | **Utilities** | Lombok, Bean Validation                        |
 
 ---
@@ -367,7 +369,7 @@ cd petrecadelivery
 docker-compose up -d
 ```
 
-Starts PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, Loki, Jaeger, OTel Collector, and Keycloak. Wait **20–30 seconds** for all containers — especially Keycloak — to fully initialize.
+Starts PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, Loki, Jaeger, OTel Collector, and Keycloak. Wait **20–30 seconds** for all containers — especially Keycloak — to fully initialize and to our test user be automatically created.
 
 | Service | URL | Credentials |
 | --- | --- | --- |
@@ -380,20 +382,7 @@ Starts PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, Loki, Jaeger, 
 
 ---
 
-### Step 2 — Create the Test User in Keycloak
-
-> ⚠️ **Mandatory.** The user `geralt` must exist in the realm before authentication can succeed. Run this **before** starting microservices and **before** running the test script or creating a delivery manually.
-
-```bash
-chmod +x create-test-user.sh
-./create-test-user.sh
-```
-
-This calls the Keycloak Admin API to create `geralt / witcher123` in `petreca-realm`. If you get a connection error, Keycloak is still starting — wait a few seconds and try again.
-
----
-
-### Step 3 — Build All Modules
+### Step 2 — Build All Modules
 
 **The Witcher's Path (Fast Local Build):** For local development, heavy security scans are locked behind a Maven profile. Your default build is blazing fast.
 
@@ -411,7 +400,7 @@ export NVD_API_KEY="your_api_key_here"
 
 ---
 
-### Step 4 — Start the Microservices
+### Step 3 — Start the Microservices
 
 **A. Service Registry** *(start first)*
 
@@ -451,23 +440,20 @@ All services are up at `http://localhost:9999`.
 **Full startup sequence:**
 
 ```
-1. docker-compose up -d           ← infrastructure + Keycloak
-2. ./create-test-user.sh           ← insert geralt into the realm  ← DO NOT SKIP
-3. Service-Registry                ← first microservice
-4. Delivery-Tracking               ← either order
+1. docker-compose up -d           ← infrastructure + Keycloak + test user
+2. Service-Registry                ← first microservice
+3. Delivery-Tracking               ← either order
    Courier-Management              ← either order
-5. Gateway                         ← last microservice
+4. Gateway                         ← last microservice
 ```
 
 ---
-
 
 
 ## 🔥 End-to-End Test — A Witcher's Full Contract
 
 ### Option 1: Automated Script (Recommended)
 
-> ⚠️ Run `./create-test-user.sh` first. The script authenticates as `geralt` — the user must already exist. After that we are ready to our E2E script.
 
 ```bash
 chmod +x test-delivery-flow.sh
@@ -671,6 +657,32 @@ The gold standard for Spring Boot infrastructure monitoring. This dashboard prov
 **🔍 Bonus — Trace Explorer:** Direct links to Jaeger traces for the most recent requests — one-click root cause investigation for any error spike.
 
 > All panels, datasources (Prometheus, Loki, Jaeger), and the War Room dashboard are **automatically provisioned on startup** — no manual Grafana setup required.
+
+---
+
+## 🧪 Performance Testing (K6 Siege)
+> *"A sword is only as good as the steel it's forged from. A microservice is only as good as the load it can bear."*
+
+To prove the resilience of the API Gateway and downstream microservices, the stronghold is stress-tested using **Grafana K6**. We simulate a horde of 100 concurrent Virtual Users (Witchers) authenticating and requesting delivery data simultaneously.
+
+### The Siege Engine (How to Run)
+We use an ephemeral Docker container to run the load test, binding it to the host network so it can strike the local Gateway without polluting your machine with K6 installations.
+
+> *(Note: Ensure your Keycloak and microservices are fully running before launching the siege).*
+
+```Bash
+docker run --rm -i --network host -v $(pwd):/scripts grafana/k6 run /scripts/load-test.js
+```
+
+### The Battle Plan (Inversion of Control)
+
+The `load-test.js` script is an enterprise-grade template utilizing K6's lifecycle hooks:
+
+* `options` **(The Strategy):** Configures a ramp-up/ramp-down test to 100 Virtual Users over 3.5 minutes. It includes strict DevSecOps thresholds: if the `http_req_failed` rate exceeds 1%, the CI/CD pipeline will fail.
+
+* `setup` **(The Potion):** Executes exactly once before the attack, securely authenticating with Keycloak and passing the JWT down to the worker threads.
+
+* `default` **(The Strike):** The infinite loop executed concurrently by the clones, hitting the Gateway and asserting that HTTP 200 is returned quickly.
 
 ---
 
