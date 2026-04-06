@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export KEYCLOAK_URL=${KEYCLOAK_URL:-http://localhost:8082}
+
 # --- The Witcher's Coordinates ---
 CONTAINER_NAME="petrecadelivery-keycloak"
 REALM_NAME="petreca-realm"
@@ -20,17 +22,17 @@ verify_execution() {
 }
 
 echo "================================================"
-echo "🐺 KEYCLOAK FORGE - USER & ROLE PROVISIONING"
+echo "🐺 KEYCLOAK FORGE - AUTOMATED PROVISIONING"
 echo "================================================"
+echo "⏳ Waiting for Keycloak to open on $KEYCLOAK_URL..."
 
-echo "⏳ Step 1: Waiting for the Emperor's Gates (Keycloak) to open..."
-MAX_RETRIES=15
+MAX_RETRIES=40
 RETRY_COUNT=0
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
   # We send the output to /dev/null to keep the terminal clean while waiting
-  docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh config credentials \
-    --server http://localhost:8080 \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+    --server $KEYCLOAK_URL \
     --realm master \
     --user admin \
     --password admin > /dev/null 2>&1
@@ -41,7 +43,7 @@ while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
   fi
 
   echo "   ... still waiting for Keycloak to boot (Attempt $((RETRY_COUNT+1))/$MAX_RETRIES)"
-  sleep 3
+  sleep 5
   RETRY_COUNT=$((RETRY_COUNT+1))
 done
 
@@ -52,7 +54,7 @@ fi
 echo "------------------------------------------------"
 
 echo "⚔️ Step 2: Creating user '$USERNAME' with full profile data..."
-docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh create users \
+/opt/keycloak/bin/kcadm.sh create users \
   -r $REALM_NAME \
   -s username=$USERNAME \
   -s enabled=true \
@@ -62,19 +64,19 @@ docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh create users \
   -s emailVerified=true 2> /dev/null || echo "⚠️ User might already exist, proceeding..."
 
 echo "🛡️ Step 3: Forging the permanent password..."
-docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh set-password \
+/opt/keycloak/bin/kcadm.sh set-password \
   -r $REALM_NAME \
   --username $USERNAME \
   --new-password $PASSWORD 2> /dev/null
 verify_execution $? "Failed to set the permanent password."
 
 echo "📜 Step 4: Forging the '$ROLE' role in the realm..."
-docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh create roles \
+/opt/keycloak/bin/kcadm.sh create roles \
   -r $REALM_NAME \
   -s name=$ROLE 2> /dev/null || echo "⚠️ Role might already exist, proceeding..."
 
 echo "🪄 Step 5: Assigning the '$ROLE' role to the user..."
-docker exec $CONTAINER_NAME /opt/keycloak/bin/kcadm.sh add-roles \
+/opt/keycloak/bin/kcadm.sh add-roles \
   -r $REALM_NAME \
   --uusername $USERNAME \
   --rolename $ROLE 2> /dev/null
