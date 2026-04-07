@@ -6,8 +6,7 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets:
-        # host.docker.internal points to your Ubuntu machine's localhost
-        - 'host.docker.internal:8080' # Delivery-Tracking
-        - 'host.docker.internal:8081' # Courier-Management
-        - 'host.docker.internal:8761' # Service-Registry
-        - 'host.docker.internal:9999' # API Gateway
+        - 'delivery-tracking:8080'
+        - 'courier-management:8081'
+        - 'service-registry:8761'
+        - 'gateway:9999'

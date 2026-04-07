@@ -44,15 +44,17 @@ Whether you are a Business Stakeholder looking for ROI, or a Senior Architect in
 
 ### 👔 For the Business Stakeholder (The Alderman's Ledger)
 **The Problem:** Traditional, monolithic logistics platforms bleed coin. During peak hours (like Black Friday), the system crashes under load, losing delivery contracts and frustrating couriers. Furthermore, tightly coupled systems mean a bug in courier payouts takes down the entire delivery tracking system, halting operations completely.
+
 **The Solution (How this saves money):**
 * **Zero Lost Revenue:** By utilizing Circuit Breakers and Asynchronous Kafka events, if the Courier system goes down for maintenance, Deliveries can still be created and queued safely. No dropped orders.
 * **Operational Efficiency:** Automated, precise payout calculations based on distance traveled eliminate overpayment and manual auditing.
 * **Rapid Onboarding:** The fully interactive, auto-authenticated API Documentation Portal allows front-end teams and B2B partners to integrate with the platform in minutes, not weeks.
 
-👉 **The Fast Path:** Want to see it working without reading code? Jump down to the [How to Run](#-how-to-run--summoning-the-continent) section to spin up the infrastructure, and you can interact with the entire platform through our centralized, auto-authenticating Swagger UI portal. No Postman or terminal required.
+👉 **The Fast Path:** Want to see it working without reading code? Jump down to the [How to Run](#-how-to-run--summoning-the-continent) section to spin up the infrastructure, and you can interact with the entire platform through our centralized, auto-authenticating Swagger UI portal. No Postman required.
 
 ### 🛠️ For the Technical Engineer (The Witcher's Inspection)
 By exploring this repository, engineering managers and technical recruiters will find enterprise-grade patterns:
+* **Container-First DevSecOps:** The entire microservice ecosystem is built using Multi-Stage Dockerfiles with elevated root-contexts. Applications compile inside isolated Alpine environments, guaranteeing 100% reproducibility across any host machine.
 * **Interface Segregation (API Contracts):** REST controllers are stripped of web annotations, implementing pure Java interfaces that act as strict OpenAPI contracts.
 * **REST Maturity Level 3 (HATEOAS-lite):** Endpoints strictly adhere to returning `201 Created` with dynamic `Location` headers instead of bloated JSON bodies.
 * **Gateway-Aggregated OpenAPI:** A single, central Swagger UI on the Spring Cloud Gateway that dynamically routes and authenticates requests to underlying microservices using Keycloak OAuth2.
@@ -175,12 +177,12 @@ As a Software Engineer, I designed this platform by weighing strict decoupling a
 
 **The Verdict:** Following Domain-Driven Design (DDD), a contact point has no identity outside of its delivery. Flattening it via `@AttributeOverride` eliminates slow SQL `JOIN` operations, massively optimizing read performance.
 
-### 4. Authentication Flow (grant_type=password)
-**The Choice:** The automated end-to-end test script uses the Resource Owner Password Credentials flow (`grant_type=password`) to obtain a JWT from Keycloak.
+### 4. Multi-Stage Docker Builds (Root Context)
+**The Choice:** The microservices are built via `docker-compose up --build` utilizing a unified root context. Docker internally downloads Maven, reads the parent `pom.xml`, and dynamically compiles the child `.jar` artifacts before sealing them in minimal Alpine JRE images.
 
-**The Trade-off:** This flow is deprecated in OAuth 2.1 for production web applications because it exposes raw credentials to the client.
+**The Trade-off:** The initial build takes slightly longer as Docker downloads dependencies internally.
 
-**The Verdict:** For automated, headless shell scripts running in a trusted CI/CD or local test environment, it remains a highly efficient and valid mechanism. A production frontend UI for this platform would strictly use the Authorization Code Flow with PKCE.
+**The Verdict:** We achieve the ultimate Developer Experience (DevEx). A fresh developer does not even need Java or Maven installed on their host machine to launch the entire multi-module enterprise architecture.
 
 ---
 
@@ -300,20 +302,6 @@ All infrastructure is provisioned via `docker-compose.yml`.
 
 ---
 
-## 🛠️ Getting Started
-
-### 📋 Prerequisites — Before You Draw Your Sword
-
-- ☕ **JDK 21+**
-- 🐳 **Docker & Docker Compose**
-- 📦 **Apache Maven** (or use the included `./mvnw` wrapper)
-- 🖥️ IntelliJ IDEA (recommended)
-
-
----
-
-
-
 ## 🛡️ CI/CD Pipeline — The Witcher's Preparation Ritual
 
 > *"A witcher who doesn't prepare is a witcher who doesn't return."*
@@ -352,43 +340,51 @@ With this active, no pull request can merge if SonarCloud detects a new vulnerab
 
 ---
 
+## 🛠️ Getting Started
+
+### 📋 Prerequisites — Before You Draw Your Sword
+
+Because the entire architecture is fully containerized with multi-stage builds, your local host machine requires only one tool to run the system:
+- 🐳 **Docker & Docker Compose**
+- *(Optional)* **☕ JDK 21+ & Maven** (Only required if you wish to run or compile the modules locally outside of Docker for development).
+
+---
+
+
 ## ⚡ How to Run — Summoning the Continent
 
-> *Follow the order below exactly.*
+> *The days of manually compiling microservices are over. With a single command, the entire Continent is forged.*
 
-### Step 0 — Clone the Repository
+### Step 1 — Clone the Repository
 
 ```bash
 git clone https://github.com/weritonpetreca/petrecadelivery.git
 cd petrecadelivery
 ```
 
-### Step 1 — Raise the Infrastructure
+### Step 2 — The Grand Summoning
+
+This single incantation commands Docker to download Maven, compile all 4 Java microservices in parallel, seal them in secure Alpine Linux images, and boot the entire infrastructure network.
 
 ```bash
-docker-compose up -d
+docker-compose up -d --build
 ```
 
-Starts PostgreSQL, pgAdmin, Kafka, Kafka UI, Prometheus, Grafana, Loki, Jaeger, OTel Collector, and Keycloak. Wait **20–30 seconds** for all containers — especially Keycloak — to fully initialize and to our test user be automatically created.
+Wait ~45 seconds for the databases to initialize, Keycloak to import the petreca-realm, and Eureka to map the routing tables.
 
-| Service | URL | Credentials |
-| --- | --- | --- |
-| pgAdmin | http://localhost:5050 | admin@admin.com / admin |
-| Kafka UI | http://localhost:8090 | — |
-| Prometheus | http://localhost:9090 | — |
-| Grafana (War Room) | http://localhost:3000 | admin / admin |
-| Jaeger | http://localhost:16686 | — |
-| Keycloak | http://localhost:8082 | admin / admin |
+### ✅ The Continent is Alive
+
+| Service                     | URL                                   | Credentials                       |
+|-----------------------------|---------------------------------------|-----------------------------------|
+| 🚪 API Gateway (Swagger UI) | http://localhost:9999/swagger-ui.html | *Auto-authenticates via Keycloak* |
+| 🔐 Keycloak Admin           | http://localhost:8082                 | `admin` / `admin`                 |
+| 📉 Grafana (War Room)       | http://localhost:3000                 | `admin` / `admin`                 |
+| 📊 Kafka UI                 | http://localhost:8090                 | —                                 |
+| 🔍 Jaeger Tracing           | http://localhost:16686                | —                                 |
+| 🖥️ pgAdmin                 | http://localhost:5050                 | `admin@admin.com` / `admin`       |
+| 📍 Service Registry         | http://localhost:8761                 | —                                 |
 
 ---
-
-### Step 2 — Build All Modules
-
-**The Witcher's Path (Fast Local Build):** For local development, heavy security scans are locked behind a Maven profile. Your default build is blazing fast.
-
-```bash
-./mvnw clean install -DskipTests
-````
 
 ### 🛡️ The Grandmaster's Audit (Local Security Scan):
 If you want to run the full OWASP Dependency-Check locally (exactly as it runs in the CI/CD pipeline) to check for CVEs before pushing, you must activate the security profile and provide your NVD API key (more details given on [Setting Up Keys](#-setting-up-secrets)):
@@ -399,56 +395,6 @@ export NVD_API_KEY="your_api_key_here"
 ```
 
 ---
-
-### Step 3 — Start the Microservices
-
-**A. Service Registry** *(start first)*
-
-```bash
-cd Microservices/Service-Registry
-./mvnw spring-boot:run
-```
-
-Wait for the Eureka dashboard at http://localhost:8761.
-
-**B. Delivery Tracking & Courier Management** *(either order)*
-
-```bash
-# Terminal 2
-cd Microservices/Delivery-Tracking
-./mvnw spring-boot:run
-
-# Terminal 3
-cd Microservices/Courier-Management
-./mvnw spring-boot:run
-```
-
-**C. API Gateway** *(start last)*
-
-```bash
-# Terminal 4
-cd Microservices/Gateway
-./mvnw spring-boot:run
-```
-
----
-
-### ✅ The Continent is Alive
-
-All services are up at `http://localhost:9999`.
-
-**Full startup sequence:**
-
-```
-1. docker-compose up -d           ← infrastructure + Keycloak + test user
-2. Service-Registry                ← first microservice
-3. Delivery-Tracking               ← either order
-   Courier-Management              ← either order
-4. Gateway                         ← last microservice
-```
-
----
-
 
 ## 🔥 End-to-End Test — A Witcher's Full Contract
 
@@ -478,7 +424,38 @@ Expected final output:
 
 ---
 
-### Option 2: Manual Step-by-Step
+### Option 2 — Centralized API Documentation
+
+> *"A witcher's signs are useless if he forgets the incantations. An API is useless if it lacks documentation."*
+
+Instead of forcing frontend teams to hunt down endpoints across multiple microservices, **PetrecaDelivery** features an enterprise-grade, centralized documentation portal hosted directly on the **API Gateway**.
+
+**Access the Portal:** `http://localhost:9999/swagger-ui.html`
+
+### 🧩 1. Interface Segregation (Pristine Controllers)
+We strictly separate the HTTP/OpenAPI contract from the business logic execution to maintain a clean architecture.
+* **The Notice Board (`*Doc.java` Interfaces):** All `@GetMapping`, `@RequestBody`, `@Valid`, and Swagger `@Operation` annotations live strictly in Java Interfaces. These act as the immutable contracts for the web layer.
+* **The Execution (`*Controller.java`):** The concrete Spring controllers implement these interfaces. Free of web-layer clutter, they remain terrifyingly clean and focused purely on delegating tasks to the Domain Services.
+
+### 🔐 2. Integrated Identity (Zero-Friction DevEx)
+Developers do not need to juggle Postman environments or terminal to generate JWTs. The Swagger UI is deeply integrated with our Keycloak server:
+* Click **Authorize** in the UI.
+* The Gateway auto-injects the required `petreca-api-client` ID.
+* Enter the test credentials (`geralt` / `witcher123`).
+* Swagger securely negotiates the **OAuth2 Password Flow** with Keycloak, retrieves the JWT, and automatically attaches the `Bearer` token to all subsequent requests.
+* **Persistence:** The token is saved in Local Storage. It survives page reloads and remains active even when you swap the dropdown between the Courier and Delivery API definitions.
+
+### 🛡️ 3. Defeating the CORS Monster
+A common trap with Gateway-hosted Swagger UIs is Cross-Origin Resource Sharing (CORS) blocks when the UI attempts to call child services directly on their internal ports.
+We bypassed this by configuring the child `OpenApiConfig` files to explicitly declare the Gateway (`http://localhost:9999`) as their single `@Server` origin. All UI traffic routes flawlessly through the Gateway, respecting all underlying Resilience4j circuit breakers and retry policies.
+
+### 📍 4. REST Maturity Level 3 (HATEOAS-lite)
+This platform adheres to strict Enterprise REST standards to optimize bandwidth and client routing.
+When creating a new resource (e.g., `POST /api/v1/deliveries`), the API **does not** return the entire JSON body. Instead, it returns a hyper-efficient `201 Created` status with an exact **`Location` HTTP header** pointing to the newly forged resource URI (e.g., `Location: http://localhost:9999/api/v1/deliveries/12345`).
+
+---
+
+### Option 3: Manual Step-by-Step
 
 **Obtain token:**
 
@@ -512,37 +489,6 @@ curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/placement -H "A
 curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/pickups -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" -d '{"courierId":"COURIER_ID"}'
 curl -X POST http://localhost:9999/api/v1/deliveries/DELIVERY_ID/completion -H "Authorization: Bearer $TOKEN"
 ```
-
----
-
-### Option 3 — Centralized API Documentation
-
-> *"A witcher's signs are useless if he forgets the incantations. An API is useless if it lacks documentation."*
-
-Instead of forcing frontend teams to hunt down endpoints across multiple microservices, **PetrecaDelivery** features an enterprise-grade, centralized documentation portal hosted directly on the **API Gateway**.
-
-**Access the Portal:** `http://localhost:9999/swagger-ui.html`
-
-### 🧩 1. Interface Segregation (Pristine Controllers)
-We strictly separate the HTTP/OpenAPI contract from the business logic execution to maintain a clean architecture.
-* **The Notice Board (`*Doc.java` Interfaces):** All `@GetMapping`, `@RequestBody`, `@Valid`, and Swagger `@Operation` annotations live strictly in Java Interfaces. These act as the immutable contracts for the web layer.
-* **The Execution (`*Controller.java`):** The concrete Spring controllers implement these interfaces. Free of web-layer clutter, they remain terrifyingly clean and focused purely on delegating tasks to the Domain Services.
-
-### 🔐 2. Integrated Identity (Zero-Friction DevEx)
-Developers do not need to juggle Postman environments or terminal to generate JWTs. The Swagger UI is deeply integrated with our Keycloak server, after you generate the user with the `./create-test-user.sh`:
-* Click **Authorize** in the UI.
-* The Gateway auto-injects the required `petreca-api-client` ID.
-* Enter the test credentials (`geralt` / `witcher123`).
-* Swagger securely negotiates the **OAuth2 Password Flow** with Keycloak, retrieves the JWT, and automatically attaches the `Bearer` token to all subsequent requests.
-* **Persistence:** The token is saved in Local Storage. It survives page reloads and remains active even when you swap the dropdown between the Courier and Delivery API definitions.
-
-### 🛡️ 3. Defeating the CORS Monster
-A common trap with Gateway-hosted Swagger UIs is Cross-Origin Resource Sharing (CORS) blocks when the UI attempts to call child services directly on their internal ports.
-We bypassed this by configuring the child `OpenApiConfig` files to explicitly declare the Gateway (`http://localhost:9999`) as their single `@Server` origin. All UI traffic routes flawlessly through the Gateway, respecting all underlying Resilience4j circuit breakers and retry policies.
-
-### 📍 4. REST Maturity Level 3 (HATEOAS-lite)
-This platform adheres to strict Enterprise REST standards to optimize bandwidth and client routing.
-When creating a new resource (e.g., `POST /api/v1/deliveries`), the API **does not** return the entire JSON body. Instead, it returns a hyper-efficient `201 Created` status with an exact **`Location` HTTP header** pointing to the newly forged resource URI (e.g., `Location: http://localhost:9999/api/v1/deliveries/12345`).
 
 ---
 
@@ -668,9 +614,8 @@ To prove the resilience of the API Gateway and downstream microservices, the str
 ### The Siege Engine (How to Run)
 We use an ephemeral Docker container to run the load test, binding it to the host network so it can strike the local Gateway without polluting your machine with K6 installations.
 
-> *(Note: Ensure your Keycloak and microservices are fully running before launching the siege).*
-
 ```Bash
+cd performance-tests
 docker run --rm -i --network host -v $(pwd):/scripts grafana/k6 run /scripts/load-test.js
 ```
 
