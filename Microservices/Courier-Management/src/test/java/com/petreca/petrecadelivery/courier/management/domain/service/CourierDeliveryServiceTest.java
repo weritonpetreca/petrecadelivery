@@ -60,7 +60,7 @@ public class CourierDeliveryServiceTest {
                     .willReturn(Optional.empty());
 
             assertThatThrownBy(() -> courierDeliveryService.assign(deliveryId, courierId))
-                    .isInstanceOf(NoCouriersAvailableException.class)
+                    .isInstanceOf(DomainException.class)
                     .hasMessageContaining("Courier not found for assigment");
         }
     }
