@@ -15,26 +15,27 @@ import static com.petreca.petrecadelivery.delivery.tracking.infrastructure.kafka
 @RequiredArgsConstructor
 public class DeliveryDomainEventHandler {
 
+    public static final String PUBLISH_TO_KAFKA = "Publish to Kafka: {}";
     private final IntegrationEventPublisher integrationEventPublisher;
 
     @EventListener
     public void handle(DeliveryPlacedEvent event) {
-        log.info(event.toString());
+        log.info(PUBLISH_TO_KAFKA, event);
         integrationEventPublisher.publish(event,
-                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
+                event.deliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
     }
 
     @EventListener
     public void handle(DeliveryPickedUpEvent event) {
-        log.info(event.toString());
+        log.info(PUBLISH_TO_KAFKA, event);
         integrationEventPublisher.publish(event,
-                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
+                event.deliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
     }
 
     @EventListener
     public void handle(DeliveryFulfilledEvent event) {
-        log.info(event.toString());
+        log.info(PUBLISH_TO_KAFKA, event);
         integrationEventPublisher.publish(event,
-                event.getDeliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
+                event.deliveryId().toString(), DELIVERY_EVENTS_TOPIC_NAME);
     }
 }

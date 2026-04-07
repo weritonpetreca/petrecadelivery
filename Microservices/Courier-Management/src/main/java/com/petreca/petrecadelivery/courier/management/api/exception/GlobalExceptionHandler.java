@@ -2,7 +2,6 @@ package com.petreca.petrecadelivery.courier.management.api.exception;
 
 
 import com.petreca.petrecadelivery.courier.management.domain.exception.DomainException;
-import com.petreca.petrecadelivery.courier.management.domain.exception.NoCouriersAvailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,14 +52,4 @@ public class GlobalExceptionHandler {
         problem.setProperty("timestamp", Instant.now());
         return problem;
     }
-
-    @ExceptionHandler(NoCouriersAvailableException.class)
-    public ProblemDetail handleNoCouriersAvailableException(NoCouriersAvailableException ex) {
-        ProblemDetail problem = ProblemDetail
-                .forStatusAndDetail(HttpStatus.CONFLICT, ex.getMessage());
-        problem.setProperty("timestamp", Instant.now());
-        return problem;
-    }
-
-
 }

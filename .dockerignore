@@ -1,0 +1,23 @@
+# Ignore Git history (Crucial for security and size)
+.git
+.gitignore
+
+# Ignore local environment secrets
+.env
+*.env
+.env.*
+
+# Ignore IDE files
+.idea/
+.vscode/
+*.iml
+
+# Ignore local build artifacts (Docker will compile its own)
+target/
+*/target/
+*/*/target/
+
+# Ignore tests and scripts not needed inside the final container
+performance-tests/
+test-delivery-flow.sh
+README.md

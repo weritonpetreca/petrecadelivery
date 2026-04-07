@@ -1,7 +1,6 @@
 package com.petreca.petrecadelivery.courier.management.domain.service;
 
 import com.petreca.petrecadelivery.courier.management.domain.exception.DomainException;
-import com.petreca.petrecadelivery.courier.management.domain.exception.NoCouriersAvailableException;
 import com.petreca.petrecadelivery.courier.management.domain.model.Courier;
 import com.petreca.petrecadelivery.courier.management.domain.repository.CourierRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +18,9 @@ public class CourierDeliveryService {
 
     private final CourierRepository courierRepository;
 
-    public void assign(UUID deliveryId){
-        Courier courier = courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc()
-                .orElseThrow(() -> new NoCouriersAvailableException("No couriers available for assignment."));
+    public void assign(UUID deliveryId, UUID courierId){
+        Courier courier = courierRepository.findById(courierId)
+                .orElseThrow(() -> new DomainException("Courier not found for assigment: " + courierId));
         courier.assign(deliveryId);
         courierRepository.saveAndFlush(courier);
         log.info("Courier {} assigned to delivery {}", courier.getId(), deliveryId);

@@ -1,17 +1,14 @@
 package com.petreca.petrecadelivery.delivery.tracking.domain.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Getter
-@AllArgsConstructor
-@ToString
-public class DeliveryPickedUpEvent {
+public record DeliveryPickedUpEvent(
+        OffsetDateTime occurredAt,
+        UUID deliveryId,
+        UUID courierId) implements DeliveryDomainEvent {
 
-    private final OffsetDateTime occurredAt;
-    private final UUID deliveryId;
+    public DeliveryPickedUpEvent(UUID deliveryId, UUID courierId) {
+        this(OffsetDateTime.now(), deliveryId, courierId);
+    }
 }

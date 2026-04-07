@@ -54,12 +54,12 @@ Whether you are a Business Stakeholder looking for ROI, or a Senior Architect in
 
 ### 🛠️ For the Technical Engineer (The Witcher's Inspection)
 By exploring this repository, engineering managers and technical recruiters will find enterprise-grade patterns:
-* **Container-First DevSecOps:** The entire microservice ecosystem is built using Multi-Stage Dockerfiles with elevated root-contexts. Applications compile inside isolated Alpine environments, guaranteeing 100% reproducibility across any host machine.
+* **Infrastructure Separation of Concerns (The Great Purification):** `docker-compose.yml` acts strictly as an infrastructure map. All application framework logic (`SPRING_*`) is stripped from Docker and securely managed inside `application.yml` using "Smart Fallback Variables" (`${DB_HOST:localhost}`). This enables seamless toggling between isolated Docker networking and native local IDE execution without changing code.
+* **Secure Container Contexts:** Strict `.dockerignore` policies prevent sensitive artifacts (`.env`, `.git`) from leaking into the container images, resolving critical DevSecOps security hotspots (docker:S6470) while utilizing Multi-Stage builds.
 * **Interface Segregation (API Contracts):** REST controllers are stripped of web annotations, implementing pure Java interfaces that act as strict OpenAPI contracts.
 * **REST Maturity Level 3 (HATEOAS-lite):** Endpoints strictly adhere to returning `201 Created` with dynamic `Location` headers instead of bloated JSON bodies.
-* **Gateway-Aggregated OpenAPI:** A single, central Swagger UI on the Spring Cloud Gateway that dynamically routes and authenticates requests to underlying microservices using Keycloak OAuth2.
-* **Event-Driven Architecture:** Decoupled domains communicating asynchronously via Apache Kafka.
-* **Full-Stack Observability:** A complete telemetry ecosystem (Prometheus, Grafana, Loki, Jaeger) configured via Infrastructure as Code.
+* **Event-Driven Architecture:** Decoupled domains communicating asynchronously via Apache Kafka using immutable Java `records`.
+* **Full-Stack Observability:** A complete telemetry ecosystem (Prometheus, Grafana, Loki, Jaeger) configured via Infrastructure as Code and featuring non-blocking, asynchronous logging to protect main application threads..
 
 ---
 
@@ -288,7 +288,7 @@ All infrastructure is provisioned via `docker-compose.yml`.
 | **Async Messaging** | Spring for Apache Kafka                        |
 | **Resilience** | Resilience4j 2.3 (Circuit Breaker, Retry)      |
 | **Distributed Tracing** | OpenTelemetry + Jaeger                         |
-| **Log Aggregation** | Grafana Loki                                   |
+| **Log Aggregation** | Grafana Loki (Async Appender)                  |
 | **Observability** | Prometheus + Grafana (Spring Boot Actuator)    |
 | **Persistence** | Spring Data JPA + Hibernate                    |
 | **Database** | PostgreSQL 17                                  |
@@ -297,7 +297,7 @@ All infrastructure is provisioned via `docker-compose.yml`.
 | **Code Quality & SAST** | SonarCloud (Quality Gate enforced on every PR) |
 | **Dependency Security** | OWASP Dependency-Check (NVD CVE scan)          |
 | **Test Coverage** | JaCoCo (reported to SonarCloud)                |
-| **Performance Testing** | Grafana K6 (Containerized Siege Engine)      |
+| **Performance Testing** | Grafana K6 (Containerized Siege Engine)        |
 | **Utilities** | Lombok, Bean Validation                        |
 
 ---
@@ -370,7 +370,7 @@ This single incantation commands Docker to download Maven, compile all 4 Java mi
 docker-compose up -d --build
 ```
 
-Wait ~45 seconds for the databases to initialize, Keycloak to import the petreca-realm, and Eureka to map the routing tables.
+Wait ~45 seconds for the databases to initialize, Keycloak to import the `petreca-realm`, and Eureka to map the routing tables.
 
 ### ✅ The Continent is Alive
 
@@ -400,13 +400,14 @@ export NVD_API_KEY="your_api_key_here"
 
 ### Option 1: Automated Script (Recommended)
 
+To prove the resilience of the ecosystem, this script doesn't just execute CURL commands. It features a loop to handle Keycloak/JVM cold starts and **Idempotent Retry Mechanisms** to elegantly handle asynchronous eventual consistency and Kafka metadata fetching.
 
 ```bash
 chmod +x test-delivery-flow.sh
 ./test-delivery-flow.sh
 ```
 
-The script authenticates, creates a courier, drafts a delivery, places it, assigns the courier, and completes the delivery — firing all three Kafka events along the way.
+The script authenticates, creates a courier, drafts a delivery, places it, assigns the courier, and completes the delivery — firing all three Kafka events along the way while rigorously validating state transitions.
 
 Expected final output:
 
@@ -451,6 +452,7 @@ We bypassed this by configuring the child `OpenApiConfig` files to explicitly de
 
 ### 📍 4. REST Maturity Level 3 (HATEOAS-lite)
 This platform adheres to strict Enterprise REST standards to optimize bandwidth and client routing.
+
 When creating a new resource (e.g., `POST /api/v1/deliveries`), the API **does not** return the entire JSON body. Instead, it returns a hyper-efficient `201 Created` status with an exact **`Location` HTTP header** pointing to the newly forged resource URI (e.g., `Location: http://localhost:9999/api/v1/deliveries/12345`).
 
 ---
@@ -538,6 +540,9 @@ You will then see:
 
 The platform implements **full-stack observability**: metrics via Prometheus, logs via Loki, and distributed traces via OpenTelemetry + Jaeger — all unified in the **Petreca War Room**.
 
+### ⚡ Asynchronous Logging 
+To ensure absolute resilience, logs are routed via a non-blocking `AsyncAppender`. If the Loki container drops, the main application thread never blocks. The service drops the oldest logs from memory to maintain 100% operational uptime during high-stress encounters.
+
 ### 📡 OpenTelemetry — The Medallion That Vibrates Across Services
 
 Every microservice emits **traces** and **metrics** to the OTel Collector, which forwards them to the appropriate backends:
@@ -612,11 +617,15 @@ The gold standard for Spring Boot infrastructure monitoring. This dashboard prov
 To prove the resilience of the API Gateway and downstream microservices, the stronghold is stress-tested using **Grafana K6**. We simulate a horde of 100 concurrent Virtual Users (Witchers) authenticating and requesting delivery data simultaneously.
 
 ### The Siege Engine (How to Run)
-We use an ephemeral Docker container to run the load test, binding it to the host network so it can strike the local Gateway without polluting your machine with K6 installations.
+We use an ephemeral Docker container to run the load test, binding it to the host network so it can strike the local Gateway without polluting your machine with K6 installations. To maintain DevSecOps compliance and mitigate CWE-798 (Hardcoded Credentials), secrets are injected safely via CLI environment variables (`__ENV`):
 
 ```Bash
 cd performance-tests
-docker run --rm -i --network host -v $(pwd):/scripts grafana/k6 run /scripts/load-test.js
+
+docker run --rm -i --network host \
+  -e TEST_USER_NAME=geralt \
+  -e TEST_USER_PASSWORD=witcher123 \
+  -v $(pwd):/scripts grafana/k6 run /scripts/load-test.js
 ```
 
 ### The Battle Plan (Inversion of Control)
@@ -687,10 +696,13 @@ The CI/CD workflow activates the security profile and passes the key to Maven vi
 
 > After completing these steps, the **Quality Gate** and **Coverage** badges at the top of this README will display live data from your next CI run.
 
-### Environment Configuration (The Campfire)
-This project uses environment variables to manage sensitive data and infrastructure coordinates.
+---
 
-Before starting any services, you must create your local configuration file. Copy the provided example file to create your own `.env`:
+### Environment Configuration (The Campfire)
+This project uses environment variables to manage sensitive data and infrastructure coordinates, but thanks to the robust **Fallback Pattern** implemented across the architecture, the platform works perfectly out-of-the-box using safe local defaults.
+
+If you wish to override database passwords, Keycloak admin credentials, or inject your `NVD_API_KEY` for local security scans, you can create a local environment file:
+
 
 ```bash
 cp .env.example .env

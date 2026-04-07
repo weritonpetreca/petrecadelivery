@@ -5,7 +5,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8082/realms/petreca-realm
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8082/realms/petreca-realm}
+          jwk-set-uri: ${JWT_JWK_SET_URI:http://localhost:8082/realms/petreca-realm/protocol/openid-connect/certs}
 
   application.name: gateway
   cloud:
@@ -76,7 +77,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
 
 resilience4j:
   circuitbreaker:
@@ -97,11 +98,9 @@ management:
   endpoints:
     web:
       exposure:
-        # SECURITY FIRST: Only expose exactly what we need. Never use '*'.
         include: health,prometheus,info
   endpoint:
     health:
-      # Allows us to see database and Kafka connection status, not just "UP"
       show-details: always
   metrics:
     tags:
@@ -115,4 +114,4 @@ management:
       probability: 1.0
   otlp:
     tracing:
-      endpoint: http://localhost:4318/v1/traces
+      endpoint: http://${JAEGER_HOST:localhost}:4318/v1/traces

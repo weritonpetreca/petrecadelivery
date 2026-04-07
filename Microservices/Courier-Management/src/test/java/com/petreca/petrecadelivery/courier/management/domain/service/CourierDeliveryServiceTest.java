@@ -1,7 +1,6 @@
 package com.petreca.petrecadelivery.courier.management.domain.service;
 
 import com.petreca.petrecadelivery.courier.management.domain.exception.DomainException;
-import com.petreca.petrecadelivery.courier.management.domain.exception.NoCouriersAvailableException;
 import com.petreca.petrecadelivery.courier.management.domain.model.Courier;
 import com.petreca.petrecadelivery.courier.management.domain.repository.CourierRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -38,12 +37,13 @@ public class CourierDeliveryServiceTest {
         @DisplayName("should find available courier, assign, and save")
         void shouldAssignSuccessfully() {
             UUID deliveryId = UUID.randomUUID();
+            UUID courierId = UUID.randomUUID();
             Courier mockCourier = mock(Courier.class);
 
-            given(courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc())
+            given(courierRepository.findById(courierId))
                     .willReturn(Optional.of(mockCourier));
 
-            courierDeliveryService.assign(deliveryId);
+            courierDeliveryService.assign(deliveryId, courierId);
 
             then(mockCourier).should().assign(deliveryId);
             then(courierRepository).should().saveAndFlush(mockCourier);
@@ -53,12 +53,14 @@ public class CourierDeliveryServiceTest {
         @DisplayName("should throw NoCourierAvailableException if repository returns empty")
         void shouldThrowWhenNoCouriers() {
             UUID deliveryId = UUID.randomUUID();
-            given(courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc())
+            UUID courierId = UUID.randomUUID();
+
+            given(courierRepository.findById(courierId))
                     .willReturn(Optional.empty());
 
-            assertThatThrownBy(() -> courierDeliveryService.assign(deliveryId))
-                    .isInstanceOf(NoCouriersAvailableException.class)
-                    .hasMessageContaining("No couriers available");
+            assertThatThrownBy(() -> courierDeliveryService.assign(deliveryId, courierId))
+                    .isInstanceOf(DomainException.class)
+                    .hasMessageContaining("Courier not found for assigment");
         }
     }
 

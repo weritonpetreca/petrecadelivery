@@ -10,13 +10,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 import static com.petreca.petrecadelivery.delivery.tracking.infrastructure.kafka.KafkaTopicConfig.DELIVERY_EVENTS_TOPIC_NAME;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("Delivery Domain Event Handler")
@@ -32,8 +31,7 @@ class DeliveryDomainEventHandlerTest {
     @DisplayName("should relay DeliveryPlacedEvent on Kafka Publisher")
     void shouldRelayPlacedEvent() {
         UUID deliveryId = UUID.randomUUID();
-        DeliveryPlacedEvent event = mock(DeliveryPlacedEvent.class);
-        given(event.getDeliveryId()).willReturn(deliveryId);
+        DeliveryPlacedEvent event = new DeliveryPlacedEvent(OffsetDateTime.now(), deliveryId);
 
         eventHandler.handle(event);
 
@@ -48,8 +46,8 @@ class DeliveryDomainEventHandlerTest {
     @DisplayName("should relay DeliveryPickedUpEvent on Kafka Publisher")
     void shouldRelayPickedUpEvent() {
         UUID deliveryId = UUID.randomUUID();
-        DeliveryPickedUpEvent event = mock(DeliveryPickedUpEvent.class);
-        given(event.getDeliveryId()).willReturn(deliveryId);
+        UUID courierId = UUID.randomUUID();
+        DeliveryPickedUpEvent event = new DeliveryPickedUpEvent(OffsetDateTime.now(), deliveryId, courierId);
 
         eventHandler.handle(event);
 
@@ -64,8 +62,7 @@ class DeliveryDomainEventHandlerTest {
     @DisplayName("should relay DeliveryFulfilledEvent on Kafka Publisher")
     void shouldRelayFulfilledEvent() {
         UUID deliveryID = UUID.randomUUID();
-        DeliveryFulfilledEvent event = mock(DeliveryFulfilledEvent.class);
-        given(event.getDeliveryId()).willReturn(deliveryID);
+        DeliveryFulfilledEvent event = new DeliveryFulfilledEvent(OffsetDateTime.now(), deliveryID);
 
         eventHandler.handle(event);
 
