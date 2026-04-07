@@ -1,7 +1,6 @@
 package com.petreca.petrecadelivery.courier.management.domain.service;
 
 import com.petreca.petrecadelivery.courier.management.domain.exception.DomainException;
-import com.petreca.petrecadelivery.courier.management.domain.exception.NoCouriersAvailableException;
 import com.petreca.petrecadelivery.courier.management.domain.model.Courier;
 import com.petreca.petrecadelivery.courier.management.domain.repository.CourierRepository;
 import org.junit.jupiter.api.DisplayName;
