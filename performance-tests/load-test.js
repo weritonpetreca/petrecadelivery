@@ -22,8 +22,8 @@ export function setup() {
     const payload = {
         client_id: 'petreca-api-client',
         grant_type: 'password',
-        username: 'geralt',
-        password: 'witcher123'
+        username: __ENV.TEST_USER_NAME,
+        password: __ENV.TEST_USER_PASSWORD
     };
 
     const res = http.post(url, payload);

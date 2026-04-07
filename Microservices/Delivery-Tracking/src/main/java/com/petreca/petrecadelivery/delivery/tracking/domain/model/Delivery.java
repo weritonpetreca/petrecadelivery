@@ -199,7 +199,7 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
         this.changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         this.setPlacedAt(OffsetDateTime.now());
         super.registerEvent(
-                new DeliveryPlacedEvent(this.placedAt, this.id));
+                new DeliveryPlacedEvent(this.id));
     }
 
     /**
@@ -213,7 +213,7 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
         this.changeStatusTo(DeliveryStatus.IN_TRANSIT);
         this.setAssignedAt(OffsetDateTime.now());
         super.registerEvent(
-                new DeliveryPickedUpEvent(this.assignedAt, this.id));
+                new DeliveryPickedUpEvent(this.id, courierId));
     }
 
     /**
@@ -224,7 +224,7 @@ public class Delivery extends AbstractAggregateRoot<Delivery> {
         this.changeStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
         super.registerEvent(
-                new DeliveryFulfilledEvent(this.getFulfilledAt(), this.getId()));
+                new DeliveryFulfilledEvent(this.id));
     }
 
     // ─────────────────────────────────────────────────────────────────

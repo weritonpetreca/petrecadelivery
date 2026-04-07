@@ -38,12 +38,13 @@ public class CourierDeliveryServiceTest {
         @DisplayName("should find available courier, assign, and save")
         void shouldAssignSuccessfully() {
             UUID deliveryId = UUID.randomUUID();
+            UUID courierId = UUID.randomUUID();
             Courier mockCourier = mock(Courier.class);
 
-            given(courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc())
+            given(courierRepository.findById(courierId))
                     .willReturn(Optional.of(mockCourier));
 
-            courierDeliveryService.assign(deliveryId);
+            courierDeliveryService.assign(deliveryId, courierId);
 
             then(mockCourier).should().assign(deliveryId);
             then(courierRepository).should().saveAndFlush(mockCourier);
@@ -53,12 +54,14 @@ public class CourierDeliveryServiceTest {
         @DisplayName("should throw NoCourierAvailableException if repository returns empty")
         void shouldThrowWhenNoCouriers() {
             UUID deliveryId = UUID.randomUUID();
-            given(courierRepository.findTop1ByOrderByLastFulfilledDeliveryAtAsc())
+            UUID courierId = UUID.randomUUID();
+
+            given(courierRepository.findById(courierId))
                     .willReturn(Optional.empty());
 
-            assertThatThrownBy(() -> courierDeliveryService.assign(deliveryId))
+            assertThatThrownBy(() -> courierDeliveryService.assign(deliveryId, courierId))
                     .isInstanceOf(NoCouriersAvailableException.class)
-                    .hasMessageContaining("No couriers available");
+                    .hasMessageContaining("Courier not found for assigment");
         }
     }
 

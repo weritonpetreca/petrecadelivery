@@ -8,13 +8,14 @@ spring:
       ddl-auto: update
     show-sql: false
   datasource:
-    url: jdbc:postgresql://localhost:5432/courierdb
+    url: jdbc:postgresql://${DB_HOST:localhost}:5432/courierdb
     username: ${DB_USERNAME:postgres}
     password: ${DB_PASSWORD:postgres}
 
   kafka:
+    bootstrap-servers: ${KAFKA_HOST:localhost:9092}
     consumer:
-      bootstrap-servers: localhost:9092
+      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
       group-id: courier-management
@@ -23,7 +24,7 @@ spring:
         spring.json.trusted.packages: 'com.petreca.petrecadelivery.*'
         spring.json.type.mapping:
           delivery-placed-event:com.petreca.petrecadelivery.courier.management.infrastructure.event.DeliveryPlacedIntegrationEvent,
-          delivery-picked-up-event:com.fasterxml.jackson.databind.JsonNode,
+          delivery-picked-up-event:com.petreca.petrecadelivery.courier.management.infrastructure.event.DeliveryPickedUpIntegrationEvent,
           delivery-fulfilled-event:com.petreca.petrecadelivery.courier.management.infrastructure.event.DeliveryFulfilledIntegrationEvent
     template:
       observation-enabled: true
@@ -33,7 +34,7 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_HOST:localhost}:8761/eureka/
   instance:
     instance-id: ${random.value}
     prefer-ip-address: true
@@ -46,11 +47,9 @@ management:
   endpoints:
     web:
       exposure:
-        # SECURITY FIRST: Only expose exactly what we need. Never use '*'.
         include: health,prometheus,info
   endpoint:
     health:
-      # Allows us to see database and Kafka connection status, not just "UP"
       show-details: always
   metrics:
     tags:
@@ -64,4 +63,4 @@ management:
       probability: 1.0
   otlp:
     tracing:
-      endpoint: http://localhost:4318/v1/traces
+      endpoint: http://${JAEGER_HOST:localhost}:4318/v1/traces

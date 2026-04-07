@@ -1,17 +1,15 @@
 package com.petreca.petrecadelivery.delivery.tracking.domain.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.ToString;
-
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Getter
-@AllArgsConstructor
-@ToString
-public class DeliveryPlacedEvent {
+public record DeliveryPlacedEvent(
+        OffsetDateTime occurredAt,
+        UUID deliveryId
+) implements DeliveryDomainEvent {
 
-    private final OffsetDateTime occurredAt;
-    private final UUID deliveryId;
+    // Custom constructor to automatically generate the timestamp if not provided
+    public DeliveryPlacedEvent(UUID deliveryId) {
+        this(OffsetDateTime.now(), deliveryId);
+    }
 }
