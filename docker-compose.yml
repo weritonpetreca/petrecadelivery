@@ -1,4 +1,7 @@
 services:
+  # ==========================================
+  # INFRASTRUCTURE (The Continent)
+  # ==========================================
   postgres:
     image: postgres:17-alpine
     container_name: petrecadelivery-postgres
@@ -56,14 +59,12 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      # Fixado o bind de IPs (0.0.0.0) para garantir que escute todas as interfaces do container
       KAFKA_LISTENERS: INTERNAL://0.0.0.0:9094,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9094,EXTERNAL://localhost:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
-      # Configurações para single-node (desenvolvimento)
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
@@ -176,6 +177,99 @@ services:
     command: -config.file=/etc/loki/local-config.yaml
     networks:
       - petrecadelivery-net
+
+  # ==========================================
+  # THE WITCHER SCHOOLS (Microservices)
+  # ==========================================
+  service-registry:
+    build:
+      context: .
+      dockerfile: Microservices/Service-Registry/Dockerfile
+    image: petrecadelivery-registry:latest
+    container_name: petreca-registry
+    ports:
+      - "8761:8761"
+    environment:
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+      - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://jaeger:4318/v1/traces
+    networks:
+      - petrecadelivery-net
+
+  delivery-tracking:
+    build:
+      context: .
+      dockerfile: Microservices/Delivery-Tracking/Dockerfile
+    image: petrecadelivery-delivery-tracking:latest
+    container_name: petreca-delivery-tracking
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/deliverydb
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_ADMIN_BOOTSTRAP_SERVERS=kafka:9094
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://jaeger:4318/v1/traces
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8082/realms/petreca-realm
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/petreca-realm/protocol/openid-connect/certs
+    depends_on:
+      - postgres
+      - kafka
+      - service-registry
+    networks:
+      - petrecadelivery-net
+
+  courier-management:
+    build:
+      context: .
+      dockerfile: Microservices/Courier-Management/Dockerfile
+    image: petrecadelivery-courier-management:latest
+    container_name: petreca-courier-management
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/courierdb
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_ADMIN_BOOTSTRAP_SERVERS=kafka:9094
+      - SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET=earliest
+      - SPRING_KAFKA_CONSUMER_PROPERTIES_SPRING_JSON_TRUSTED_PACKAGES=*
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://jaeger:4318/v1/traces
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8082/realms/petreca-realm
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/petreca-realm/protocol/openid-connect/certs
+    depends_on:
+      - postgres
+      - kafka
+      - service-registry
+    networks:
+      - petrecadelivery-net
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Microservices/Gateway/Dockerfile
+    image: petrecadelivery-gateway:latest
+    container_name: petreca-gateway
+    ports:
+      - "9999:9999"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://keycloak:8080/realms/petreca-realm
+      - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://jaeger:4318/v1/traces
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://localhost:8082/realms/petreca-realm
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI=http://keycloak:8080/realms/petreca-realm/protocol/openid-connect/certs
+    depends_on:
+      - service-registry
+      - keycloak
+    networks:
+      - petrecadelivery-net
+
 
 volumes:
   kafka_data:
